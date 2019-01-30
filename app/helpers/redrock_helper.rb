@@ -1,0 +1,2 @@
+module RedrockHelper
+end
