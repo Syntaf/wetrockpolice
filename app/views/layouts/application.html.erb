@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Wetrockpolice</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <!--
+    <div class="btn-float-dropdown dropdown">
+      <button aria-expanded="false" aria-haspopup="true" class="btn btn-float btn-primary" data-toggle="dropdown" type="button">
+        <i class="material-icons">menu</i>
+      </button>
+      <div class="dropdown-menu">
+        <span><button class="btn btn-float btn-light btn-sm" type="button"><i class="material-icons">question_answer</i></button> FAQ</span>
+        <button class="btn btn-float btn-light btn-sm" type="button"><i class="material-icons">attach_money</i></button>
+        <button class="btn btn-float btn-light btn-sm" type="button"><i class="material-icons">contact_support</i></button>
+      </div>
+    </div>
+    !-->
+    <%= yield %>
+  </body>
+</html>
