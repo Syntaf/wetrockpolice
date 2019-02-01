@@ -44,7 +44,7 @@
     
             .card {
                 width: 100px;
-                height: 80px;
+                height: 100px;
                 margin: 20px;
                 justify-content: center;
                 background-color: rgba(255, 255, 255, 0.8);
@@ -59,6 +59,36 @@
                 span {
                     color: #272727;
                 }
+            }
+        }
+
+        .call-to-action {
+            margin-top: 50px;
+            justify-content: center;
+
+            button {
+                width: 145px;
+                font-size: 16px;
+                letter-spacing: 2px;
+                text-transform: none;
+            }
+
+            .weather {
+                color: #272727;
+                padding: 10px 0;
+                margin-right: 15px;
+                background-color: white;
+                font-family: 'Roboto Condensed', sans-serif;
+
+                i {
+                    margin-right: -5px;
+                }
+            }
+
+            .faq {
+                color: #fff;
+                border: 2px solid #fff;
+                background-color: transparent;
             }
         }
     }
