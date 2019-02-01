@@ -16,7 +16,7 @@
 
 @import "material";
 @import "animations";
-@import url('https://fonts.googleapis.com/css?family=Raleway:400,500');
+@import url("https://fonts.googleapis.com/css?family=Raleway:400,600|Roboto+Condensed" rel="stylesheet");
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
 
 html, body {
@@ -24,6 +24,10 @@ html, body {
     height: 100%;
     font-family: 'Raleway', sans-serif;
     overflow: hidden;
+
+    * {
+        font-family: 'Raleway', sans-serif;
+    }
 }
 
 .container {
