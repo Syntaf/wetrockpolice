@@ -1,4 +1,4 @@
-particlesJS.load('particles-js', '/particles.json', $.noop);
+particlesJS.load('particles-js', '/snow.json', $.noop);
 
 fetchPrecipitationIntervals()
     .then(function (response) {
