@@ -11,18 +11,13 @@
   </head>
 
   <body>
-    <!--
-    <div class="btn-float-dropdown dropdown">
-      <button aria-expanded="false" aria-haspopup="true" class="btn btn-float btn-primary" data-toggle="dropdown" type="button">
-        <i class="material-icons">menu</i>
-      </button>
-      <div class="dropdown-menu">
-        <span><button class="btn btn-float btn-light btn-sm" type="button"><i class="material-icons">question_answer</i></button> FAQ</span>
-        <button class="btn btn-float btn-light btn-sm" type="button"><i class="material-icons">attach_money</i></button>
-        <button class="btn btn-float btn-light btn-sm" type="button"><i class="material-icons">contact_support</i></button>
+    <%= yield %>
+
+    <div class="footer">
+      <div class="footer-container">
+        <p>For site issues or suggestions: </p>
+        <a href="mailto:gmercer015@gmail.com">gmercer015@gmail.com</a>
       </div>
     </div>
-    !-->
-    <%= yield %>
   </body>
 </html>

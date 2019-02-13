@@ -1,62 +1,183 @@
-particlesJS.load('particles-js', '/snow.json', $.noop);
-
-fetchPrecipitationIntervals()
-    .then(function (response) {
-        if (response.SUMMARY.RESPONSE_CODE < 0) {
-            console.error(response);
-            return;
-        }
-
-        console.log(response);
-        
-        var totalHours = getHoursSinceRain(response.STATION[0].OBSERVATIONS.precipitation);
-        var days = Math.floor(totalHours / 24);
-        var hours = totalHours % 24;
-        
-        $('div[data-role="loading"]').remove();
-        $('p[data-role="days"]').html(days);
-        $('p[data-role="hours"]').html(hours);
-
-        if (days == 1) {
-            $('span[data-role="days-label"]').html('Day');
-        }
-
-        if (hours == 1) {
-            $('span[data-role="hours-label"]').html("Hour");
-        }
+$(document).ready(function() {
+    particlesJS.load('particles-js', '/snow.json', $.noop);
+    AOS.init({duration: 1000});
+    
+    $('button[data-role="scroll-to-weather"]').click(function () {
+        $('html, body').animate({
+            scrollTop: $('.weather-breakdown .header').offset().top
+        }, 700);
     });
+    
+    fetchPrecipitationIntervals()
+        .then(function (response) {
+            if (response.SUMMARY.RESPONSE_CODE < 0) {
+                console.error(response);
+                return;
+            }
+    
+            var intervals = response.STATION[0].OBSERVATIONS.precipitation
+            var lastRainInterval = getLastSeenRainInterval(intervals);
+            var elapsedHours = lastRainInterval.elapsedHours;
 
-function getHoursSinceRain(intervals) {
-    if (!intervals) {
-        console.error('Reponse failed');
+            var days = Math.floor(elapsedHours / 24);
+            var hours = elapsedHours % 24;
+            
+            $('div[data-role="loading"]').remove();
+            $('p[data-role="days"]').html(days);
+            $('p[data-role="hours"]').html(hours);
+    
+            if (days == 1) {
+                $('span[data-role="days-label"]').html('Day');
+            }
+    
+            if (hours == 1) {
+                $('span[data-role="hours-label"]').html("Hour");
+            }
+
+            var dateOfRain = new Date(lastRainInterval.interval.last_report);
+            var month = getMonth(dateOfRain.getMonth());
+            var day = getOrdinalSuffix(dateOfRain.getDate());
+
+            $('div[data-role="loading-date"]').remove();
+            $('strong[data-role="last-rain-date"]').html(month + ' ' + day);
+
+            var timeSeriesData = parseIntervalsForGraph(intervals);
+            var timeSeriesCanvas = document.getElementById("timeSeries").getContext('2d');
+            var timeSeriesChart = new Chart(timeSeriesCanvas, {
+                type: 'bar',
+                data: {
+                    labels: timeSeriesData.labels,
+                    datasets: [{
+                        label: 'Accumulated Precipitation (24 hours)',
+                        data: timeSeriesData.data,
+                        backgroundColor: Chart.helpers.color('rgb(255, 99, 132)').alpha(0.5).rgbString(),
+                        type: 'bar',
+                        pointRadius: 0,
+                        fill: false,
+                        lineTension: 0,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            distribution: 'series',
+                            time: {
+                                unit: 'day',
+                                displayFormats: {
+                                    'day': 'MMM DD'
+                                 }
+                            },
+                            ticks: {
+                                source: 'labels'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Precipitation (in)'
+                            }
+                        }]
+                    },
+                    responsive: true
+                }
+            });
+        });
+    
+    function getLastSeenRainInterval(intervals) {
+        if (!intervals) {
+            console.error('Reponse failed');
+        }
+    
+        var runningIntervalCount = 0;
+    
+        intervals = intervals.reverse();
+        for(var i = 0; i < intervals.length; i++) {
+            if (intervals[i].total > 0 && intervals[i].count !== null) {
+                return {
+                    'elapsedHours': runningIntervalCount,
+                    'interval': intervals[i]
+                };
+            }
+    
+            runningIntervalCount++;
+        }
+    
+        return null;
+    }
+    
+    function fetchPrecipitationIntervals() {
+        return $.ajax({
+            'method': 'GET',
+            'url': 'https://api.synopticdata.com/v2/stations/precip',
+            'data': {
+                'token': '2153743de639465ebbb30fa392c748de',
+                'stid': 'rrkn2',
+                'recent': 43200,
+                'units': 'english',
+                'pmode': 'intervals',
+                'interval': 'hour'
+            },
+            'dataType': 'json'
+        });
     }
 
-    var runningIntervalCount = 0;
+    function parseIntervalsForGraph(intervals) {
+        var data = [];
+        var labels = [];
 
-    intervals = intervals.reverse();
-    for(var i = 0; i < intervals.length; i++) {
-        if (intervals[i].total > 0) {
-            break;
+        var accumulatedPrecip = intervals[0].total;
+        var date = moment(intervals[0].last_report);
+        //new Date(intervals[0].last_report);
+
+        for (var i = 0; i < intervals.length; i++) {
+            if (intervals[i].count === null)
+                continue;
+
+            var intDate = moment(intervals[i].last_report);
+
+            if (intDate.date() === date.date()) {
+                accumulatedPrecip += intervals[i].total;
+            } else {
+                labels.push(date.endOf('day'));
+                data.push({
+                    t: date.valueOf(),
+                    y: accumulatedPrecip
+                });
+
+                date = moment(intervals[i].last_report);
+                accumulatedPrecip = intervals[i].total;
+            }
         }
 
-        runningIntervalCount++;
+        return {
+            data: data,
+            labels: labels
+        };
     }
 
-    return runningIntervalCount;
-}
+    function getMonth(monthIndex) {
+        var months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
 
-function fetchPrecipitationIntervals() {
-    return $.ajax({
-        'method': 'GET',
-        'url': 'https://api.synopticdata.com/v2/stations/precip',
-        'data': {
-            'token': '2153743de639465ebbb30fa392c748de',
-            'stid': 'rrkn2',
-            'recent': 43200,
-            'units': 'english',
-            'pmode': 'intervals',
-            'interval': 'hour'
-        },
-        'dataType': 'json'
-    });
-}
+        return months[monthIndex];
+    }
+
+    function getOrdinalSuffix(i) {
+        var j = i % 10,
+            k = i % 100;
+        if (j == 1 && k != 11) {
+            return i + "st";
+        }
+        if (j == 2 && k != 12) {
+            return i + "nd";
+        }
+        if (j == 3 && k != 13) {
+            return i + "rd";
+        }
+        return i + "th";
+    }
+});

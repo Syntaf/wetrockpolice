@@ -30,8 +30,8 @@
         </div>
         <span>Since rain last fell in the canyon</span>
         <div class="row call-to-action">
-            <button class="btn weather">Can I Climb?</button> 
-            <button class="btn faq">Weather</button>
+            <button class="btn weather" data-role="scroll-to-weather">Can I Climb?</button> 
+            <a class="btn faq" href="/redrock/faq">FAQ</a>
         </div>
     </div>
 
@@ -45,15 +45,39 @@
 </div>
 
 <div class="weather-breakdown">
-    <div class="header">
-        <h3>The last recorded precipitation was on <strong>February 3rd</strong></h3>
-        <span>Where does this data come from?</span>
-    </div>
-
-    <div class="content">
-        
+    <div class="container">
+        <div class="header" data-aos="fade-up">
+            <h2>The last recorded precipitation was on</h2>
+            <div class="spinner loading-date" data-role="loading-date">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+            <strong data-role="last-rain-date"></strong>
+            <a href="/redrock/faq">Where does this data come from?</a>
+        </div>
+            
+        <div class="content">
+            <div class="text-content" data-aos="fade-right">
+                Generally, you should avoid climbing <strong>24</strong> to <strong>72</strong> hours after rain, depending on where you intend to climb. 
+                <br><br>
+                Sunny locations like <a href="https://www.mountainproject.com/area/105732132/sunny-and-steep" target="_blank">Sunny and Steep</a> or <a href="https://www.mountainproject.com/area/105813478/stratocaster-area" target="_blank">Stratocaster Wall</a> will need much less
+                time to dry when compared to places like <a href="https://www.mountainproject.com/area/105732030/the-black-corridor" target="_blank">Black Corridor</a>
+                <br><br>
+                Not sure why you shouldn't climb when it's wet, or want to read more on how to determine when climbing is OK? Check out <a href="http://www.southernnevadaclimberscoalition.org/climbing-after-rain/" target="_blank">SNCC's write up</a>
+            </div>
+            <div class="graph" data-aos="fade-left">
+                <canvas id="timeSeries"></canvas>
+            </div>
+        </div>
+        <div class="content-widget" data-aos="fade-up">
+            <div class="widget-container">
+                <script type='text/javascript' src='https://darksky.net/widget/default/36.13234657827764,-115.43574920166014/us12/en.js?width=100%&height=350&title=Calico Basin, NV &textColor=333333&bgColor=transparent&transparency=true&skyColor=undefined&fontFamily=Sans-Serif&customFont=&units=us&htColor=333333&ltColor=C7C7C7&displaySum=yes&displayHeader=yes'></script>
+            </div>
+            <div class="text-content">
+                Las Vegas has <em>plenty</em> of rainy day options, with climbing that rivals Red Rock itself.
+                If you've found yourself in town during a rainy week, check out one of the <a href="http://www.ladylockoff.com/so-it-rained">many surrounding areas</a> we have to offer.
+            </div>
+        </div>
     </div>
 </div>
-
-
-
