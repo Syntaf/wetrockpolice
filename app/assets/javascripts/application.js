@@ -11,6 +11,9 @@
 // about supported directives.
 //
 //= require particles
+//= require aos
+//= require moment
+//= require chart
 //= require rails-ujs
 //= require turbolinks
 //= require jquery

@@ -16,6 +16,7 @@
 
 @import "material";
 @import "animations";
+@import "aos";
 @import url("https://fonts.googleapis.com/css?family=Raleway:400,600|Montserrat:600");
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
 
@@ -23,7 +24,7 @@ html, body {
     width: 100%;
     height: 100%;
     font-family: 'Raleway', sans-serif;
-    overflow: hidden;
+    // overflow-x: hidden;
 
     * {
         font-family: 'Raleway', sans-serif;
@@ -37,4 +38,61 @@ html, body {
 .row {
     width: 100%;
     margin: 0 auto;
+}
+
+.footer {
+    height: 150px;
+    background-color: #eee;
+
+    .footer-container {
+        max-width: 700px;
+        margin: auto;
+        text-align: center;
+        padding-top: 60px;
+
+        p {
+            margin: 0;
+        }
+    }
+}
+
+.spinner {
+    width: 100%;
+    text-align: center;
+
+    & > div {
+        width: 6px;
+        height: 6px;
+        margin: 0 2px;
+        background-color: #333;
+        border-radius: 100%;
+        display: inline-block;
+        -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+        animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    }
+
+    .bounce1 {
+        -webkit-animation-delay: -0.32s;
+        animation-delay: -0.32s;
+    }
+
+    .bounce2 {
+        -webkit-animation-delay: -0.16s;
+        animation-delay: -0.16s;
+    }
+}
+
+@-webkit-keyframes sk-bouncedelay {
+    0%, 80%, 100% { -webkit-transform: scale(0) }
+    40% { -webkit-transform: scale(1.0) }
+}
+  
+@keyframes sk-bouncedelay {
+    0%, 80%, 100% { 
+      -webkit-transform: scale(0);
+      transform: scale(0);
+    } 40% { 
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
 }
