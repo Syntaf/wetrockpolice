@@ -47,15 +47,17 @@ $(document).ready(function() {
             $('div[data-role="loading-date"]').remove();
             $('strong[data-role="last-rain-date"]').html(month + ' ' + day);
 
-            var timeSeriesData = parseIntervalsForGraph(intervals);
+            var timeSeriesDailyData = parseDailyIntervalsForGraph(intervals);
+            var timeSeriesHourlyData = parseHourlyIntervalsForGraph(intervals);
+
             var timeSeriesCanvas = document.getElementById("timeSeries").getContext('2d');
             var timeSeriesChart = new Chart(timeSeriesCanvas, {
                 type: 'bar',
                 data: {
-                    labels: timeSeriesData.labels,
+                    labels: timeSeriesDailyData.labels,
                     datasets: [{
                         label: 'Accumulated Precipitation (rolling 24 hours)',
-                        data: timeSeriesData.data,
+                        data: timeSeriesDailyData.data,
                         backgroundColor: Chart.helpers.color('rgb(255, 99, 132)').alpha(0.5).rgbString(),
                         type: 'bar',
                         pointRadius: 0,
@@ -74,7 +76,8 @@ $(document).ready(function() {
                             time: {
                                 unit: 'day',
                                 displayFormats: {
-                                    'day': 'MMM DD'
+                                    'day': 'MMM DD',
+                                    'hour': 'MMM D hA'
                                  }
                             },
                             ticks: {
@@ -100,10 +103,24 @@ $(document).ready(function() {
                         titleFontSize: 0,
                         callbacks: {
                           label: function(tooltipItems, data) {
-                            return tooltipItems.yLabel.toFixedDown(3) + ' Inches of rain'
+                            return ' ' + data.labels[tooltipItems.datasetIndex].format('ll') + ' - ' + tooltipItems.yLabel.toFixedDown(3) + ' Inches of rain'
                           },
                         }
                     }
+                }
+            });
+
+            $('#graphSwitch').change(function() { 
+                if ($(this).prop('checked')) {
+                    timeSeriesChart.config.data.datasets[0].data = timeSeriesHourlyData.data;
+                    timeSeriesChart.config.data.labels = timeSeriesHourlyData.labels;
+                    timeSeriesChart.config.options.scales.xAxes[0].time.unit = 'hour';
+                    timeSeriesChart.update();
+                } else {
+                    timeSeriesChart.config.data.datasets[0].data = timeSeriesDailyData.data;
+                    timeSeriesChart.config.data.labels = timeSeriesDailyData.labels
+                    timeSeriesChart.config.options.scales.xAxes[0].time.unit = 'day';
+                    timeSeriesChart.update();
                 }
             });
         });
@@ -145,7 +162,7 @@ $(document).ready(function() {
         });
     }
 
-    function parseIntervalsForGraph(intervals) {
+    function parseDailyIntervalsForGraph(intervals) {
         var data = [];
         var labels = [];
 
@@ -171,6 +188,29 @@ $(document).ready(function() {
                 date = moment(intervals[i].last_report);
                 accumulatedPrecip = intervals[i].total;
             }
+        }
+
+        return {
+            data: data,
+            labels: labels
+        };
+    }
+
+    function parseHourlyIntervalsForGraph(intervals) {
+        var data = [];
+        var labels = [];
+
+        for (var i = 0; i < 30; i++) {
+            if (intervals[i].count === null)
+                continue;
+
+            var date = moment(intervals[i].last_report);
+
+            labels.push(date);
+            data.push({
+                t: date.valueOf(),
+                y: intervals[i].total
+            });
         }
 
         return {
