@@ -183,17 +183,26 @@
     .content {
         padding-top: 40px;
 
-        .graph-switcher {
-            text-align: right;
-            margin-bottom: -20px;
-            margin-right: 10px;
+        .graph {
+            position: relative;
 
-            .daily-switch {
-                padding-right:20px;
+            .graph-switcher {
+                text-align: right;
+                position: absolute;
+                right: 10px;
+                z-index: 5;
+    
+                .daily-switch {
+                    padding-right:20px;
+                }
+    
+                .custom-switch {
+                    display: inline-block;
+                }
             }
 
-            .custom-switch {
-                display: inline-block;
+            .graph-render {
+                height: 450px;
             }
         }
 
@@ -256,6 +265,41 @@
         .scroll-down,
         .vertical-line {
             display: none;
+        }
+    }
+
+    .weather-breakdown .content {
+        .text-content {
+            display: block;
+
+            .cta {
+                padding: 40px;
+
+                .btn {
+                    padding-left: 35px;
+                    padding-right: 35px;
+                }
+            }
+        }
+
+        .graph .graph-switcher {
+            text-align: center;
+            position: relative;
+            margin: 0;
+            padding-bottom: 20px;
+        }
+
+        .overflow-wrapper {
+            overflow-x: scroll;
+
+            .graph-render {
+                height: 300px;
+                width: 600px;
+            }
+        }
+
+        .content-widget {
+            padding-bottom: 20px;
         }
     }
 }

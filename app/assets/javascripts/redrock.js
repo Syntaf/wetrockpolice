@@ -10,7 +10,7 @@ $(document).ready(function() {
     
     $('button[data-role="scroll-to-weather"]').click(function () {
         $('html, body').animate({
-            scrollTop: $('.weather-breakdown .header').offset().top
+            scrollTop: $('.weather-breakdown').offset().top
         }, 700);
     });
     
@@ -68,6 +68,7 @@ $(document).ready(function() {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     showTooltips: true,
                     scales: {
                         xAxes: [{
@@ -166,8 +167,20 @@ $(document).ready(function() {
         var data = [];
         var labels = [];
 
-        var accumulatedPrecip = intervals[0].total;
-        var date = moment(intervals[0].last_report);
+        var accumulatedPrecip = 0.0;
+        var date = null;
+
+        if (intervals[0].count !== null)
+        {
+            accumulatedPrecip = intervals[0].total;
+            date = moment(intervals[0].last_report);
+        }
+        else
+        {
+            accumulatedPrecip = intervals[1].total;
+            date = moment(intervals[1].last_report);
+        }
+
         //new Date(intervals[0].last_report);
 
         for (var i = 0; i < intervals.length; i++) {
