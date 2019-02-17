@@ -202,22 +202,19 @@
             text-align: left;
             letter-spacing: 1px;
             font-size: 14px;
-            padding: 0 15px;
-        }
-    }
+            padding: 40px 15px 0 15px;
+            display: flex;
+            flex-direction: row;
 
-    .content-widget {
-        display: flex;
-        flex-direction: row;
-        padding-top: 40px;
+            .cta {
+                padding: 0 60px;
+                display: flex;
+                align-items: center;
 
-        .widget-container {
-            flex: 1;
-        }
-
-        .text-content {
-            width: 40%;
-            margin: auto 0;
+                a {
+                    height: 35px;
+                }
+            }
         }
     }
 }
