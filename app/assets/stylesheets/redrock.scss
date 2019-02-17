@@ -181,25 +181,28 @@
     }
 
     .content {
-        display: flex;
-        flex-direction: row;
         padding-top: 40px;
 
+        .graph-switcher {
+            text-align: right;
+            margin-bottom: -20px;
+            margin-right: 10px;
+
+            .daily-switch {
+                padding-right:20px;
+            }
+
+            .custom-switch {
+                display: inline-block;
+            }
+        }
+
         .text-content {
-            width: 38%;
             margin: auto 0;
             text-align: left;
             letter-spacing: 1px;
             font-size: 14px;
             padding: 0 15px;
-        }
-
-        .graph {
-            flex: 1;
-
-            canvas {
-                margin: auto;
-            }
         }
     }
 

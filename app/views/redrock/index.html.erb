@@ -58,6 +58,17 @@
         </div>
             
         <div class="content">
+            <div class="graph" data-aos="fade-up">
+                <div class="graph-switcher">
+                    <label class="custom-control-label daily-switch" for="customSwitch">Daily</label>
+                    <div class="custom-control custom-switch">
+                        <input class="custom-control-input" id="customSwitch" type="checkbox">
+                        <span class="custom-control-track"></span>
+                        <label class="custom-control-label" for="customSwitch">Hourly</label>
+                    </div>
+                </div>
+                <canvas id="timeSeries"></canvas>
+            </div>
             <div class="text-content" data-aos="fade-right">
                 Generally, you should avoid climbing <strong>24</strong> to <strong>72</strong> hours after rain, depending on where you intend to climb. 
                 <br><br>
@@ -65,9 +76,6 @@
                 time to dry when compared to places like <a href="https://www.mountainproject.com/area/105732030/the-black-corridor" target="_blank">Black Corridor</a>
                 <br><br>
                 Not sure why you shouldn't climb when it's wet, or want to read more on how to determine when climbing is OK? Check out <a href="http://www.southernnevadaclimberscoalition.org/climbing-after-rain/" target="_blank">SNCC's write up</a>
-            </div>
-            <div class="graph" data-aos="fade-left">
-                <canvas id="timeSeries"></canvas>
             </div>
         </div>
         <div class="content-widget" data-aos="fade-up">

@@ -1,3 +1,9 @@
+Number.prototype.toFixedDown = function(digits) {
+    var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)"),
+        m = this.toString().match(re);
+    return m ? parseFloat(m[1]) : this.valueOf();
+};
+
 $(document).ready(function() {
     particlesJS.load('particles-js', '/snow.json', $.noop);
     AOS.init({duration: 1000});
@@ -48,7 +54,7 @@ $(document).ready(function() {
                 data: {
                     labels: timeSeriesData.labels,
                     datasets: [{
-                        label: 'Accumulated Precipitation (24 hours)',
+                        label: 'Accumulated Precipitation (rolling 24 hours)',
                         data: timeSeriesData.data,
                         backgroundColor: Chart.helpers.color('rgb(255, 99, 132)').alpha(0.5).rgbString(),
                         type: 'bar',
@@ -59,6 +65,8 @@ $(document).ready(function() {
                     }]
                 },
                 options: {
+                    responsive: true,
+                    showTooltips: true,
                     scales: {
                         xAxes: [{
                             type: 'time',
@@ -80,11 +88,25 @@ $(document).ready(function() {
                             }
                         }]
                     },
-                    responsive: true
+                    hover: {
+                        animationDuration: 400,
+                        axis: "x",
+                        intersect: true,
+                        mode: "label"
+                    },
+                    tooltips: {
+                        enabled: true,
+                        intersect: false,
+                        titleFontSize: 0,
+                        callbacks: {
+                          label: function(tooltipItems, data) {
+                            return tooltipItems.yLabel.toFixedDown(3) + ' Inches of rain'
+                          },
+                        }
+                    }
                 }
             });
         });
-    
     function getLastSeenRainInterval(intervals) {
         if (!intervals) {
             console.error('Reponse failed');
