@@ -104,7 +104,9 @@ $(document).ready(function() {
                         titleFontSize: 0,
                         callbacks: {
                           label: function(tooltipItems, data) {
-                            return ' ' + data.labels[tooltipItems.datasetIndex].format('ll') + ' - ' + tooltipItems.yLabel.toFixedDown(3) + ' Inches of rain'
+                            console.log(tooltipItems);
+                            console.log(data);
+                            return ' ' + data.labels[tooltipItems.index].format('ll') + ' - ' + tooltipItems.yLabel.toFixedDown(3) + ' Inches of rain'
                           },
                         }
                     }
