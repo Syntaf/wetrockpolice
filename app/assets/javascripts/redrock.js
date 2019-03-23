@@ -13,6 +13,8 @@ $(document).ready(function() {
             scrollTop: $('.weather-breakdown').offset().top
         }, 700);
     });
+
+    $('#weather-tooltip-warning').tooltip();
     
     fetchPrecipitationIntervals()
         .then(function (response) {
@@ -104,8 +106,6 @@ $(document).ready(function() {
                         titleFontSize: 0,
                         callbacks: {
                           label: function(tooltipItems, data) {
-                            console.log(tooltipItems);
-                            console.log(data);
                             return ' ' + data.labels[tooltipItems.index].format('ll') + ' - ' + tooltipItems.yLabel.toFixedDown(3) + ' Inches of rain'
                           },
                         }
