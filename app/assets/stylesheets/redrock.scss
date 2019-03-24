@@ -8,6 +8,28 @@
     text-align: left !important;
 }
 
+.popover-header {
+    font-size: 18px !important;
+}
+
+.notification-menu {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    cursor: pointer;
+
+    i {
+        font-size: 20px;
+    }
+
+    .badge-light {
+        font-size: 10px;
+        border-radius: 100%;
+        background-color: #f44336;
+        margin-left: -6px;
+    }
+}
+
 .hero-header {
     color: white;
     width: 100%;
@@ -287,6 +309,10 @@
 }
 
 @media (max-width: 1000px) {
+    .notification-menu {
+        display: none;
+    }
+
     .hero-header {
         .hero-container {
             top: 10%;

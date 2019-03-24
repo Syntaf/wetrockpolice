@@ -1,6 +1,10 @@
 <div class="hero-header" id="particles-js">
     <div class="shadow-overlay"></div>
 
+    <div class="notification-menu" id="temp-notification" tabindex="0" data-toggle="popover" data-trigger="focus" title="Red Rock Rehab is soon!">
+        <i class="fas fa-bell"></i><span class="badge badge-light">1</span>
+    </div>
+
     <div class="hero-container">
         <h1 class="animated bounceInLeft delay-1s">Did it rain in Red Rock?</h1>
         <span>It's been...</span>
@@ -102,5 +106,11 @@
         var redRockController = new RedRockController({});
 
         redRockController.initLandingView();
+
+        $('#temp-notification').popover({
+            trigger: 'focus',
+            html: true,
+            content: 'Support Red Rock by attending a community night hosted by SNCC. Proceeds go towards improving and maintaining climbing at Red Rock.<br><br><a href="http://www.southernnevadaclimberscoalition.org/rehab19/?src=wetrockpolice" target="_blank">Learn More</a>'
+        });
     });
 </script>
