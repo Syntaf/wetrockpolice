@@ -1,6 +1,4 @@
-// Place all the styles related to the Redrock controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+@import "vars";
 
 .tooltip-inner {
     max-width: 250px;
@@ -13,6 +11,7 @@
 }
 
 .notification-menu {
+    display: none;
     position: absolute;
     top: 25px;
     left: 25px;
@@ -253,66 +252,15 @@
                 display: flex;
                 align-items: center;
 
-                a {
-                    height: 35px;
+                .rainy-day-crags {
+                    padding: 15px 25px;
                 }
             }
         }
     }
 }
 
-.faq-hero {
-    height: 400px;
-    display: flex;
-    align-items: center;
-    background-image: url("faq.jpeg");
-    background-size: cover;
-    background-position: bottom;
-
-    h1 {
-        color: white;
-        font-family: 'Montserrat', sans-serif;
-        letter-spacing: 3px;
-        margin-left: 15%;
-    }
-}
-
-.faq-content {
-    padding-top: 50px;
-    padding-bottom: 100px;
-
-    .about {
-        padding-bottom: 10px;
-        border-bottom: 1px solid #eee;
-        margin-bottom: 25px;
-        margin-top: 20px;
-    }
-
-    ul {
-        padding: 0;
-
-        li {
-            list-style: none;
-            margin-bottom: 25px;
-            
-            strong {
-                font-size: 20px;
-            }
-
-            p {
-                font-size: 16px;
-                margin-top: 15px;
-                padding-left: 20px;
-            }
-        }
-    }
-}
-
-@media (max-width: 1000px) {
-    .notification-menu {
-        display: none;
-    }
-
+@media (max-width: $mobileBreakpoint) {
     .hero-header {
         .hero-container {
             top: 10%;
@@ -384,14 +332,6 @@
 
         .content-widget {
             padding-bottom: 20px;
-        }
-    }
-
-    .faq-hero {
-        height: 200px;
-
-        h1 {
-            margin: 0 auto;
         }
     }
 }

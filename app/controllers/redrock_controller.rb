@@ -4,4 +4,7 @@ class RedrockController < ApplicationController
 
   def faq
   end
+
+  def rainy_day_options
+  end
 end
