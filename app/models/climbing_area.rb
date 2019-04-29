@@ -1,0 +1,2 @@
+class ClimbingArea < ApplicationRecord
+end
