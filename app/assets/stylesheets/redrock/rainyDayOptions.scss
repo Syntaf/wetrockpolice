@@ -1,0 +1,89 @@
+body {
+    background-color: #eee;
+}
+
+.page-header {
+    padding: 25px;
+
+    h1 {
+        text-align: center;
+    }
+}
+
+.container {
+    margin-bottom: 100px;
+}
+
+.wrapper {
+    padding: 10px;
+}
+
+.crags {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+
+    .crag-list {
+        width: 30%;
+        margin-right: 10px;
+
+        .dropdown {
+            width: 100%;
+            position: relative;
+
+            .header {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                left: 15px;
+                font-weight: bold;
+                font-size: 16px;
+            }
+
+            > button {
+                width: 100%;
+                text-align: left;
+                text-transform: none;
+                padding-top: 17px;
+                padding-bottom: 17px;
+                text-align: right;
+            }
+        }
+        
+        ul {
+            padding: 0;
+
+            li {
+                font-size: 16px;
+            }
+        }
+    }
+
+    .mountain-project {
+        width: 70%;
+    }
+}
+
+.crag-info {
+    padding-top: 0;
+
+    .crag-title {
+        text-align: right;
+        position: absolute;
+        font-style: italic;
+        right: 10px;
+    }
+
+    .card {
+        padding: 10px;
+
+        p, li, strong {
+            font-family: 'Roboto', sans-serif;
+            color: #272727;
+        }
+
+        p {
+            padding-left: 25px;
+        }
+    }
+}
