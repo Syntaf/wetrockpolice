@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  longitude: MyString
+  latitude: MyString
+  mt_z: MyString
+  climbing_area: one
+
+two:
+  longitude: MyString
+  latitude: MyString
+  mt_z: MyString
+  climbing_area: two

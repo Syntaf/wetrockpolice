@@ -1,0 +1,2 @@
+class WatchedArea < ApplicationRecord
+end
