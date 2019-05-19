@@ -10,6 +10,7 @@ en:
       already_authenticated: "You are already signed in."
       inactive: "Your account is not activated yet."
       invalid: "Invalid %{authentication_keys} or password."
+      not_approved: "Your account has not been approved by an administrator yet"
       locked: "Your account is locked."
       last_attempt: "You have one more attempt before your account is locked."
       not_found_in_database: "Invalid %{authentication_keys} or password."
@@ -58,7 +59,6 @@ en:
     messages:
       already_confirmed: "was already confirmed, please try signing in"
       confirmation_period_expired: "needs to be confirmed within %{period}, please request a new one"
-      not_approved: "Your account has not been approved by an administrator yet"
       expired: "has expired, please request a new one"
       not_found: "not found"
       not_locked: "was not locked"
