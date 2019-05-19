@@ -4,7 +4,7 @@ RailsAdmin.config do |config|
 
   # == Devise ==
   config.authenticate_with do
-    redirect_to main_app.new_user_session_path unless warden.user.admin == true
+    redirect_to main_app.new_user_session_path unless warden.user and warden.user.admin?
   end
   config.current_user_method(&:current_user)
 
