@@ -1,0 +1,2 @@
+class WhitelistedEmail < ApplicationRecord
+end
