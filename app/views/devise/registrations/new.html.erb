@@ -2,13 +2,13 @@
     <h2>Wet Rock Police</h2>
 </div>
 
+<%= render "devise/shared/error_messages", resource: resource %>
+
 <div class="page-wrapper">
   <div class="login card">
     <h3>Administration Portal</h3>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-      <%= render "devise/shared/error_messages", resource: resource %>
-
       <div class="field form-group">
         <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Email" %>
       </div>
