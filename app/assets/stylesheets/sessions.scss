@@ -1,3 +1,36 @@
+.alert,
+.notice {
+    position: absolute !important;
+    top: 69px;
+    width: 100%;
+    text-align: center;
+}
+
+#error_explanation {
+    p {
+        display: inline;
+    }
+
+    ul {
+        list-style: none;
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+
+        li {
+            display: inline;
+
+            &::after {
+                content: ", ";
+            }
+
+            &:last-child::after {
+                content: "";
+            }
+        }
+    }
+}
+
 .header {
     padding: 15px 0;
     background-color: #272727;
