@@ -1,0 +1,39 @@
+<div class="header">
+    <h2>Wet Rock Police</h2>
+</div>
+
+<div class="page-wrapper">
+  <div class="login card">
+    <h3>Administration Portal</h3>
+
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="field form-group">
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Email" %>
+      </div>
+
+      <div class="field form-group">
+        <% if @minimum_password_length %>
+          <% @extra = ' ( ' + @minimum_password_length.to_s + ' characters minimum)' %>
+        <% end %>
+        <%= f.password_field :password, autocomplete: "new-password", class: "form-control", placeholder: "password" + @extra %>
+      </div>
+
+      <div class="field form-group">
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", placeholder: "password confirmation" %>
+      </div>
+
+      <div class="actions">
+        <%= f.submit "Sign up", class: "btn btn-outline-dark action-button" %>
+      </div>
+    <% end %>
+
+    <div class="line-break">
+      <hr>
+      <span>OR</span>
+    </div>
+
+    <%= render "devise/shared/links" %>
+  </div>
+</div>

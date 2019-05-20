@@ -1,0 +1,85 @@
+.header {
+    padding: 15px 0;
+    background-color: #272727;
+
+    h2 {
+        margin: 0;
+        color: #fff;
+        text-align: center;
+    }
+}
+
+.page-wrapper {
+    min-height: calc(100vh - 150px - 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #eeeeee;
+    border-bottom: 1px solid #cccccc;
+
+    .login {
+        margin: 0 auto;
+        padding: 50px 100px 50px 100px;
+        text-align: center;
+
+        h3 {
+            margin-bottom: 40px;
+            padding-bottom: 10px;
+        }
+
+        form {
+            margin-bottom: 20px;
+
+            input:not([type="checkbox"]) {
+                min-width: 215px;
+                font-size: 14px;
+            }
+
+            .field {
+                padding: 3px 0;
+            }
+
+            .remember-me {
+                margin-top: 6px;
+                text-align: left;
+            }
+
+            .actions {
+                padding-top: 10px;
+
+                .action-button {
+                    border: 1px solid #272727;
+                    border-radius: 3px;
+                    margin-top: 5px;
+                }
+            }
+        }
+
+        .line-break {
+            position: relative;
+
+            span {
+                position: absolute;
+                top: 9px;
+                font-size: 12px;
+                left: calc(50% - 16px);
+                background-color: #fff;
+                padding: 0 8px;
+            }
+        }
+    }
+}
+
+.forgot-password-link {
+    position: absolute;
+    font-size: 12px;
+    bottom: 20px;
+    left: 20px;
+}
+
+.email-again-link {
+    position: absolute;
+    font-size: 12px;
+    bottom: 20px;
+    right: 20px;
+}
