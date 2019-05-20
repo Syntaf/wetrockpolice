@@ -27,11 +27,21 @@
 
   <body>
     <% if notice %>
-      <p class="notice"><%= notice %></p>
+      <div class="notice opaque alert alert-warning alert-dismissible fade show">
+        <%= notice %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
     <% end %>
 
     <% if alert %>
-      <p class="alert alert-warning show"><%= alert %></p>
+      <div class="notice opaque alert alert-warning alert-dismissible fade show">
+        <%= alert %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
     <% end %>
 
     <%= yield %>
