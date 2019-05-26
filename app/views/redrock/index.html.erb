@@ -108,7 +108,8 @@
         var redRockController = new RedRockController({});
 
         redRockController.initLandingView();
-        redRockController.initSnow();
+
+        window.addEventListener('lazyLoadFinished', redRockController.initSnow.bind(redRockController));
 
         $('#temp-notification').popover({
             trigger: 'focus',
