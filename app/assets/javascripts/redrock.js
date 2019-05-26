@@ -12,9 +12,8 @@ function RedRockController(options) {
 }
 
 RedRockController.prototype.initLandingView = function () {
-    particlesJS.load('particles-js', '/snow.json', $.noop);
     AOS.init({duration: 1000});
-    
+
     $('button[data-role="scroll-to-weather"]').click(function () {
         $('html, body').animate({
             scrollTop: $('.weather-breakdown').offset().top
@@ -25,6 +24,10 @@ RedRockController.prototype.initLandingView = function () {
 
     this.fetchPrecipitation()
         .then(this.renderLandingView.bind(this));
+}
+
+RedRockController.prototype.initSnow = function () {
+    particlesJS.load('particles-js', '/snow.json', $.noop);
 }
 
 RedRockController.prototype.fetchPrecipitation = function () {

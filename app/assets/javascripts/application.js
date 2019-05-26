@@ -27,3 +27,38 @@ Number.prototype.toFixedDown = function(digits) {
         m = this.toString().match(re);
     return m ? parseFloat(m[1]) : this.valueOf();
 };
+
+window.onload = function loadStuff() {
+    if (!('addEventListener' in window)) {
+        return;
+    }
+
+    var backgroundImageSrc = (function () {
+        var styles = document.querySelector('style').sheet.cssRules;
+        var fetchImage = (function () {
+            var bgStyle, i, stylesLength = styles.length;
+
+            for (i = 0; i < stylesLength; i++) {
+                if (styles[i].selectorText && styles[i].selectorText == '.hero-header-loaded') {
+                    bgStyle = styles[i].style.backgroundImage;
+                    break;
+                }
+            }
+
+            return bgStyle;
+        }());
+
+        return fetchImage && fetchImage.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/)[1];
+    }());
+
+    var image = new Image();
+    var heroHeader = document.querySelector('.hero-header');
+
+    image.onload = function () {
+        heroHeader.className += ' ' + 'hero-header-loaded';
+    };
+
+    if (backgroundImageSrc) {
+        image.src = backgroundImageSrc;
+    }
+};

@@ -9,6 +9,36 @@
 
     <%= csrf_meta_tags %>
 
+    <style>
+      .hero-header-loaded {
+          background-image: url(<%= asset_path 'hero-image.jpg' %>) !important;
+      }
+
+      .hero-header {
+    transform: translateZ(0);
+    
+}
+
+  .hero-header {
+    transform: translateZ(0);
+  }
+  .hero-header-loaded {
+    filter: blur(30px);
+  }
+  @keyframes unblur {
+    0% {
+      filter: blur(30px);
+    }
+    50% {
+      filter: blur(5px);
+    },
+    100% {
+      filter: blur(0px);
+    }
+  }
+
+    </style>
+
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
