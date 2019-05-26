@@ -1,4 +1,5 @@
-<div class="hero-header" id="particles-js">
+<div class="hero-header-content" id="particles-js">
+    <div class="hero-header"></div>
     <div class="shadow-overlay"></div>
 
     <!-- disabled until the next event -->
@@ -107,6 +108,7 @@
         var redRockController = new RedRockController({});
 
         redRockController.initLandingView();
+        redRockController.initSnow();
 
         $('#temp-notification').popover({
             trigger: 'focus',
