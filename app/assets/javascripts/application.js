@@ -15,7 +15,6 @@
 //= require moment
 //= require chart
 //= require rails-ujs
-//= require turbolinks
 //= require jquery
 //= require popper
 //= require bootstrap
@@ -39,7 +38,7 @@ window.onload = function loadStuff() {
             var bgStyle, i, stylesLength = styles.length;
 
             for (i = 0; i < stylesLength; i++) {
-                if (styles[i].selectorText && styles[i].selectorText == '.hero-header-loaded') {
+                if (styles[i].selectorText && styles[i].selectorText == '.hero-header.hero-header-loaded') {
                     bgStyle = styles[i].style.backgroundImage;
                     break;
                 }
@@ -54,11 +53,15 @@ window.onload = function loadStuff() {
     var image = new Image();
     var heroHeader = document.querySelector('.hero-header');
 
-    image.onload = function () {
-        heroHeader.className += ' ' + 'hero-header-loaded';
-    };
-
-    if (backgroundImageSrc) {
-        image.src = backgroundImageSrc;
+    if (heroHeader)
+    {
+        image.onload = function () {
+            heroHeader.className += ' ' + 'hero-header-loaded';
+        };
+    
+        if (backgroundImageSrc) {
+            image.src = backgroundImageSrc;
+            window.dispatchEvent(new Event('lazyLoadFinished'));
+        }
     }
 };
