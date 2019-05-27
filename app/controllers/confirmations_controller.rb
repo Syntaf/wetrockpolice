@@ -3,6 +3,8 @@ class ConfirmationsController < Devise::ConfirmationsController
     def after_confirmation_path_for(resource_name, resource)
       sign_in(resource)
       
-      redirect_to rails_admin
+      if current_user.admin?
+        redirect_to rails_admin
+      end
     end
   end
