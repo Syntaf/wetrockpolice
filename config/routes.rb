@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   devise_for :users
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'  
 
   get '/redrock', to: 'redrock#index'
   get '/redrock/faq', to: 'redrock#faq'
