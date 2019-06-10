@@ -1,4 +1,4 @@
-class RainyDayRepository
+class WatchedAreaRepository
     def get_watched_area(slug)
         areas = WatchedArea.find_by(slug: slug)
 
