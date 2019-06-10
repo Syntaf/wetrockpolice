@@ -2,6 +2,21 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   config.action_mailer.default_url_options = { host: 'wetrockpolice.com' }
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.default :charset => "utf-8"
+  config.action_mailer.smtp_settings = {
+    address:              'smtp.gmail.com',
+    port:                 465,
+    domain:               'gmail.com',
+    user_name:            'wetrockpolice@gmail.com',
+    password:             'spar22ky',
+    authentication:       'plain',
+    enable_starttls_auto: true,
+    ssl:                  true,
+    openssl_verify_mode:  OpenSSL::SSL::VERIFY_NONE
+  }
 
   # Code is not reloaded between requests.
   config.cache_classes = true

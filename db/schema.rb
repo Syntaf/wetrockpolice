@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190519211700) do
+ActiveRecord::Schema.define(version: 20190610001737) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20190519211700) do
     t.bigint "watched_area_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "driving_time"
     t.index ["climbing_area_id"], name: "index_rainy_day_areas_on_climbing_area_id"
     t.index ["watched_area_id"], name: "index_rainy_day_areas_on_watched_area_id"
   end
@@ -64,12 +65,7 @@ ActiveRecord::Schema.define(version: 20190519211700) do
 
   create_table "watched_areas", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "whitelisted_emails", force: :cascade do |t|
-    t.string "email"
+    t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

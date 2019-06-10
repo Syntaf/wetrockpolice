@@ -1,7 +1,9 @@
 <div class="page-header">
     <h1>Rainy Day Options</h1>
 </div>
-
+<% @rainyDayAreas.climbing_areas.each do |area| %>
+    <%= area.name %>
+<% end %>
 <div class="container">
     <div class="crags wrapper">
         <div class="crag-list card">
