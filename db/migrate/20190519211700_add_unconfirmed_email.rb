@@ -4,6 +4,6 @@ class AddUnconfirmedEmail < ActiveRecord::Migration[5.1]
   end
 
   def self.down
-    remove_columns :users, :unconfirmed_email, :string
+    remove_columns :users, :unconfirmed_email
   end
 end
