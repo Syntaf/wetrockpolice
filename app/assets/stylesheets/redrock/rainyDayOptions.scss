@@ -1,21 +1,37 @@
+@import "../vars.scss";
+
 body {
     background-color: #eee;
 }
 
 .page-header {
     padding: 25px;
+    margin-bottom: 25px;
+
+    &.card {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    h1, h2 {
+        display: inline-block;
+        font-size: 26px;
+        margin: 0;
+    }
 
     h1 {
-        text-align: center;
+        font-weight: $extraBold;
+        padding-right: 10px;
+        border-right: 1px solid #eee;
+    }
+
+    h2 {
+        padding-left: 10px;
     }
 }
 
 .container {
     margin-bottom: 100px;
-}
-
-.wrapper {
-    padding: 10px;
 }
 
 .crags {
@@ -30,13 +46,15 @@ body {
         .dropdown {
             width: 100%;
             position: relative;
+            border-bottom: 1px solid #eee;
 
             .header {
                 position: absolute;
+                color: #666;
                 top: 50%;
                 transform: translateY(-50%);
-                left: 15px;
-                font-weight: bold;
+                left: 0;
+                font-weight: $bold;
                 font-size: 16px;
             }
 
@@ -44,8 +62,8 @@ body {
                 width: 100%;
                 text-align: left;
                 text-transform: none;
-                padding-top: 17px;
-                padding-bottom: 17px;
+                padding-top: 10px;
+                padding-bottom: 10px;
                 text-align: right;
             }
         }
@@ -54,7 +72,26 @@ body {
             padding: 0;
 
             li {
-                font-size: 16px;
+                font-size: 15px;
+                padding: 5px 0;
+                cursor: pointer;
+
+                &.list-group-item {
+                    min-height: 0;
+                    border: none;
+                    color: #666;
+                    font-weight: 800;
+                }
+
+                &.active {
+                    background-color: transparent;
+                    color: $primaryColor;
+                }
+
+                &:hover {
+                    background-color: transparent;
+                    color: $primaryColor;
+                }
             }
         }
     }
@@ -74,12 +111,16 @@ body {
         right: 10px;
     }
 
+    h4 {
+        color: #666;
+    }
+
     .card {
         padding: 10px;
 
         p, li, strong {
             font-family: 'Roboto', sans-serif;
-            color: #272727;
+            color: #666;
         }
 
         p {

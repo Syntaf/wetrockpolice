@@ -6,8 +6,8 @@ class RedrockController < ApplicationController
   end
 
   def rainy_day_options
-    rainyDayRepo = RainyDayRepository.new()
+    watched_area_repo = WatchedAreaRepository.new()
 
-    @rainyDayAreas = rainyDayRepo.get_watched_area('redrock')
+    @watched_area = watched_area_repo.get_watched_area('redrock')
   end
 end
