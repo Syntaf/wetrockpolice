@@ -6,7 +6,12 @@ body {
 
 .page-header {
     padding: 25px;
-    margin-bottom: 25px;
+    margin-bottom: 50px;
+
+    .container {
+        margin: 0 auto;
+        padding-left: 30px;
+    }
 
     &.card {
         flex-direction: row;
@@ -30,37 +35,33 @@ body {
     }
 }
 
-.container {
-    margin-bottom: 100px;
-}
-
 .crags {
     display: flex;
     flex-direction: row;
-    padding: 10px;
+    padding: 10px 10px 50px 10px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee;
 
     .crag-list {
         width: 30%;
         margin-right: 10px;
 
         .dropdown {
-            width: 100%;
-            position: relative;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
             border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            margin-bottom: 10px;
 
             .header {
-                position: absolute;
                 color: #666;
-                top: 50%;
-                transform: translateY(-50%);
-                left: 0;
+                flex: 1;
                 font-weight: $bold;
                 font-size: 16px;
             }
 
             > button {
-                width: 100%;
-                text-align: left;
                 text-transform: none;
                 padding-top: 10px;
                 padding-bottom: 10px;
@@ -72,7 +73,7 @@ body {
             padding: 0;
 
             li {
-                font-size: 15px;
+                font-size: 16px;
                 padding: 5px 0;
                 cursor: pointer;
 
@@ -80,7 +81,7 @@ body {
                     min-height: 0;
                     border: none;
                     color: #666;
-                    font-weight: 800;
+                    font-weight: $extraBold;
                 }
 
                 &.active {
@@ -102,29 +103,27 @@ body {
 }
 
 .crag-info {
-    padding-top: 0;
+    padding: 0 10px 35px 10px;
+    margin-bottom: 35px;
 
-    .crag-title {
-        text-align: right;
-        position: absolute;
-        font-style: italic;
-        right: 10px;
+    &.bottom-border {
+        border-bottom: 1px solid #eee;
+    }
+
+    p, td, strong {
+        margin-bottom: 0;
+        color: #666;
+    }
+
+    tr {
+        & > td {
+            width: 225px;
+        }
     }
 
     h4 {
         color: #666;
-    }
-
-    .card {
-        padding: 10px;
-
-        p, li, strong {
-            font-family: 'Roboto', sans-serif;
-            color: #666;
-        }
-
-        p {
-            padding-left: 25px;
-        }
+        font-weight: $bold;
+        margin-bottom: 20px;
     }
 }

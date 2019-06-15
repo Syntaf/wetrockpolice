@@ -1,12 +1,16 @@
 <div class="page-header card">
-    <h1>WET ROCK POLICE</h1>
-    <h2>Rainy Day Options for <%= @watched_area.name %></h2>
+    <div class="container">
+        <h1>WET ROCK POLICE</h1>
+        <h2>Rainy Day Options for <%= @watched_area.name %></h2>
+    </div>
 </div>
 <div class="container">
     <div class="crags">
         <div class="crag-list">
             <div class="dropdown dropright">
                 <span class="header">Areas</span>
+
+                <!-- Disabled as there is currently no need for a sort option
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Sort by
                 </button>
@@ -14,6 +18,7 @@
                     <button class="dropdown-item">Distance</button>
                     <button class="dropdown-item active">Popularity</button>
                 </div>
+                -->
             </div>
             <ul class="list-group-flush">
                 <li class="list-group-item list-group-item-action active">Mount Charleston</li>
@@ -26,27 +31,27 @@
             <iframe style="width:100%; max-width:1200px; height:500px;" frameborder="0" scrolling="no" src="https://www.mountainproject.com/widget?loc=fixed&x=-12871302&y=4337800&z=11.7&h=500"></iframe>
         </div>
     </div>
+    <div class="crag-info bottom-border">
+        <h4>Description (via <a href="">Mountain Project</a>):</h4>
+        <p>
+            This is one of the premier/most controversial climbing destinations in the US, if hard limestone routes are what you're seeking. The beautiful surroundings, overhanging caves, and cooler temperatures make Mt. Charleston a welcomed escape from the desert heat of Las Vegas during the summer months. Mt. Charleston is most well-known for having chipped routes and its hard pocketed testpieces such as Jason Campbell's Soul Train: 5.14a, Chris Sharma's Hasta La Vista: 5.14b/c, and Dan McQuade's Infectious Groove: 5.13b. Other climbers of note who contributed to the excellent climbing up on the mountaintop include Tony Yaniro, Randy Marsh, Leo Henson, Terry Parish, Rob Mulligan, Joe Brooks, Francois LeGrand, Doug Englekirk, etc. etc. etc. Mt. Charleston also sports numerous other quality lines ranging from 5.10 and up, so if you are in Vegas and looking to avoid the scorching sun and overcrowding of Red Rocks, head 45 minutes north to this pine tree oasis. 
+        </p>
+    </div>
     <div class="crag-info">
-        <div class="card">
-            <h4 class="crag-title">Mount Charleston</h4>
-            <h4>Description (via Mountain Project):</h4>
-            <p>
-                This is one of the premier/most controversial climbing destinations in the US, if hard limestone routes are what you're seeking. The beautiful surroundings, overhanging caves, and cooler temperatures make Mt. Charleston a welcomed escape from the desert heat of Las Vegas during the summer months. Mt. Charleston is most well-known for having chipped routes and its hard pocketed testpieces such as Jason Campbell's Soul Train: 5.14a, Chris Sharma's Hasta La Vista: 5.14b/c, and Dan McQuade's Infectious Groove: 5.13b. Other climbers of note who contributed to the excellent climbing up on the mountaintop include Tony Yaniro, Randy Marsh, Leo Henson, Terry Parish, Rob Mulligan, Joe Brooks, Francois LeGrand, Doug Englekirk, etc. etc. etc. Mt. Charleston also sports numerous other quality lines ranging from 5.10 and up, so if you are in Vegas and looking to avoid the scorching sun and overcrowding of Red Rocks, head 45 minutes north to this pine tree oasis. 
-            </p>
-            <h4>Features:</h4>
-            <ul>
-                <li>
-                    Rock Type:
-                    <strong>Limestone</strong>
-                <li>
-                    Distance from Las Vegas (Central):
-                    <strong>50 minutes</strong>
-                </li>
-                <li>
-                    Seasons:
-                    <strong>Late Spring, Summer, Fall<strong>
-                </li>
-            </ul>
-        </div>
+        <h4>Features:</h4>
+        <table>
+            <tr>
+                <td>Rock Type:</td>
+                <td><strong>Limestone</strong></td>
+            </tr>
+            <tr>
+                <td>Distance from Las Vegas:</td>
+                <td><strong>50 minutes</strong></td>
+            </tr>
+            <tr>
+                <td>Seasons:</td>
+                <td><strong>Late Spring, Summer, Fall</strong></td>
+            </tr>
+        </table>
     </div>
 </div>
