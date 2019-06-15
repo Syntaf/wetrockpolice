@@ -5,8 +5,8 @@ body {
 }
 
 .page-header {
-    padding: 25px;
-    margin-bottom: 50px;
+    padding: 25px 25px 25px 0;
+    margin-bottom: 30px;
 
     .container {
         margin: 0 auto;
@@ -46,7 +46,7 @@ body {
         width: 30%;
         margin-right: 10px;
 
-        .dropdown {
+        .area-header {
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -59,13 +59,6 @@ body {
                 flex: 1;
                 font-weight: $bold;
                 font-size: 16px;
-            }
-
-            > button {
-                text-transform: none;
-                padding-top: 10px;
-                padding-bottom: 10px;
-                text-align: right;
             }
         }
         
