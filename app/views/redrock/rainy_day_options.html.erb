@@ -10,15 +10,19 @@
             <div class="area-header dropright">
                 <span class="header">Areas</span>
             </div>
-            <ul class="list-group-flush">
-                <li class="list-group-item list-group-item-action active">Mount Charleston</li>
-                <li class="list-group-item list-group-item-action">Virgin River Gorge</li>
-                <li class="list-group-item list-group-item-action">Gun Club</li>
-                <li class="list-group-item list-group-item-action">Rainbow Canyon</li>
+            <ul class="list-group-flush" data-role="crag-list">
+                <% @watched_area.climbing_areas.each_with_index do |area, index| %>
+                    <li class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
+                        data-lat="<%= area.location.latitude.to_f %>"
+                        data-lon="<%= area.location.longitude.to_f %>"
+                        data-mtz="<%= area.location.mt_z %>">
+                        <%= area.name %>
+                    </li>
+                <% end %>
             </ul>
         </div>
         <div class="mountain-project card">
-            <iframe style="width:100%; max-width:1200px; height:500px;" frameborder="0" scrolling="no" src="https://www.mountainproject.com/widget?loc=fixed&x=-12871302&y=4337800&z=11.7&h=500"></iframe>
+            <iframe id="mountainProjectWidget" style="width:100%; max-width:1200px; height:500px;" frameborder="0" scrolling="no" src="https://www.mountainproject.com/widget?loc=fixed&x=-12871302&y=4337800&z=11.7&h=500"></iframe>
         </div>
     </div>
     <div class="crag-info bottom-border">
@@ -45,3 +49,7 @@
         </table>
     </div>
 </div>
+
+<script>
+    var rainyDayController = new RainyDayController({});
+</script>
