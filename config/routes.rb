@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get '/redrock', to: 'redrock#index'
   get '/redrock/faq', to: 'redrock#faq'
   get '/redrock/rainy-day-options', to: 'redrock#rainy_day_options'
+  get '/redrock/climbing_area', to: 'redrock#climbing_area'
 
   get '/admin', to: 'admin#index'
 
