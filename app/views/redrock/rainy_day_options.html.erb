@@ -10,9 +10,11 @@
             <div class="area-header dropright">
                 <span class="header">Areas</span>
             </div>
-            <ul class="list-group-flush" data-role="crag-list">
+            <ul class="list-group-flush">
                 <% @watched_area.climbing_areas.each_with_index do |area, index| %>
                     <li class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
+                        data-role="rainy-day-list-option"
+                        data-name="<%= area.name %>"
                         data-lat="<%= area.location.latitude.to_f %>"
                         data-lon="<%= area.location.longitude.to_f %>"
                         data-mtz="<%= area.location.mt_z %>">
@@ -27,24 +29,30 @@
     </div>
     <div class="crag-info bottom-border">
         <h4>Description (via <a href="">Mountain Project</a>):</h4>
-        <p>
-            This is one of the premier/most controversial climbing destinations in the US, if hard limestone routes are what you're seeking. The beautiful surroundings, overhanging caves, and cooler temperatures make Mt. Charleston a welcomed escape from the desert heat of Las Vegas during the summer months. Mt. Charleston is most well-known for having chipped routes and its hard pocketed testpieces such as Jason Campbell's Soul Train: 5.14a, Chris Sharma's Hasta La Vista: 5.14b/c, and Dan McQuade's Infectious Groove: 5.13b. Other climbers of note who contributed to the excellent climbing up on the mountaintop include Tony Yaniro, Randy Marsh, Leo Henson, Terry Parish, Rob Mulligan, Joe Brooks, Francois LeGrand, Doug Englekirk, etc. etc. etc. Mt. Charleston also sports numerous other quality lines ranging from 5.10 and up, so if you are in Vegas and looking to avoid the scorching sun and overcrowding of Red Rocks, head 45 minutes north to this pine tree oasis. 
-        </p>
+        <p data-role="area-description"><%= raw @active_rainy_day_option.climbing_area.description %></p>
     </div>
     <div class="crag-info">
         <h4>Features:</h4>
         <table>
             <tr>
                 <td>Rock Type:</td>
-                <td><strong>Limestone</strong></td>
+                <td>
+                    <strong data-role="area-rock-type">
+                        <%= @active_rainy_day_option.climbing_area.rock_type %>
+                    </strong>
+                </td>
             </tr>
             <tr>
                 <td>Distance from Las Vegas:</td>
-                <td><strong>50 minutes</strong></td>
+                <td> 
+                    <strong data-role="area-drive-time">
+                        <%= @active_rainy_day_option.driving_time %> minutes
+                    </strong>
+                </td>
             </tr>
             <tr>
                 <td>Seasons:</td>
-                <td><strong>Late Spring, Summer, Fall</strong></td>
+                <td><strong data-role="area-seasons">Late Spring, Summer, Fall</strong></td>
             </tr>
         </table>
     </div>
