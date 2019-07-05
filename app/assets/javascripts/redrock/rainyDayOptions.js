@@ -6,8 +6,9 @@ function RainyDayController(options) {
             'height': 500,
             'urlBase': 'https://www.mountainproject.com/widget'
         },
-        'areaListElementSelector': 'li[data-role="rainy-day-list-option"]',
-        'activeSelectorClass': 'active'
+        'areaListElementSelector': '[data-role="rainy-day-list-option"]',
+        'activeSelectorClass': 'active',
+        'activeLabelSelector': '[data-role="active-title"]'
     });
 
     this.initView();
@@ -17,6 +18,7 @@ RainyDayController.prototype.initView = function () {
     $(this.options.areaListElementSelector).click(this.handleAreaSelection.bind(this));
 
     this.$activeLocation = $('.' + this.options.activeSelectorClass);
+    this.$activeLabel = $(this.options.activeLabelSelector);
     this.$description = $('p[data-role="area-description"]');
     this.$rockType = $('strong[data-role="area-rock-type"]');
     this.$driveTime = $('strong[data-role="area-drive-time"]');
@@ -49,6 +51,8 @@ RainyDayController.prototype.buildMountainProjectUrl = function (longitude, lati
 
 RainyDayController.prototype.handleAreaSelection = function (ev) {
     var $target = $(ev.target);
+    var area = $target.data('name');
+    var $selectedItems = $('[data-name="' + $target.data('name') + '"]');
 
     // Do nothing if the clicked element is already active
     if ($target.hasClass(this.options.activeSelectorClass))
@@ -56,8 +60,8 @@ RainyDayController.prototype.handleAreaSelection = function (ev) {
         return;
     }
 
-    this.fetchArea($target.data('name'))
-        .then(this.displayArea.bind(this, $target));
+    this.fetchArea(area)
+        .then(this.displayArea.bind(this, $selectedItems));
 }
 
 RainyDayController.prototype.fetchArea = function (name) {
@@ -68,8 +72,6 @@ RainyDayController.prototype.displayArea = function ($newActiveListItem, respons
     if (!response || response.length == 0) {
         console.error('Issue connecting to server :(');
     }
-
-    console.log(response);
 
     this.swapActiveClass($newActiveListItem);
     this.updatePageInformation(response);
@@ -87,4 +89,5 @@ RainyDayController.prototype.updatePageInformation = function(newAreaInformation
     this.$description.html(newAreaInformation['climbing_area']['description']);
     this.$rockType.html(newAreaInformation['climbing_area']['rock_type']);
     this.$driveTime.html(newAreaInformation['driving_time'] + ' minutes');
+    this.$activeLabel.html(newAreaInformation['climbing_area']['name']);
 }

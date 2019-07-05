@@ -11,6 +11,10 @@ body {
     .container {
         margin: 0 auto;
         padding-left: 30px;
+
+        @media (max-width: $mobileBreakpoint) {
+            text-align: center;
+        }
     }
 
     &.card {
@@ -33,10 +37,22 @@ body {
             color: black;
             text-decoration: none;
         }
+
+        @media (max-width: $mobileBreakpoint) {
+            margin-bottom: 10px;
+        }
     }
 
     h2 {
         padding-left: 10px;
+
+        @media (max-width: $mobileBreakpoint) {
+            font-size: 18px;
+        }
+    }
+
+    @media (max-width: $mobileBreakpoint) {
+        margin-bottom: 10px;
     }
 }
 
@@ -49,6 +65,7 @@ body {
 
     .crag-list {
         width: 30%;
+        position: relative;
         margin-right: 10px;
 
         .area-header {
@@ -64,10 +81,46 @@ body {
                 flex: 1;
                 font-weight: $bold;
                 font-size: 16px;
+
+                @media (max-width: $mobileBreakpoint) {
+                    display: none;
+                }
+            }
+
+            .header-mobile {
+                display: none;
+
+                @media (max-width: $mobileBreakpoint) {
+                    display: block;
+                }
+            }
+
+            @media (max-width: $mobileBreakpoint) {
+                margin-bottom: 25px;
             }
         }
-        
-        ul {
+
+        .mobile {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 0;
+
+            .dropdown-toggle {
+                outline: none;
+                border: none;
+                background: transparent;
+                color: $primaryColor;
+                font-weight: $extraBold;
+            }
+
+            @media (max-width: $mobileBreakpoint) {
+                display: block;
+            }
+        }
+
+        .desktop {
+            display: block;
             padding: 0;
 
             li {
@@ -92,11 +145,32 @@ body {
                     color: $primaryColor;
                 }
             }
+
+            @media (max-width: $mobileBreakpoint) {
+                display: none;
+            }
+        }
+
+        @media (max-width: $mobileBreakpoint) {
+            width: 100%;
         }
     }
 
     .mountain-project {
         width: 70%;
+
+        @media (max-width: $mobileBreakpoint) {
+            width: 100%;
+
+            #mountainProjectWidget {
+                height: 300px !important;
+            }
+        }
+    }
+
+    @media (max-width: $mobileBreakpoint) {
+        display: block;
+        padding-bottom: 25px;
     }
 }
 
