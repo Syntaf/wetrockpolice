@@ -40,6 +40,8 @@ body {
 
         @media (max-width: $mobileBreakpoint) {
             margin-bottom: 10px;
+            border: none;
+            padding-right: 0;
         }
     }
 
@@ -180,6 +182,15 @@ body {
 
     &.bottom-border {
         border-bottom: 1px solid #eee;
+    }
+
+    &.bottom-padding {
+        min-height: 200px;
+
+        @media (max-width: $mobileBreakpoint) {
+            min-height: auto;
+            padding-bottom: 10px;
+        }
     }
 
     p, td, strong {
