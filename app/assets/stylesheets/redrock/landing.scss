@@ -277,6 +277,10 @@
 
             .content-widget {
                 margin-top: -23px;
+
+                @media (max-width: $mobileBreakpoint) {
+                    margin-top: 20px;
+                }
             }
         }
     }
