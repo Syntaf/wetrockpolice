@@ -149,6 +149,10 @@
                 background-color: transparent;
             }
         }
+
+        @media (max-height: 800px) {
+            top: 15%;
+        }
     }
 
     .plug {
