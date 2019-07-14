@@ -14,6 +14,7 @@ gem 'pg'
 gem 'dotenv-rails'
 gem 'devise'
 gem 'seed_dump'
+gem 'meta-tags'
 gem 'rails_admin'
 gem 'rails_12factor', group: :production
 
