@@ -24,6 +24,22 @@ RailsAdmin.config do |config|
   ## To disable Gravatar integration in Navigation Bar set to false
   # config.show_gravatar = true
 
+  config.model ClimbingArea do
+    edit do
+      configure :rainy_day_areas do
+        hide
+      end
+    end
+  end
+
+  config.model Location do
+    edit do
+      configure :rainy_day_areas do
+        hide
+      end
+    end
+  end
+
   config.actions do
     dashboard                     # mandatory
     index                         # mandatory

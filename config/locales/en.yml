@@ -31,3 +31,10 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    errors:
+      models:
+        climbing_area:
+          attributes:
+            watched_areas:
+              too_short: "cannot be empty, please select one or more watched areas"
