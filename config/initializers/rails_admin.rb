@@ -2,14 +2,15 @@ RailsAdmin.config do |config|
 
   ### Popular gems integration
 
-  # == Devise ==
+  ## == Devise ==
   config.authenticate_with do
-    redirect_to main_app.new_user_session_path unless warden.user and warden.user.admin?
+    warden.authenticate! scope: :user
   end
   config.current_user_method(&:current_user)
 
   ## == Cancan ==
-  # config.authorize_with :cancan
+  config.authorize_with :cancan
+  config.parent_controller = 'ApplicationController'
 
   ## == Pundit ==
   # config.authorize_with :pundit

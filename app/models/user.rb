@@ -6,6 +6,7 @@ class User < ApplicationRecord
          :confirmable
 
   after_create :send_admin_mail
+  serialize :manages, Array
 
   def active_for_authentication?
     super && approved?
@@ -15,7 +16,7 @@ class User < ApplicationRecord
     approved ? super : :not_approved
   end
 
-  def self.send_reset_password_instructions(attributes={})
+  def send_reset_password_instructions(attributes={})
     recoverable = find_or_initialize_with_errors(reset_password_keys, attributes, :not_found)
 
     if !recoverable.approved?
