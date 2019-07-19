@@ -15,9 +15,9 @@ class Ability
       end
 
       # Allow Admins to manage models related to the watched areas they manage
-      # can :manage, RainyDayArea, RainyDayArea.where(:watched_area => user.manages) do |area|
-      #   area.present?
-      # end
+      can :manage, RainyDayArea, RainyDayArea.where(:watched_area => user.manages) do |area|
+        area.present?
+      end
 
       can :manage, ClimbingArea, ClimbingArea.joins(:watched_areas).where(:watched_areas => { :id => user.manages }) do |climbing_area|
         climbing_area.present?

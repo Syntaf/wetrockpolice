@@ -29,6 +29,10 @@ RailsAdmin.config do |config|
       configure :rainy_day_areas do
         hide
       end
+
+      configure :watched_areas do
+        inline_add false
+      end
     end
   end
 
