@@ -1,5 +1,4 @@
 class RedrockController < WatchedAreaController
-
   def base_keywords
     super + ", Las Vegas, Nevada"
   end

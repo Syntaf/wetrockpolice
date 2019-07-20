@@ -9,10 +9,12 @@ Rails.application.routes.draw do
     get '/climbing_area', to: '/redrock#climbing_area'
   end
 
-  # get '/redrock', to: 'redrock#index'
-  # get '/redrock/faq', to: 'redrock#faq'
-  # get '/redrock/rainy-day-options', to: 'redrock#rainy_day_options'
-  # get '/redrock/climbing_area', to: 'redrock#climbing_area'
+  namespace :castlerock, defaults: { watched_area_id: 2 } do
+    get '/', to: '/castlerock#index'
+    get '/faq', to: '/castlerock#faq'
+    get '/rainy-day-options', to: '/castlerock#rainy_day_options'
+    get '/climbing_area', to: '/castlerock#climbing_area'
+  end
 
-  # root :to => redirect('redrock')
+  root :to => redirect('redrock')
 end
