@@ -7,45 +7,45 @@
     <i class="fas fa-bell"></i><span class="badge badge-light">1</span>
   </div>
 
-    <div class="hero-container">
-      <h1 class="animated bounceInLeft">Did it rain in <%= @watched_area.name %>?</h1>
-      <span>It's been...</span>
-      <div class="row time-since-rain">
-        <div class="days card">
-          <div class="placeholder" data-role="loading">
-            <div class="spinner">
-              <div class="bounce1"></div>
-              <div class="bounce2"></div>
-              <div class="bounce3"></div>
-            </div>
+  <div class="hero-container">
+    <h1 class="animated bounceInLeft">Did it rain in <%= @watched_area.name %>?</h1>
+    <span>It's been...</span>
+    <div class="row time-since-rain">
+      <div class="days card">
+        <div class="placeholder" data-role="loading">
+          <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
           </div>
-          <p data-role="days"></p>
-          <span data-role="days-label">Days</span>
         </div>
-        <div class="hours card">
-          <div class="placeholder" data-role="loading">
-            <div class="spinner">
-              <div class="bounce1"></div>
-              <div class="bounce2"></div>
-              <div class="bounce3"></div>
-            </div>
-          </div>
-          <p data-role="hours"></p>
-          <span data-role="hours-label">Hours</span>
-        </div>
-        <div class="warning-tooltip animated tada delay-2s">
-          <i class="fas fa-exclamation-circle" id="weather-tooltip-warning" data-toggle="tooltip" data-placement="right" title="Precipitation data collected from Red Rock visitor center. Use your best judgement in determening whether this information is relevant to the climbing area you will be in."></i>
-        </div>
+        <p data-role="days"></p>
+        <span data-role="days-label">Days</span>
       </div>
-      <span><%= render :partial => 'rain_last_fell_excerpt' %></span>
-      <div class="row call-to-action">
-        <button class="btn weather" data-role="scroll-to-weather">Can I Climb?</button> 
-        <a class="btn rainy-day-options" href="<%= current_rainy_day_options_path(@watched_area) %>">Rainy Day Options</a>
+      <div class="hours card">
+        <div class="placeholder" data-role="loading">
+          <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+        </div>
+        <p data-role="hours"></p>
+        <span data-role="hours-label">Hours</span>
+      </div>
+      <div class="warning-tooltip animated tada delay-2s">
+        <i class="fas fa-exclamation-circle" id="weather-tooltip-warning" data-toggle="tooltip" data-placement="right" title="Precipitation data collected from Red Rock visitor center. Use your best judgement in determening whether this information is relevant to the climbing area you will be in."></i>
       </div>
     </div>
+    <span><%= render :partial => 'rain_last_fell_excerpt' %></span>
+    <div class="row call-to-action">
+      <button class="btn weather" data-role="scroll-to-weather">Can I Climb?</button> 
+      <a class="btn rainy-day-options" href="<%= current_rainy_day_options_path(@watched_area) %>">Rainy Day Options</a>
+    </div>
+  </div>
 
-    <%= render :partial => 'photographer_shoutout' %>
+  <%= render :partial => 'photographer_shoutout' %>
 
-    <p class="scroll-down"><i class="material-icons">expand_more</i> Scroll Down</p>
-    <div class="vertical-line"></div>
+  <p class="scroll-down"><i class="material-icons">expand_more</i> Scroll Down</p>
+  <div class="vertical-line"></div>
 </div>
