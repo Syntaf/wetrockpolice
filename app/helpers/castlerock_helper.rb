@@ -1,0 +1,2 @@
+module CastlerockHelper
+end
