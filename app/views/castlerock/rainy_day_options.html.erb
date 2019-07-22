@@ -1,0 +1,81 @@
+<div class="page-header card">
+    <div class="container">
+        <h1><a href="/">WET ROCK POLICE</a></h1>
+        <h2>Rainy Day Options for <%= @watched_area.name %></h2>
+    </div>
+</div> 
+<div class="container">
+    <div class="crags">
+        <div class="crag-list">
+            <div class="area-header ">
+                <span class="header">Areas</span>
+                <span class="header header-mobile">Area:</span>
+            </div>
+            <div class="mobile dropdown">
+                <button class="dropdown-toggle" data-role="active-title" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <%= @active_rainy_day_option.climbing_area.name %>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <% @watched_area.climbing_areas.each_with_index do |area, index| %>
+                        <a class="dropdown-item <% if index == 0 %>active<% end %>"
+                            data-role="rainy-day-list-option"
+                            data-name="<%= area.name %>"
+                            data-lat="<%= area.location.latitude.to_f %>"
+                            data-lon="<%= area.location.longitude.to_f %>"
+                            data-mtz="<%= area.location.mt_z %>">
+                            <%= area.name %>
+                        </a>
+                    <% end %>
+                </div>
+            </div>
+            <ul class="desktop list-group-flush">
+                <% @watched_area.climbing_areas.each_with_index do |area, index| %>
+                    <li class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
+                        data-role="rainy-day-list-option"
+                        data-name="<%= area.name %>"
+                        data-lat="<%= area.location.latitude.to_f %>"
+                        data-lon="<%= area.location.longitude.to_f %>"
+                        data-mtz="<%= area.location.mt_z %>">
+                        <%= area.name %>
+                    </li>
+                <% end %>
+            </ul>
+        </div>
+        <div class="mountain-project card">
+            <iframe id="mountainProjectWidget" style="width:100%; max-width:1200px; height:500px;" frameborder="0" scrolling="no" src="https://www.mountainproject.com/widget?loc=fixed&x=-12871302&y=4337800&z=11.7&h=500"></iframe>
+        </div>
+    </div>
+    <div class="crag-info bottom-border">
+        <h4>Description (via <a href="">Mountain Project</a>):</h4>
+        <p data-role="area-description"><%= raw @active_rainy_day_option.climbing_area.description %></p>
+    </div>
+    <div class="crag-info bottom-padding">
+        <h4>Features:</h4>
+        <table>
+            <tr>
+                <td>Rock Type:</td>
+                <td>
+                    <strong data-role="area-rock-type">
+                        <%= @active_rainy_day_option.climbing_area.rock_type %>
+                    </strong>
+                </td>
+            </tr>
+            <tr>
+                <td>Distance from Las Vegas:</td>
+                <td> 
+                    <strong data-role="area-drive-time">
+                        <%= @active_rainy_day_option.driving_time %> minutes
+                    </strong>
+                </td>
+            </tr>
+            <tr>
+                <td>Seasons:</td>
+                <td><strong data-role="area-seasons">Late Spring, Summer, Fall</strong></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+    var rainyDayController = new RainyDayController({});
+</script>
