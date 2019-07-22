@@ -1,0 +1,16 @@
+<%= render :partial => 'hero_above_the_fold', :locals => { :watched_area => @watched_area } %>
+<%= render :partial => 'graph_below_the_fold', :locals => { :watched_area => @watched_area } %>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var redRockController = new RedRockController({});
+
+        redRockController.initLandingView();
+
+        $('#temp-notification').popover({
+            trigger: 'focus',
+            html: true,
+            content: 'Support Red Rock by attending a community night hosted by SNCC. Proceeds go towards improving and maintaining climbing at Red Rock.<br><br><a href="http://www.southernnevadaclimberscoalition.org/rehab19/?src=wetrockpolice" target="_blank">Learn More</a>'
+        });
+    });
+</script>

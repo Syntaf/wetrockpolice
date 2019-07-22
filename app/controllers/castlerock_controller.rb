@@ -1,4 +1,4 @@
-class CastlerockController < ApplicationController
+class CastlerockController < WatchedAreaController
   def base_keywords
     super + ", California, San Francisco"
   end
