@@ -1,10 +1,9 @@
-<%= render :partial => 'hero_above_the_fold', :locals => { :watched_area => @watched_area } %>
-<%= render :partial => 'graph_below_the_fold', :locals => { :watched_area => @watched_area } %>
+<%= render :partial => 'watched_area_landing', :locals => { :watched_area => @watched_area } %>
 
 <script type="text/javascript">
     $(document).ready(function () {
         var imageLoader = new ImageLoader({
-            'imageContainerSelector': '.hero-header',
+            'imageContainerSelector': '.hero-header.<%= @watched_area.slug %>',
             'imageLoadedClass': '.hero-header-loaded'
         })
         var redRockController = new LandingController({
