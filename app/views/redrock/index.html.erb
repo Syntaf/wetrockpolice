@@ -3,8 +3,15 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var redRockController = new RedRockController({});
+        var imageLoader = new ImageLoader({
+            'imageContainerSelector': '.hero-header',
+            'imageLoadedClass': '.hero-header-loaded'
+        })
+        var redRockController = new LandingController({
+            'stid': 'rrkn2'
+        });
 
+        imageLoader.load();
         redRockController.initLandingView();
 
         $('#temp-notification').popover({

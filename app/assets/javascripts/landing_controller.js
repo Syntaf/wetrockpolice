@@ -1,61 +1,66 @@
-function RedRockController(options) {
-    this.options = $.extend(options, {
-        'apiOptions': {
-            'token': '2153743de639465ebbb30fa392c748de',
-            'stid': 'rrkn2',
-            'recent': 43200,
-            'units': 'english',
-            'pmode': 'intervals',
-            'interval': 'hour'
-        }
-    });
+function LandingController(apiOptions) {
+    this.apiOptions = $.extend({
+        'token': '2153743de639465ebbb30fa392c748de',
+        'stid': '',
+        'recent': 43200,
+        'units': 'english',
+        'pmode': 'intervals',
+        'interval': 'hour'
+    }, apiOptions);
 }
 
-RedRockController.prototype.initLandingView = function () {
-    $('button[data-role="scroll-to-weather"]').click(function () {
-        $('html, body').animate({
-            scrollTop: $('.weather-breakdown').offset().top
-        }, 700);
-    });
-
-    // $('#weather-tooltip-warning').tooltip();
+LandingController.prototype.initLandingView = function () {
+    $('button[data-role="scroll-to-weather"]').click(this.scrollToWeather.bind(this));
 
     this.fetchPrecipitation()
-        .then(this.renderLandingView.bind(this));
+        .then(this.renderView.bind(this));
 }
 
-RedRockController.prototype.initSnow = function () {
-    particlesJS.load('particles-js', '/snow.json', $.noop);
+LandingController.prototype.scrollToWeather = function () {
+    var $weatherSection = $('[data-role="weather-section"]');
+    var offsetToScrollTo = $weatherSection.offset().top;
+
+    $('html, body').animate({
+        'scrollTop': offsetToScrollTo
+    }, 700);
 }
 
-RedRockController.prototype.fetchPrecipitation = function () {
+LandingController.prototype.fetchPrecipitation = function () {
     return $.ajax({
         'method': 'GET',
         'url': 'https://api.synopticdata.com/v2/stations/precip',
-        'data': this.options.apiOptions,
+        'data': this.apiOptions,
         'dataType': 'json'
     });
 }
 
-RedRockController.prototype.renderLandingView = function (precipResponse) {
-    if (precipResponse.SUMMARY.RESPONSE_CODE < 0) {
-        console.error(precipResponse);
-        return;
+LandingController.prototype.renderView = function (synopticResponse) {
+    if (synopticResponse.SUMMARY.RESPONSE_CODE !== 1) {
+        console.error(
+            'Fetching precipitation data failed with response code: \'' +
+            synopticResponse.SUMMARY.RESPONSE_CODE + '\' and message: \'' +
+            synopticResponse.SUMMARY.RESPONSE_MESSAGE + '\''
+        );
     }
 
-    var intervals = precipResponse.STATION[0].OBSERVATIONS.precipitation
+    var intervals = synopticResponse.STATION[0].OBSERVATIONS.precipitation;
+
+    if (!intervals) {
+        console.error('Precipitation response contains no intervals, cannot render view...');
+        return;
+    }
 
     this.renderRainCounter(intervals);
     this.renderGraph(intervals);
 }
 
-RedRockController.prototype.renderRainCounter = function (intervals) {
+LandingController.prototype.renderRainCounter = function (intervals) {
     var lastRainInterval = this._getLastSeenRainInterval(intervals);
     var elapsedHours = lastRainInterval.elapsedHours;
 
     var days = Math.floor(elapsedHours / 24);
     var hours = elapsedHours % 24;
-    
+
     $('div[data-role="loading"]').remove();
     $('p[data-role="days"]').html(days);
     $('p[data-role="hours"]').html(hours);
@@ -77,7 +82,7 @@ RedRockController.prototype.renderRainCounter = function (intervals) {
     $('strong[data-role="last-rain-date"]').html(month + ' ' + day);
 }
 
-RedRockController.prototype.renderGraph = function (intervals) {
+LandingController.prototype.renderGraph = function (intervals) {
     var timeSeriesDailyData = this._parseDailyIntervalsForGraph(intervals);
     var timeSeriesHourlyData = this._parseHourlyIntervalsForGraph(intervals);
 
@@ -157,30 +162,7 @@ RedRockController.prototype.renderGraph = function (intervals) {
     });
 }
 
-RedRockController.prototype._getLastSeenRainInterval = function (intervals) {
-    if (!intervals) {
-        console.error('Null value passed into _getLastSeenRainInterval');
-        return;
-    }
-
-    var runningIntervalCount = 0;
-
-    intervals = intervals.reverse();
-    for(var i = 0; i < intervals.length; i++) {
-        if (intervals[i].total > 0 && intervals[i].count !== null) {
-            return {
-                'elapsedHours': runningIntervalCount,
-                'interval': intervals[i]
-            };
-        }
-
-        runningIntervalCount++;
-    }
-
-    return null;
-}
-
-RedRockController.prototype._parseDailyIntervalsForGraph = function (intervals) {
+LandingController.prototype._parseDailyIntervalsForGraph = function (intervals) {
     var data = [];
     var labels = [];
 
@@ -224,7 +206,7 @@ RedRockController.prototype._parseDailyIntervalsForGraph = function (intervals) 
     };
 }
 
-RedRockController.prototype._parseHourlyIntervalsForGraph = function (intervals) {
+LandingController.prototype._parseHourlyIntervalsForGraph = function (intervals) {
     var data = [];
     var labels = [];
 
@@ -247,7 +229,25 @@ RedRockController.prototype._parseHourlyIntervalsForGraph = function (intervals)
     };
 }
 
-RedRockController.prototype._getMonth = function (monthIndex) {
+LandingController.prototype._getLastSeenRainInterval = function (intervals) {
+    var runningIntervalCount = 0;
+
+    intervals = intervals.reverse();
+    for(var i = 0; i < intervals.length; i++) {
+        if (intervals[i].total > 0 && intervals[i].count !== null) {
+            return {
+                'elapsedHours': runningIntervalCount,
+                'interval': intervals[i]
+            };
+        }
+
+        runningIntervalCount++;
+    }
+
+    return null;
+}
+
+LandingController.prototype._getMonth = function (monthIndex) {
     var months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -256,7 +256,7 @@ RedRockController.prototype._getMonth = function (monthIndex) {
     return months[monthIndex];
 }
 
-RedRockController.prototype._getOrdinalSuffix = function (i) {
+LandingController.prototype._getOrdinalSuffix = function (i) {
     var j = i % 10,
         k = i % 100;
     if (j == 1 && k != 11) {
