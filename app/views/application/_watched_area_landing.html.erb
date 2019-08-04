@@ -34,10 +34,16 @@
         <span data-role="hours-label">Hours</span>
       </div>
       <div class="warning-tooltip animated tada delay-2s">
-        <i class="fas fa-exclamation-circle" data-role="tooltip" data-toggle="tooltip" data-placement="right" title="Precipitation data collected from Red Rock visitor center. Use your best judgement in determening whether this information is relevant to the climbing area you will be in."></i>
+        <i
+          class="fas fa-exclamation-circle"
+          data-role="tooltip"
+          data-toggle="tooltip"
+          data-placement="right"
+          title="<%= render :partial => 'rain_counter_tooltip' %>">
+        </i>
       </div>
     </div>
-    <span><%= render :partial => 'rain_last_fell_excerpt' %></span>
+    <span data-role="excerpt"><%= render :partial => 'rain_last_fell_excerpt' %></span>
     <div class="row call-to-action">
       <button class="btn weather" data-role="scroll-to-weather">Can I Climb?</button> 
       <a class="btn rainy-day-options" href="<%= current_rainy_day_options_path(@watched_area) %>">Rainy Day Options</a>

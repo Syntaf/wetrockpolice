@@ -56,6 +56,16 @@ LandingController.prototype.renderView = function (synopticResponse) {
 
 LandingController.prototype.renderRainCounter = function (intervals) {
     var lastRainInterval = this._getLastSeenRainInterval(intervals);
+
+    if (!lastRainInterval) {
+        $('div[data-role="loading"]').remove();
+        $('p[data-role="days"]').html('&#8734;');
+        $('p[data-role="hours"]').html('&#8734;');
+        $('span[data-role="excerpt"]').html('No rain detected in the last month. Climb on!')
+
+        return;
+    }
+
     var elapsedHours = lastRainInterval.elapsedHours;
 
     var days = Math.floor(elapsedHours / 24);
