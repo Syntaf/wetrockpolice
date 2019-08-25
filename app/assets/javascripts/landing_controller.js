@@ -61,7 +61,10 @@ LandingController.prototype.renderRainCounter = function (intervals) {
         $('div[data-role="loading"]').remove();
         $('p[data-role="days"]').html('&#8734;');
         $('p[data-role="hours"]').html('&#8734;');
-        $('span[data-role="excerpt"]').html('No rain detected in the last month. Climb on!')
+        $('span[data-role="excerpt"]').html('No rain detected in the last month. Climb on!');
+        $('div[data-role="loading-date"]').remove();
+        $('strong[data-role="last-rain-date"]').remove();
+        $('h2[data-role="weather-breakdown-header"]').html('Nothing to look at down here, come back when weather is looking bleak.');
 
         return;
     }
@@ -85,11 +88,12 @@ LandingController.prototype.renderRainCounter = function (intervals) {
 
     // Label just below hero image, saying the date it last rained
     var dateOfRain = new Date(lastRainInterval.interval.last_report);
+
     var month = this._getMonth(dateOfRain.getMonth());
     var day = this._getOrdinalSuffix(dateOfRain.getDate());
 
     $('div[data-role="loading-date"]').remove();
-    $('strong[data-role="last-rain-date"]').html(month + ' ' + day);
+    $('strong[data-role="last-rain-date"]').html('on ' + month + ' ' + day);
 }
 
 LandingController.prototype.renderGraph = function (intervals) {
