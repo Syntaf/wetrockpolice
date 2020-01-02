@@ -17,6 +17,10 @@ body {
         }
     }
 
+    .page-content {
+        min-height: 100%;
+    }
+
     &.card {
         flex-direction: row;
         align-items: center;
