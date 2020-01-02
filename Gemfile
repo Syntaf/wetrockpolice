@@ -13,14 +13,14 @@ gem 'material-sass', '4.1.1'
 gem 'pg'
 gem 'dotenv-rails'
 gem 'devise'
-gem 'cancancan'
+gem 'cancancan', "~> 3.0"
 gem 'seed_dump'
 gem 'meta-tags'
-gem 'rails_admin'
+gem 'rails_admin', '~> 2.0'
 gem 'rails_12factor', group: :production
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.3'
+gem 'rails', '~> 5.2.4'
 # Use Puma as the app server
 gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
