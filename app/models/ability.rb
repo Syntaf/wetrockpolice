@@ -7,7 +7,7 @@ class Ability
 
     if user && user.admin?
       can :access, :rails_admin
-      can :dashboard, :all
+      can :read, :dashboard
 
       # Only allow admins to view watched areas (Red Rock / Castle Rock)
       can :read, WatchedArea, WatchedArea.where(:id => user.manages) do |watched_area|
