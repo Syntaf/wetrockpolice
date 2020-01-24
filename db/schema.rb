@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191225022746) do
+ActiveRecord::Schema.define(version: 2020_01_24_191804) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,24 @@ ActiveRecord::Schema.define(version: 20191225022746) do
     t.string "name"
     t.string "rock_type"
     t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "joint_membership_applications", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "phone_number"
+    t.string "street_line_one"
+    t.string "street_line_two"
+    t.string "city"
+    t.string "state"
+    t.string "zipcode"
+    t.string "organization"
+    t.string "amount_paid"
+    t.string "shirt_size"
+    t.string "shirt_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

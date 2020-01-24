@@ -1,0 +1,2 @@
+class JointMembershipApplication < ApplicationRecord
+end

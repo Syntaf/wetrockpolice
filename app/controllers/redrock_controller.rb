@@ -20,4 +20,8 @@ class RedrockController < WatchedAreaController
   def climbing_area
     super
   end
+
+  def sncc
+    # todo
+  end
 end
