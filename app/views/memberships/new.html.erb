@@ -8,23 +8,21 @@
     builder: MaterialFormsHelper::MaterialFormBuilder,
     html: { class: "membership-form container" } do |f| %>
     <div class="row">
-      <div class="col-md-6 order-md-1 col-12 order-3 form-group">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :first_name %>
         <%= f.text_field :first_name %>
       </div>
 
-      <div class="w-100 d-none d-mg-block order-2"></div>
-
-      <div class="col-md-6 order-md-3 col-12 order-1 form-group">
-        <%= f.label :email %>
-        <%= f.email_field :email %>
+      <div class="col-md-6 col-12 form-group">
+        <%= f.label :last_name %>
+        <%= f.text_field :last_name %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
-        <%= f.label :last_name %>
-        <%= f.text_field :last_name %>
+        <%= f.label :email %>
+        <%= f.email_field :email %>
       </div>
       <div class="col-md-6 col-12 form-group">
         <%= f.label :phone_number %>
@@ -40,15 +38,15 @@
         <%= f.text_field :street_line_one %>
       </div>
       <div class="col-md-6 col-12 form-group">
-        <%= f.label :shirt_type %>
-        <%= f.select :shirt_type, ["Local", "AccessFund"] %>
+        <%= f.label :street_line_2 %>
+        <%= f.text_field :street_line_two %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
-        <%= f.label :stree_line_2 %>
-        <%= f.text_field :street_line_two %>
+        <%= f.label :shirt_type %>
+        <%= f.select :shirt_type, ["Local", "AccessFund"] %>
       </div>
       <div class="col-md-6 col-12 form-group">
         <%= f.label :shirt_size %>
