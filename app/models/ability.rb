@@ -27,6 +27,8 @@ class Ability
         location.present?
       end
 
+      can :manage, JointMembershipApplication
+
       # Give super admins (me) full access to everything
       if user.super_admin?
         can :manage, :all
