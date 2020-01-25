@@ -11,4 +11,22 @@
             text-align: center;
         }
     }
+
+    &.page-content form {
+        padding-top: 50px;
+
+        .divider {
+            margin: 25px 0;
+        }
+
+        .submit-row {
+            justify-content: center;
+            margin: 50px 0;
+
+            .btn-primary {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+    }
 }
