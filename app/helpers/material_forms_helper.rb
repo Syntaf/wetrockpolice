@@ -15,11 +15,26 @@ module MaterialFormsHelper
             super
         end
 
-        def append_material_class(options={})
+        def number_field(attribute, options={})
+            options = self.append_material_class(options)
+            super
+        end
+
+        def select(attribute, choices=nil, options={}, html_options={}, &block)
+            html_options = self.append_material_class(html_options)
+            super
+        end
+
+        def submit(value=nil, options={})
+            options = self.append_material_class(options, "btn btn-primary")
+            super
+        end
+
+        def append_material_class(options={}, html_class="form-control")
             if options.key?(:class)
-                options[:class] << " form-control"
+                options[:class] << " " << html_class
             else
-                options[:class] = "form-control"
+                options[:class] = html_class
             end
 
             options
