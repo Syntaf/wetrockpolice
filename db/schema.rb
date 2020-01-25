@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_24_191804) do
+ActiveRecord::Schema.define(version: 2020_01_25_014236) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,11 @@ ActiveRecord::Schema.define(version: 2020_01_24_191804) do
     t.string "amount_paid"
     t.string "shirt_size"
     t.string "shirt_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "local_climbing_orgs", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -88,6 +93,8 @@ ActiveRecord::Schema.define(version: 2020_01_24_191804) do
     t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "local_climbing_orgs_id"
+    t.index ["local_climbing_orgs_id"], name: "index_watched_areas_on_local_climbing_orgs_id"
   end
 
   add_foreign_key "locations", "climbing_areas"

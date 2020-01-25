@@ -1,0 +1,2 @@
+class LocalClimbingOrg < ApplicationRecord
+end
