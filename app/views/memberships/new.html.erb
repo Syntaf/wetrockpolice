@@ -8,70 +8,78 @@
     builder: MaterialFormsHelper::MaterialFormBuilder,
     html: { class: "membership-form container" } do |f| %>
     <div class="row">
-      <div class="col-6">
+      <div class="col-md-6 order-md-1 col-12 order-3 form-group">
         <%= f.label :first_name %>
         <%= f.text_field :first_name %>
       </div>
-      <div class="col-6">
+
+      <div class="w-100 d-none d-mg-block order-2"></div>
+
+      <div class="col-md-6 order-md-3 col-12 order-1 form-group">
         <%= f.label :email %>
         <%= f.email_field :email %>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-6">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :last_name %>
         <%= f.text_field :last_name %>
       </div>
-      <div class="col-6">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :phone_number %>
         <%= f.telephone_field :phone_number %>
       </div>
     </div>
 
+    <div class="row divider"></div>
+
     <div class="row">
-      <div class="col-6 form-group">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :streel_line_1 %>
         <%= f.text_field :street_line_one %>
       </div>
-      <div class="col-6">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :shirt_type %>
         <%= f.select :shirt_type, ["Local", "AccessFund"] %>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-6">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :stree_line_2 %>
         <%= f.text_field :street_line_two %>
       </div>
-      <div class="col-6">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :shirt_size %>
         <%= f.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WS", "WM", "WL", "WXL" ] %>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-6">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :city %>
         <%= f.text_field :city %>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-6">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :state %>
         <%= f.text_field :state %>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-6">
+      <div class="col-md-6 col-12 form-group">
         <%= f.label :postal_code %>
         <%= f.number_field :zipcode %>
       </div>
     </div>
 
-    <%= f.submit "Submit" %>
+    <div class="row submit-row">
+      <%= f.submit "Submit" %>
+    </div>
+    
   <% end %>
 </div>
