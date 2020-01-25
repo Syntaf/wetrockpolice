@@ -22,6 +22,6 @@ class RedrockController < WatchedAreaController
   end
 
   def sncc
-    # todo
+    @jointMembership = JointMembershipApplication.new
   end
 end

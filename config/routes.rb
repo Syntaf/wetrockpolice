@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     get '/faq', to: '/redrock#faq'
     get '/rainy-day-options', to: '/redrock#rainy_day_options'
     get '/climbing_area', to: '/redrock#climbing_area'
-    get '/sncc', to: '/redrock#sncc'
+    get '/sncc', to: '/memberships#new'
   end
 
   namespace :castlerock, defaults: { watched_area_id: 2 } do
@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     get '/climbing_area', to: '/castlerock#climbing_area'
   end
 
-  resources :joint_membership_applications, only: [:create, :destroy]
+  resources :memberships, only: [:create, :destroy]
 
   root :to => redirect('redrock')
 end

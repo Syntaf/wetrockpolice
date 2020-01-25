@@ -1,12 +1,14 @@
-.header {
-    min-height: 200px;
-    background-color: #575050;
-    display: flex;
-    align-items: center;
-
-    h2 {
-        color: white;
-        width: 100%;
-        text-align: center;
+.membership-join {
+    &.header {
+        min-height: 200px;
+        background-color: #575050;
+        display: flex;
+        align-items: center;
+    
+        h2 {
+            color: white;
+            width: 100%;
+            text-align: center;
+        }
     }
 }
