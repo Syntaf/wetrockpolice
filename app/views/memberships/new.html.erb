@@ -1,12 +1,14 @@
 <div class="membership-join header">
   <h2>Join SNCC</h2>
-  <h3><%= @watchedAreaId %></h3>
 </div>
 <div class="membership-join page-content">
-  <%= form_for @jointMembership,
+  <%= form_for @joint_membership,
     url: { action: "create" },
     builder: MaterialFormsHelper::MaterialFormBuilder,
     html: { class: "membership-form container" } do |f| %>
+
+    <%= f.hidden_field :watched_area_id, :value => @watched_area.id %>
+
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :first_name %>
