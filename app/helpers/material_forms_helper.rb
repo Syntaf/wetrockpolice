@@ -1,5 +1,9 @@
 module MaterialFormsHelper
     class MaterialFormBuilder < ActionView::Helpers::FormBuilder
+        def validation_message(attribute)
+            @template.content_tag(:div, '', { class: 'invalid-feedback',  data: { :invalid_feedback => attribute }})
+        end
+
         def text_field(attribute, options={})
             options = self.append_material_class(options)
             super
