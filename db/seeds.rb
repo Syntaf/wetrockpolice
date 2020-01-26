@@ -1,6 +1,15 @@
-# watched_area = WatchedArea.create!([
-#   {name: "Red Rock", slug: "redrock"}
-# ])
+# Dev super admin account
+User.new(
+  :email => 'admin@localhost',
+  :password => 'admin',
+  :admin => true,
+  :approved => true,
+  :super_admin => true
+).confirm
+
+WatchedArea.create!([
+  {name: "Red Rock", slug: "redrock"}
+])
 ClimbingArea.create!([ 
   {
     name: "Limekiln",
@@ -14,10 +23,6 @@ ClimbingArea.create!([
     }
   }
 ])
-
 RainyDayArea.create!([
   {climbing_area_id: 1, watched_area_id: 1, driving_time: 120}
 ])
-# Location.create!([
-#   {longitude: "-12694551", latitude: "4393243", mt_z: "11.4", climbing_area_id: 1}
-# ])
