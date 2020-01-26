@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 2020_01_25_014236) do
   end
 
   create_table "local_climbing_orgs", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -93,11 +94,12 @@ ActiveRecord::Schema.define(version: 2020_01_25_014236) do
     t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "local_climbing_orgs_id"
-    t.index ["local_climbing_orgs_id"], name: "index_watched_areas_on_local_climbing_orgs_id"
+    t.bigint "local_climbing_org_id"
+    t.index ["local_climbing_org_id"], name: "index_watched_areas_on_local_climbing_org_id"
   end
 
   add_foreign_key "locations", "climbing_areas"
   add_foreign_key "rainy_day_areas", "climbing_areas"
   add_foreign_key "rainy_day_areas", "watched_areas"
+  add_foreign_key "watched_areas", "local_climbing_orgs"
 end
