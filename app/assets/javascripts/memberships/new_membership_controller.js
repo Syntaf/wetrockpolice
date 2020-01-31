@@ -17,7 +17,7 @@ NewMembershipController.prototype.initPayPal = function () {
 }
 
 NewMembershipController.prototype.orderConfigurator = function (data, actions) {
-    const config = {
+    var config = {
         'purchase_units': [{
             'amount': {
                 'value': this.options.membershipFee
@@ -29,14 +29,14 @@ NewMembershipController.prototype.orderConfigurator = function (data, actions) {
 }
 
 NewMembershipController.prototype.onApproval = function (data, actions) {
-    const orderId = data.orderID;
+    var orderId = data.orderID;
 
     return actions.order.capture().then(this.submitMembership.bind(this, orderId));
 }
 
 NewMembershipController.prototype.submitMembership = function (orderId, details) {
-    const form = $(this.options.formSelector);
-    const orderIdField = form.find(this.options.orderIdFieldSelector);
+    var form = $(this.options.formSelector);
+    var orderIdField = form.find(this.options.orderIdFieldSelector);
 
     orderIdField.val(orderId);
     form.submit();
