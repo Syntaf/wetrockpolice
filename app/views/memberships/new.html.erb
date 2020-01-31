@@ -5,27 +5,27 @@
   <%= form_for @joint_membership,
     url: { action: "create" },
     builder: MaterialFormsHelper::MaterialFormBuilder,
-    html: { class: "membership-form container" } do |f| %>
+    html: { class: "membership-form container", id: 'membership-form' } do |f| %>
 
-    <%= f.hidden_field :watched_area_id, :value => @watched_area.local_climbing_org.name %>
+    <%= f.hidden_field :organization, :value => @watched_area.local_climbing_org.name %>
+    <%= f.hidden_field :order_id, :value => nil, data: { :role => 'orderId' } %>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :first_name %>
-        <%= f.text_field :first_name %>
-        <%= f.validation_message :first_name %>
+        <%= f.text_field :first_name, required: true %>
       </div>
 
       <div class="col-md-6 col-12 form-group">
         <%= f.label :last_name %>
-        <%= f.text_field :last_name %>
+        <%= f.text_field :last_name, required: true %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :email %>
-        <%= f.email_field :email %>
+        <%= f.email_field :email, required: true %>
       </div>
       <div class="col-md-6 col-12 form-group">
         <%= f.label :phone_number %>
@@ -38,7 +38,7 @@
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :streel_line_1 %>
-        <%= f.text_field :street_line_one %>
+        <%= f.text_field :street_line_one, required: true %>
       </div>
       <div class="col-md-6 col-12 form-group">
         <%= f.label :street_line_2 %>
@@ -60,27 +60,47 @@
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :city %>
-        <%= f.text_field :city %>
+        <%= f.text_field :city, required: true %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :state %>
-        <%= f.text_field :state %>
+        <%= f.text_field :state, required: true %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :postal_code %>
-        <%= f.number_field :zipcode %>
+        <%= f.number_field :zipcode, required: true %>
       </div>
     </div>
 
-    <div class="row submit-row">
-      <%= f.submit "Submit" %>
+    <div class="row" id="paypal">
+
     </div>
     
   <% end %>
 </div>
+
+<script>
+  new NewMembershipController();
+  // paypal.Buttons({
+  //   createOrder: function (data, actions) {
+  //     return actions.order.create({
+  //       purchase_units: [{
+  //         amount: {
+  //           value: '35.00'
+  //         }
+  //       }]
+  //     });
+  //   },
+  //   onApprove: function (data, actions) {
+  //     return actions.order.capture().then(function(details) {
+  //       console.log(details);
+  //     });
+  //   }
+  // }).render('#paypal');
+</script>

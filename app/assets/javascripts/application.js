@@ -11,6 +11,7 @@
 //= require image_loader
 //= require landing_controller
 //= require rainy_day_controller
+//= require memberships/new_membership_controller
 
 Number.prototype.toFixedDown = function(digits) {
     var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)"),
