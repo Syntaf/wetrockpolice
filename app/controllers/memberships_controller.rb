@@ -8,6 +8,7 @@ class MembershipsController < ApplicationController
         @membership_app = JointMembershipApplication.create(params.require(:joint_membership_application).permit(
             :first_name,
             :last_name,
+            :organization,
             :email,
             :phone_number,
             :street_line_one,
@@ -15,6 +16,7 @@ class MembershipsController < ApplicationController
             :city,
             :state,
             :zipcode,
+            :shirt_type,
             :shirt_size))
     end
 end
