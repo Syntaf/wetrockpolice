@@ -2,6 +2,8 @@ class MembershipsController < ApplicationController
     def new
         @watched_area = WatchedArea.find_by(id: params[:watched_area_id])
         @joint_membership = JointMembershipApplication.new
+
+        @client = ::PaymentServices::PaypalClient.new
     end
 
     def create

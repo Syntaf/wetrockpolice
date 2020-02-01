@@ -17,6 +17,7 @@ gem 'cancancan', "~> 3.0"
 gem 'seed_dump'
 gem 'meta-tags'
 gem 'rails_admin', '~> 2.0'
+gem 'paypal-checkout-sdk'
 gem 'rails_12factor', group: :production
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
