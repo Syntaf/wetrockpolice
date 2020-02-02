@@ -8,24 +8,24 @@
     html: { class: "membership-form container", id: 'membership-form' } do |f| %>
 
     <%= f.hidden_field :organization, :value => @watched_area.local_climbing_org.name %>
-    <%= f.hidden_field :order_id, :value => nil, data: { :role => 'orderId' } %>
+    <%= f.hidden_field :order_id, :value => "97Y26348W8241634T", data: { :role => 'orderId' } %>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :first_name %>
-        <%= f.text_field :first_name, required: true %>
+        <%= f.text_field :first_name %>
       </div>
 
       <div class="col-md-6 col-12 form-group">
         <%= f.label :last_name %>
-        <%= f.text_field :last_name, required: true %>
+        <%= f.text_field :last_name %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :email %>
-        <%= f.email_field :email, required: true %>
+        <%= f.email_field :email %>
       </div>
       <div class="col-md-6 col-12 form-group">
         <%= f.label :phone_number %>
@@ -38,7 +38,7 @@
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :streel_line_1 %>
-        <%= f.text_field :street_line_one, required: true %>
+        <%= f.text_field :street_line_one %>
       </div>
       <div class="col-md-6 col-12 form-group">
         <%= f.label :street_line_2 %>
@@ -60,27 +60,29 @@
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :city %>
-        <%= f.text_field :city, required: true %>
+        <%= f.text_field :city %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :state %>
-        <%= f.text_field :state, required: true %>
+        <%= f.text_field :state %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :postal_code %>
-        <%= f.number_field :zipcode, required: true %>
+        <%= f.number_field :zipcode %>
       </div>
     </div>
 
     <div class="row" id="paypal">
 
     </div>
+
+    <%= f.submit %>
     
   <% end %>
 </div>
