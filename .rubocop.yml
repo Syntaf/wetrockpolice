@@ -3,3 +3,9 @@ Style/Documentation:
 
 Metrics/MethodLength:
   Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Style/EndOfLine:
+  EnforcedStyle: lf
