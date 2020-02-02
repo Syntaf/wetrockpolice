@@ -23,12 +23,15 @@ module PaymentServices
       request = OrdersGetRequest.new(order_id)
 
       begin
-        response = @client.execute(request)
+        @client.execute(request)
       rescue PayPalHttp::HttpError => e
-        logger.info e
+        Rails.logger.info e.result
+        Rails.logger.info e.status_code
+
+        return false
       end
 
-      response
+      true
     end
   end
 end
