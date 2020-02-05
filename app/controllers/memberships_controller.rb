@@ -9,9 +9,15 @@ class MembershipsController < ApplicationController
   def create
     order_id = params[:joint_membership_application][:order_id]
 
-    if PayPalPayments::OrderValidator.call(order_id)
-      @membership_app = JointMembershipApplication.create!(membership_app_params)
+    unless PayPalPayments::OrderValidator.call(order_id)
+      redirect_to :redrock_sncc,
+                  :flash => { :invalid_order => true } and return
     end
+
+    JointMembershipApplication.create!(membership_app_params)
+
+    redirect_to :redrock_sncc,
+                :flash => { :membership_successful => true }
   end
 
   private
