@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class MembershipsController < ApplicationController
-  before_action :create_paypal_client, only: :create
-
   def new
     @watched_area = WatchedArea.find_by(id: params[:watched_area_id])
     @joint_membership = JointMembershipApplication.new
@@ -10,9 +8,10 @@ class MembershipsController < ApplicationController
 
   def create
     order_id = params[:joint_membership_application][:order_id]
-    
-    if @client.order_valid?(order_id)
+
+    if PayPalPayments::OrderValidator.call(order_id)
       @membership_app = JointMembershipApplication.create!(membership_app_params)
+    end
   end
 
   private
@@ -32,9 +31,5 @@ class MembershipsController < ApplicationController
       :zipcode,
       :shirt_type,
       :shirt_size)
-  end
-
-  def create_paypal_client
-    @client = ::PaymentServices::PaypalClient.new
   end
 end
