@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'  
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 
   namespace :redrock, defaults: { watched_area_id: 1 } do
     get '/', to: '/redrock#index'
@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     get '/rainy-day-options', to: '/redrock#rainy_day_options'
     get '/climbing_area', to: '/redrock#climbing_area'
     get '/sncc', to: '/memberships#new'
+    post '/sncc', to: '/memberships#create'
   end
 
   namespace :castlerock, defaults: { watched_area_id: 2 } do
@@ -17,7 +18,7 @@ Rails.application.routes.draw do
     get '/climbing_area', to: '/castlerock#climbing_area'
   end
 
-  resources :memberships, only: [:create, :destroy]
+  resources :memberships, only: %i[destroy]
 
   root :to => redirect('redrock')
 end
