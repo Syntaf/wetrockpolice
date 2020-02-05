@@ -8,7 +8,7 @@
     html: { class: "membership-form container", id: 'membership-form' } do |f| %>
 
     <%= f.hidden_field :organization, :value => @watched_area.local_climbing_org.name %>
-    <%= f.hidden_field :order_id, :value => "97Y26348W8241634T", data: { :role => 'orderId' } %>
+    <%= f.hidden_field :order_id, :value => nil, data: { :role => 'orderId' } %>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">
