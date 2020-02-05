@@ -1,5 +1,11 @@
 <div class="membership-join header">
   <h2>Join SNCC</h2>
+  <% if flash[:membership_successful] %>
+    <h2>Success!</h2>
+  <% end %>
+  <% if flash[:invalid_order] %>
+    <h2>Failure!</h2>
+  <% end %>
 </div>
 <div class="membership-join page-content">
   <%= form_for @joint_membership,

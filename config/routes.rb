@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     get '/faq', to: '/redrock#faq'
     get '/rainy-day-options', to: '/redrock#rainy_day_options'
     get '/climbing_area', to: '/redrock#climbing_area'
-    get '/sncc', to: '/memberships#new'
+    get '/sncc', to: '/memberships#new', as: 'sncc'
     post '/sncc', to: '/memberships#create'
   end
 
