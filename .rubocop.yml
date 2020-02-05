@@ -12,3 +12,6 @@ Style/EndOfLine:
 
 Style/HashSyntax:
   Enabled: false
+
+Style/AndOr
+  EnforcedStyle: conditionals
