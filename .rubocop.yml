@@ -9,3 +9,6 @@ Metrics/AbcSize:
 
 Style/EndOfLine:
   EnforcedStyle: lf
+
+Style/HashSyntax:
+  Enabled: false
