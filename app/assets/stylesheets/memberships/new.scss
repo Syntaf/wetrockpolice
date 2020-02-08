@@ -1,4 +1,8 @@
 .membership-join {
+    * { 
+        font-family: 'Montserrat', sans-serif;
+    }
+
     &.header {
         min-height: 200px;
         background-color: #575050;
@@ -27,6 +31,10 @@
                 padding-left: 15px;
                 padding-right: 15px;
             }
+        }
+
+        .total {
+            text-align: center;
         }
 
         #paypal {
