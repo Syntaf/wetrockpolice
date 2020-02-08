@@ -3,9 +3,12 @@ function NewMembershipController(options) {
         'containerSelector': '#paypal',
         'formSelector': '#membership-form',
         'orderIdFieldSelector': 'input[data-role="orderId"]',
+        'totalSelector': 'strong[data-role="total"]',
         'membershipFee': 35.00
     });
     
+    // $(this.options.totalSelector).click(this.)
+
     this.initPayPal();
 }
 
