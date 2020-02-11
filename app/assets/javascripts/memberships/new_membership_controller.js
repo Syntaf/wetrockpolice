@@ -4,12 +4,12 @@ function NewMembershipController(options) {
         'formSelector': '#membership-form',
         'orderIdFieldSelector': 'input[data-role="orderId"]',
         'totalSelector': 'strong[data-role="total"]',
-        'membershipFee': 35.00
+        'membershipFee': 35,
+        'shirtPrice': 15
     });
 
     this.initPayPal();
     this.initShirtCheckboxListeners();
-    this.initTotalListener();
 }
 
 NewMembershipController.prototype.initShirtCheckboxListeners = function () {
@@ -33,7 +33,7 @@ NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheck
 
 NewMembershipController.prototype.updatePrice = function (shirtCheckedCount) {
     var $totalPrice = $('[data-role="price"]');
-    var newPrice = shirtCheckedCount * 15 + 35;
+    var newPrice = shirtCheckedCount * this.options.shirtPrice + this.options.membershipFee;
 
     $totalPrice.html('$' + newPrice);
 }
