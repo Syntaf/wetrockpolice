@@ -48,12 +48,12 @@
       </div>
       <div class="col-md-6 form-group d-none d-md-block">
         <div class="custom-control custom-checkbox">
-          <input type="checkbox" class="custom-control-input" id="customCheck1">
-          <label class="custom-control-label" for="customCheck1">SNCC T-Shirt <strong>(+$15)</strong></label>
+          <input type="checkbox" class="custom-control-input" data-role="shirtCheckbox" id="sncc-shirt">
+          <label class="custom-control-label" for="sncc-shirt">SNCC T-Shirt <strong>(+$15)</strong></label>
         </div>
         <div class="custom-control custom-checkbox">
-          <input type="checkbox" class="custom-control-input" id="customCheck1">
-          <label class="custom-control-label" for="customCheck1">Access Fund T-Shirt <strong>(+$15)</strong></label>
+          <input type="checkbox" class="custom-control-input" data-role="shirtCheckbox" id="access-fund-shirt">
+          <label class="custom-control-label" for="access-fund-shirt">Access Fund T-Shirt <strong>(+$15)</strong></label>
         </div>
       </div>
     </div>
@@ -85,11 +85,11 @@
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :shirt_type %>
-        <%= f.select :shirt_type, ["Local", "AccessFund"], :disabled => true %>
+        <%= f.select :shirt_type, ["Local", "AccessFund"], {}, disabled: true %>
       </div>
       <div class="col-md-6 col-12 form-group">
         <%= f.label :shirt_size %>
-        <%= f.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WS", "WM", "WL", "WXL" ] %>
+        <%= f.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WS", "WM", "WL", "WXL" ], {}, disabled: true %>
       </div>
     </div>
 

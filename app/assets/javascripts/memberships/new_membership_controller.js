@@ -10,6 +10,24 @@ function NewMembershipController(options) {
     // $(this.options.totalSelector).click(this.)
 
     this.initPayPal();
+    this.initDisabledFieldListeners();
+}
+
+NewMembershipController.prototype.initDisabledFieldListeners = function () {
+    var $shirtCheckboxes = $('[data-role="shirtCheckbox"]');
+    var $disabledShirtFields = $('select[disabled]');
+
+    $shirtCheckboxes.change(this.swapDisabledFieldState.bind(this, $shirtCheckboxes, $disabledShirtFields));
+}
+
+NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheckboxes, $disabledShirtFields) {
+    var hasAtLeastOneChecked = $($shirtCheckboxes.selector + ':checked').length;
+
+    if (hasAtLeastOneChecked > 0) {
+        $disabledShirtFields.prop('disabled', false);
+    } else {
+        $disabledShirtFields.prop('disabled', true);
+    }
 }
 
 NewMembershipController.prototype.initPayPal = function () {
