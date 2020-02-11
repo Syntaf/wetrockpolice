@@ -1,0 +1,7 @@
+include:
+  - ./**/*.rb
+exclude:
+  - vendor/**/*
+  - test/**/*
+  - spec/**/*
+  - .bundle/**/
