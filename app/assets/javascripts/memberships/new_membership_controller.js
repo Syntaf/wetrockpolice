@@ -6,14 +6,13 @@ function NewMembershipController(options) {
         'totalSelector': 'strong[data-role="total"]',
         'membershipFee': 35.00
     });
-    
-    // $(this.options.totalSelector).click(this.)
 
     this.initPayPal();
-    this.initDisabledFieldListeners();
+    this.initShirtCheckboxListeners();
+    this.initTotalListener();
 }
 
-NewMembershipController.prototype.initDisabledFieldListeners = function () {
+NewMembershipController.prototype.initShirtCheckboxListeners = function () {
     var $shirtCheckboxes = $('[data-role="shirtCheckbox"]');
     var $disabledShirtFields = $('select[disabled]');
 
@@ -21,13 +20,22 @@ NewMembershipController.prototype.initDisabledFieldListeners = function () {
 }
 
 NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheckboxes, $disabledShirtFields) {
-    var hasAtLeastOneChecked = $($shirtCheckboxes.selector + ':checked').length;
+    var shirtCheckedCount = $($shirtCheckboxes.selector + ':checked').length;
 
-    if (hasAtLeastOneChecked > 0) {
+    if (shirtCheckedCount > 0) {
         $disabledShirtFields.prop('disabled', false);
     } else {
         $disabledShirtFields.prop('disabled', true);
     }
+
+    this.updatePrice(shirtCheckedCount);
+}
+
+NewMembershipController.prototype.updatePrice = function (shirtCheckedCount) {
+    var $totalPrice = $('[data-role="price"]');
+    var newPrice = shirtCheckedCount * 15 + 35;
+
+    $totalPrice.html('$' + newPrice);
 }
 
 NewMembershipController.prototype.initPayPal = function () {
