@@ -52,7 +52,9 @@ GEM
     ast (2.4.0)
     autoprefixer-rails (9.7.3)
       execjs
+    backport (1.1.2)
     bcrypt (3.1.13)
+    benchmark (0.1.0)
     bindex (0.5.0)
     bootstrap (4.3.1)
       autoprefixer-rails (>= 9.1.0)
@@ -92,6 +94,7 @@ GEM
     dotenv-rails (2.6.0)
       dotenv (= 2.6.0)
       railties (>= 3.2, < 6.0)
+    e2mmap (0.1.0)
     erubi (1.9.0)
     execjs (2.7.0)
     ffi (1.11.3)
@@ -132,6 +135,7 @@ GEM
       mini_mime (>= 0.1.1)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
+    maruku (0.7.3)
     material-sass (4.1.1)
       autoprefixer-rails (>= 6.0.3)
       sass (>= 3.5.2)
@@ -218,6 +222,8 @@ GEM
     responders (3.0.0)
       actionpack (>= 5.0)
       railties (>= 5.0)
+    reverse_markdown (1.4.0)
+      nokogiri
     rubocop (0.79.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
@@ -256,6 +262,20 @@ GEM
     selenium-webdriver (3.141.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2, >= 1.2.2)
+    solargraph (0.38.5)
+      backport (~> 1.1)
+      benchmark
+      bundler (>= 1.17.2)
+      e2mmap
+      jaro_winkler (~> 1.5)
+      maruku (~> 0.7, >= 0.7.3)
+      nokogiri (~> 1.9, >= 1.9.1)
+      parser (~> 2.3)
+      reverse_markdown (~> 1.0, >= 1.0.5)
+      rubocop (~> 0.52)
+      thor (~> 1.0)
+      tilt (~> 2.0)
+      yard (~> 0.9)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -286,6 +306,7 @@ GEM
     websocket-extensions (0.1.4)
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    yard (0.9.24)
 
 PLATFORMS
   ruby
@@ -315,6 +336,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   seed_dump
   selenium-webdriver
+  solargraph
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
