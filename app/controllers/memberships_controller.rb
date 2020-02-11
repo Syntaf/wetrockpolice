@@ -35,7 +35,8 @@ class MembershipsController < ApplicationController
       :city,
       :state,
       :zipcode,
-      :shirt_type,
+      :local_shirt,
+      :access_fund_shirt,
       :shirt_size)
   end
 end
