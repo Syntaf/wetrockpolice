@@ -7,6 +7,7 @@
 //= require popper
 //= require bootstrap
 //= require material
+//= require vendor/jquery-input-mask-phone-number.min
 //= require init
 //= require image_loader
 //= require landing_controller
