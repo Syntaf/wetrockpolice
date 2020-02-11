@@ -8,6 +8,10 @@ function NewMembershipController(options) {
         'shirtPrice': 15
     });
 
+    $('#joint_membership_application_phone_number').usPhoneFormat({
+        'format': '(xxx) xxx-xxxx'
+    });
+
     this.initPayPal();
     this.initShirtCheckboxListeners();
 }
