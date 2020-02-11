@@ -7,7 +7,7 @@ Metrics/MethodLength:
 Metrics/AbcSize:
   Enabled: false
 
-Style/EndOfLine:
+Layout/EndOfLine:
   EnforcedStyle: lf
 
 Style/HashSyntax:
