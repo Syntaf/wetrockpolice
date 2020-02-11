@@ -1,3 +1,7 @@
+AllCops:
+  Exclude:
+    - "db/**/*.rb"
+
 Style/Documentation:
   Enabled: false
 
