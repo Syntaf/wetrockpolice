@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     get '/rainy-day-options', to: '/redrock#rainy_day_options'
     get '/climbing_area', to: '/redrock#climbing_area'
     get '/sncc', to: '/memberships#new', as: 'sncc'
-    post '/sncc', to: '/memberships#create'
+    post '/sncc', to: '/memberships#create', as: 'new_sncc_membership'
   end
 
   namespace :castlerock, defaults: { watched_area_id: 2 } do
