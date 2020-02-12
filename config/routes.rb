@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 
   namespace :redrock, defaults: { watched_area_id: 1 } do
-    get '/', to: '/redrock#index'
+    get '/', to: '/redrock#index', as: 'index'
     get '/faq', to: '/redrock#faq'
     get '/rainy-day-options', to: '/redrock#rainy_day_options'
     get '/climbing_area', to: '/redrock#climbing_area'
