@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_11_221457) do
+ActiveRecord::Schema.define(version: 2020_02_12_013054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 2020_02_11_221457) do
     t.string "order_id"
     t.boolean "local_shirt"
     t.boolean "access_fund_shirt"
+    t.boolean "paid_cash", default: false, null: false
   end
 
   create_table "local_climbing_orgs", force: :cascade do |t|

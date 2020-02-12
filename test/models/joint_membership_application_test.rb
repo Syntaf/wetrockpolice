@@ -44,4 +44,22 @@ class JointMembershipApplicationTest < ActiveSupport::TestCase
       app.save!
     end
   end
+
+  test 'Requires order_id for card payments' do
+    app = joint_membership_applications(:valid_application)
+
+    assert_raises ActiveRecord::RecordInvalid do
+      app.order_id = nil
+      app.paid_cash = false
+      app.save!
+    end
+  end
+
+  test 'Can have no order_id with cash payment' do
+    app = joint_membership_applications(:valid_application)
+
+    app.order_id = nil
+    app.paid_cash = true
+    app.save!
+  end
 end
