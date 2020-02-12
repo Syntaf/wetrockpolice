@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class RedrockControllerTest < ActionDispatch::IntegrationTest
@@ -5,5 +7,4 @@ class RedrockControllerTest < ActionDispatch::IntegrationTest
     get redrock_index_url
     assert_response :success
   end
-
 end
