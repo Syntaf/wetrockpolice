@@ -14,6 +14,13 @@ class JointMembershipApplication < ApplicationRecord
   validates :city, presence: true
   validates :state, presence: true
   validates :zipcode, numericality: true, length: { is: 5 }
+  validates :order_id, presence: true, if: :paid_with_card?
+
+  def paid_with_card?
+    paid_cash == false
+  end
+
+  private
 
   def strip_phone_number
     return if phone_number.nil?
