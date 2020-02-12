@@ -4,8 +4,22 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
+valid_application:
+  first_name: 'John'
+  last_name: 'Doe'
+  email: 'johndoe@gmail.com'
+  phone_number: '(000) 123-456'
+  street_line_one: '123 Street Ave'
+  street_line_two: 'Apt 1'
+  city: 'City'
+  state: 'State'
+  zipcode: '12345'
+  organization: 'Organization'
+  amount_paid: '35'
+  shirt_size: 'ML'
+  order_id: '1234FFF'
+  local_shirt: true
+  access_fund_shirt: true
+
 two: {}
 # column: value
