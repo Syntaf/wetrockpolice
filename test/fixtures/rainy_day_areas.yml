@@ -1,9 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  climbing_area: one
-  watched_area: one
+area1_redrock:
+  climbing_area: area1
+  watched_area: redrock
 
-two:
-  climbing_area: two
-  watched_area: two
+area2_redrock:
+  climbing_area: area2
+  watched_area: redrock

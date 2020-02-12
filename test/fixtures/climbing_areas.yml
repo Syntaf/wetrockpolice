@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  rock_type: MyString
-  description: MyString
+area1:
+  name: area1
+  rock_type: example rock type 1
+  description: lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum
 
-two:
-  name: MyString
-  rock_type: MyString
-  description: MyString
+area2:
+  name: area2
+  rock_type: example rock type 2
+  description: ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem

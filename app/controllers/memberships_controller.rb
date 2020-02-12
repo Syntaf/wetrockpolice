@@ -37,6 +37,7 @@ class MembershipsController < ApplicationController
       :zipcode,
       :local_shirt,
       :access_fund_shirt,
-      :shirt_size)
+      :shirt_size
+    )
   end
 end
