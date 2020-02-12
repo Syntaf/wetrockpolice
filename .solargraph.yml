@@ -5,3 +5,5 @@ exclude:
   - test/**/*
   - spec/**/*
   - .bundle/**/
+reporters:
+  - rubocop
