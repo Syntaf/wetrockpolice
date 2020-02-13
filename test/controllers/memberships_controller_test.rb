@@ -61,9 +61,9 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     assert flash[:membership_successful]
   end
 
-  test 'invalid_cart_payment' do
+  test 'invalid_card_payment' do
     app = joint_membership_applications(:valid_application)
-    app.order_id = null
+    app.order_id = nil
     app.paid_cash = false
 
     submit_sncc_application(app)

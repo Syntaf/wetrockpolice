@@ -8,8 +8,11 @@ class MembershipsController < ApplicationController
 
   def create
     order_id = params[:joint_membership_application][:order_id]
+    paid_cash = ActiveRecord::Type::Boolean.new.cast(
+      params[:joint_membership_application][:paid_cash]
+    )
 
-    unless PayPalPayments::OrderValidator.call(order_id)
+    unless paid_cash == true || PayPalPayments::OrderValidator.call(order_id)
       redirect_to :redrock_sncc,
                   :flash => { :invalid_order => true } and return
     end
@@ -37,7 +40,8 @@ class MembershipsController < ApplicationController
       :zipcode,
       :local_shirt,
       :access_fund_shirt,
-      :shirt_size
+      :shirt_size,
+      :paid_cash
     )
   end
 end
