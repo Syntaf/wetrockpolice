@@ -5,12 +5,16 @@ module PayPalPayments
     include PayPalCheckoutSdk::Orders
 
     def initialize(order_id)
-      @request = OrdersGetRequest.new(order_id)
+      @order_id = order_id
       @client = client
     end
 
     def call
-      @client.execute(@request)
+      return false if @order_id.nil?
+
+      request = OrdersGetRequest.new(@order_id)
+      @client.execute(request)
+
       true
     rescue PayPalHttp::HttpError => e
       Rails.logger.info e.result
