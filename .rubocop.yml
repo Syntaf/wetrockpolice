@@ -1,7 +1,7 @@
 AllCops:
   Exclude:
     - "db/**/*.rb"
-
+    - "config/environments/*.rb"
 Style/Documentation:
   Enabled: false
 
