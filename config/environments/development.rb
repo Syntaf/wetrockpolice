@@ -13,8 +13,9 @@ Rails.application.configure do
     address:              'smtp.gmail.com',
     port:                 465,
     domain:               'gmail.com',
-    user_name:            ENV['SMTP_EMAIL'],
+    user_name:            ENV['SMTP_ADMIN_EMAIL'],
     password:             ENV['SMTP_PASSWORD'],
+    from:                 ENV['SMTP_EMAIL'],
     authentication:       'plain',
     enable_starttls_auto: true,
     ssl:                  true,
@@ -23,7 +24,7 @@ Rails.application.configure do
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
-  # since you don't have to restart the web server when you make code changes. 
+  # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
   # Do not eager load code on boot.
