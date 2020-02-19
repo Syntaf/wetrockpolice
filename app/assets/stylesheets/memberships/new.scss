@@ -1,7 +1,7 @@
 @import "../vars.scss";
 
 .membership-join {
-    * { 
+    * {
         font-family: 'Montserrat', sans-serif;
     }
 
@@ -10,7 +10,7 @@
         background-color: #575050;
         display: flex;
         align-items: center;
-    
+
         h2 {
             color: white;
             width: 100%;
@@ -51,6 +51,11 @@
             @media (max-width: $mobileBreakpoint) {
                 margin: 25px 0 0 0;
             }
+        }
+
+        .error {
+            color: red;
+            text-align: center;
         }
 
         #paypal {

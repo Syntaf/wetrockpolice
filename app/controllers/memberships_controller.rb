@@ -8,24 +8,39 @@ class MembershipsController < ApplicationController
 
   def create
     order_id = params[:joint_membership_application][:order_id]
+    order_id = '8Y7241789T5516533'
     paid_cash = ActiveRecord::Type::Boolean.new.cast(
       params[:joint_membership_application][:paid_cash]
     )
 
-    unless paid_cash == true || PayPalPayments::OrderValidator.call(order_id)
-      redirect_to :redrock_sncc,
-                  :flash => { :invalid_order => true } and return
+    @submitted_application = JointMembershipApplication.new(membership_params)
+
+    respond_to do |format|
+      unless paid_cash == true || PayPalPayments::OrderValidator.call(order_id)
+        format.json do
+          render json: {
+            status: :unhandled_error,
+            message: 'Think you\'re sneaky eh?'
+          }, status: 400
+        end
+      end
+
+      if @submitted_application.save
+        format.json { render json: { status: :created } }
+      else
+        format.json do
+          render json: {
+            status: :validation_errors,
+            errors: @submitted_application.errors
+          }, status: 400
+        end
+      end
     end
-
-    JointMembershipApplication.create!(membership_app_params)
-
-    redirect_to :redrock_sncc,
-                :flash => { :membership_successful => true }
   end
 
   private
 
-  def membership_app_params
+  def membership_params
     params.require(:joint_membership_application).permit(
       :first_name,
       :last_name,
