@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class JointMembershipApplication < ApplicationRecord
+  include EmailValidatable
+
   before_validation :strip_phone_number
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :email, presence: true
+  validates :email, email: true
   validates :phone_number, numericality: true, allow_nil: true
 
   validates :organization, presence: true

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MembershipMailer < ApplicationMailer
   default from: 'admin@wetrockpolice.com'
 
