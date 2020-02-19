@@ -62,5 +62,15 @@
             margin-top: 40px;
             justify-content: center;
         }
+
+        @media (max-width: $mobileBreakpoint) {
+            .custom-control + .custom-control {
+                margin-top: 0;
+            }
+
+            .mobile-divider {
+                margin-bottom: 25px;
+            }
+        }
     }
 }

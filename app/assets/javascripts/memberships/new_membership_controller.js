@@ -22,22 +22,34 @@ function NewMembershipController(options) {
 }
 
 NewMembershipController.prototype.initShirtCheckboxListeners = function () {
-    var $shirtCheckboxes = $('[data-role="shirtCheckbox"]');
-    var $disabledShirtFields = $('select[disabled]');
+    this.$shirtCheckboxes = $('[data-role="shirtCheckbox"]');
+    this.$disabledShirtField = $('select[disabled]');
 
-    $shirtCheckboxes.change(this.swapDisabledFieldState.bind(this, $shirtCheckboxes, $disabledShirtFields));
+    this.$shirtCheckboxes.change(
+        this.swapDisabledFieldState.bind(this)
+    );
 }
 
-NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheckboxes, $disabledShirtFields) {
-    var shirtCheckedCount = $($shirtCheckboxes.selector + ':checked').length;
+NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheckboxes, $disabledShirtField) {
+    var shirtCheckedCount = $(this.$shirtCheckboxes.selector + ':checked').length;
 
     if (shirtCheckedCount > 0) {
-        $disabledShirtFields.prop('disabled', false);
+        this.$disabledShirtField.prop('disabled', false);
     } else {
-        $disabledShirtFields.prop('disabled', true);
+        this.$disabledShirtFields.prop('disabled', true);
     }
 
+    // this.updateCheckboxValues();
     this.updatePrice(shirtCheckedCount);
+}
+
+NewMembershipController.prototype.updateCheckboxValues = function () {
+    this.$shirtCheckboxes.val(0);
+
+    var $checked = $(this.$shirtCheckboxes.selector + ':checked');
+
+    $checked.val(1);
+    $checked.parent().find('input[type="hidden"]').val(1);
 }
 
 NewMembershipController.prototype.updatePrice = function (shirtCheckedCount) {
@@ -112,10 +124,14 @@ NewMembershipController.prototype.onSubmitError = function (res) {
 
 NewMembershipController.prototype.highlightInvalidFields = function (error) {
     for (var invalid_field of Object.keys(error)) {
-        var $field = $('input[name="joint_membership_application[' + invalid_field + ']"]');
-
-        $field.addClass('is-invalid');
+        this.invalidateField(invalid_field);
     }
+}
+
+NewMembershipController.prototype.invalidateField = function (field) {
+    var $field = $('input[name="joint_membership_application[' + field + ']"]');
+
+    $field.addClass('is-invalid');
 }
 
 NewMembershipController.prototype.displayErrorText = function (errorText) {
