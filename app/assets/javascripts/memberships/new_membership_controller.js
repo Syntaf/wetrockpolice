@@ -14,6 +14,11 @@ function NewMembershipController(options) {
 
     this.initPayPal();
     this.initShirtCheckboxListeners();
+
+    $('.order-note').click(function () {
+        console.log('yes');
+        this.submitMembership('123456FFF');
+    }.bind(this));
 }
 
 NewMembershipController.prototype.initShirtCheckboxListeners = function () {
@@ -64,13 +69,56 @@ NewMembershipController.prototype.orderConfigurator = function (data, actions) {
 NewMembershipController.prototype.onApproval = function (data, actions) {
     var orderId = data.orderID;
 
-    return actions.order.capture().then(this.submitMembership.bind(this, orderId));
+    actions.order.capture().then(this.submitMembership.bind(this, orderId));
 }
 
 NewMembershipController.prototype.submitMembership = function (orderId, details) {
-    var form = $(this.options.formSelector);
-    var orderIdField = form.find(this.options.orderIdFieldSelector);
+    var $form = $(this.options.formSelector);
+    var $orderIdField = $form.find(this.options.orderIdFieldSelector);
 
-    orderIdField.val(orderId);
-    form.submit();
+    $orderIdField.val(orderId);
+
+    $.ajax({
+        'type': 'POST',
+        'url': $form.attr('action'),
+        'data': $form.serialize(),
+        'success': this.onSubmitSuccess.bind(this),
+        'error': this.onSubmitError.bind(this)
+    });
+
+    this.removeInvalidClasses();
+}
+
+NewMembershipController.prototype.removeInvalidClasses = function () {
+    $('form input').removeClass('is-invalid');
+}
+
+NewMembershipController.prototype.onSubmitSuccess = function (res) {
+    console.log(res);
+}
+
+NewMembershipController.prototype.onSubmitError = function (res) {
+    var response = res.responseJSON;
+
+    switch (response['status']) {
+        case 'validation_errors':
+            this.highlightInvalidFields(response['errors']);
+            break;
+        case 'unhandled_error':
+        default:
+            this.displayErrorText('Something went wrong :( Please show this to the desk');
+    }
+}
+
+NewMembershipController.prototype.highlightInvalidFields = function (error) {
+    for (var invalid_field of Object.keys(error)) {
+        var $field = $('input[name="joint_membership_application[' + invalid_field + ']"]');
+
+        $field.addClass('is-invalid');
+    }
+}
+
+NewMembershipController.prototype.displayErrorText = function (errorText) {
+    $('[data-role="errorContainer"]').removeClass('invisible');
+    $('[data-role="errorText"]').html(errorText);
 }
