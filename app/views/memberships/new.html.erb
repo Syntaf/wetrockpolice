@@ -46,16 +46,6 @@
         <%= f.label :streel_line_1 %>
         <%= f.text_field :street_line_one %>
       </div>
-      <div class="col-md-6 form-group d-none d-md-block">
-        <div class="custom-control custom-checkbox">
-          <%= f.check_box :local_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" } %>
-          <%= f.label :local_shirt, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
-        </div>
-        <div class="custom-control custom-checkbox">
-          <%= f.check_box :access_fund_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" } %>
-          <%= f.label :access_fund_shirt, raw("Access Fund T-Shirt <strong>(+$15)</strong>") , class: "custom-control-label" %>
-        </div>
-      </div>
     </div>
 
     <div class="row">
@@ -82,23 +72,20 @@
 
     <div class="row divider"></div>
 
-    <div class="row d-md-none">
-      <div class="col-12 form-group">
-        <div class="custom-control custom-checkbox">
+    <div class="row">
+      <div class="col-md-6 col-12 row form-group mobile-divider">
+        <div class="col-sm-6 col-md-12 custom-control custom-checkbox">
           <%= f.check_box :local_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" } %>
           <%= f.label :local_shirt, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
         </div>
-        <div class="custom-control custom-checkbox">
+        <div class="col-sm-6 col-md-12 custom-control custom-checkbox">
           <%= f.check_box :access_fund_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" } %>
           <%= f.label :access_fund_shirt, raw("Access Fund T-Shirt <strong>(+$15)</strong>") , class: "custom-control-label" %>
         </div>
       </div>
-    </div>
-
-    <div class="row">
       <div class="col-md-6 col-12 form-group">
         <%= f.label :shirt_size %>
-        <%= f.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WS", "WM", "WL", "WXL" ], {}, disabled: true %>
+        <%= f.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WS", "WM", "WL", "WXL" ], {prompt: ""}, disabled: true %>
       </div>
     </div>
 
