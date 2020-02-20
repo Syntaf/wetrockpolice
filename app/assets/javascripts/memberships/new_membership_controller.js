@@ -102,7 +102,7 @@ NewMembershipController.prototype.submitMembership = function (orderId, details)
 }
 
 NewMembershipController.prototype.removeInvalidClasses = function () {
-    $('form input').removeClass('is-invalid');
+    $('form input, form select').removeClass('is-invalid');
 }
 
 NewMembershipController.prototype.onSubmitSuccess = function (res) {
@@ -129,7 +129,7 @@ NewMembershipController.prototype.highlightInvalidFields = function (error) {
 }
 
 NewMembershipController.prototype.invalidateField = function (field) {
-    var $field = $('input[name="joint_membership_application[' + field + ']"]');
+    var $field = $('[name="joint_membership_application[' + field + ']"]');
 
     $field.addClass('is-invalid');
 }
