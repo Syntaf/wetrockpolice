@@ -26,6 +26,8 @@ class MembershipsController < ApplicationController
       end
 
       if @submitted_application.save
+        MembershipMailer.with(application: @submitted_application).payment_complete.deliver_later
+
         format.json { render json: { status: :created } }
       else
         format.json do
