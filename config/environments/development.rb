@@ -1,25 +1,21 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  config.action_mailer.default_url_options = { host: 'localhost', port: '3000' }
+  config.action_mailer.default_url_options = { host: 'localhost', port: '3000', protocol: 'http' }
 
   # Change this line to true if you would like to perform mail deliveries on dev
-  config.action_mailer.perform_deliveries = false
-
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.perform_caching = false
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default :charset => "utf-8"
   config.action_mailer.smtp_settings = {
-    address:              'smtp.gmail.com',
-    port:                 465,
-    domain:               'gmail.com',
-    user_name:            ENV['SMTP_ADMIN_EMAIL'],
-    password:             ENV['SMTP_PASSWORD'],
-    from:                 ENV['SMTP_EMAIL'],
+    address:              'smtp.sendgrid.net',
+    port:                 587,
+    domain:               'wetrockpolice.com',
+    user_name:            ENV['SENDGRID_USERNAME'],
+    password:             ENV['SENDGRID_PASSWORD'],
     authentication:       'plain',
-    enable_starttls_auto: true,
-    ssl:                  true,
-    openssl_verify_mode:  OpenSSL::SSL::VERIFY_NONE
+    enable_starttls_auto: true
   }
 
   # In the development environment your application's code is reloaded on
