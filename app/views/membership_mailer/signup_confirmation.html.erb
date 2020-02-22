@@ -36,6 +36,20 @@
         <li><%= @application.city %>, <%= @application.state %></li>
         <li><%= @application.zipcode %></li>
       </ul>
+      <ul>
+        <li>
+          Shirts:
+          <% if @application.local_shirt == true %>
+            SNCC T-Shirt
+          <% end %>
+          <% if @application.access_fund_shirt == true %>
+            <% if @application.local_shirt == true %>
+              ,
+            <% end %>
+            Access Fund T-Shirt
+          <% end %>
+        </li>
+      </ul>
     </div>
   </body>
 </html>
