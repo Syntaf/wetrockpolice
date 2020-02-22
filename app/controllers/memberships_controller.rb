@@ -8,7 +8,6 @@ class MembershipsController < ApplicationController
 
   def create
     order_id = params[:joint_membership_application][:order_id]
-    order_id = '8Y7241789T5516533'
     paid_cash = ActiveRecord::Type::Boolean.new.cast(
       params[:joint_membership_application][:paid_cash]
     )
@@ -25,7 +24,7 @@ class MembershipsController < ApplicationController
         end
       end
 
-      if @submitted_application.save
+      if @submitted_application.save(context: :create)
         MembershipMailer.with(application: @submitted_application).signup_confirmation.deliver_later
 
         format.json { render json: { status: :created } }
@@ -36,6 +35,23 @@ class MembershipsController < ApplicationController
             errors: @submitted_application.errors
           }, status: 400
         end
+      end
+    end
+  end
+
+  def validate
+    application = JointMembershipApplication.new(membership_params)
+
+    respond_to do |format|
+      if application.valid?
+        format.json { render json: { status: :valid } }
+      end
+
+      format.json do
+        render json: {
+          status: :validation_errors,
+          errors: application.errors
+        }, status: 400
       end
     end
   end

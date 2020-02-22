@@ -16,7 +16,7 @@ class JointMembershipApplication < ApplicationRecord
   validates :city, presence: true
   validates :state, presence: true
   validates :zipcode, numericality: true, length: { is: 5 }
-  validates :order_id, presence: true, if: :paid_with_card?
+  validates :order_id, presence: true, if: :paid_with_card?, on: :create
   validates :shirt_size, presence: true, if: :selected_shirt?
 
   def paid_with_card?
