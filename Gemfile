@@ -21,6 +21,7 @@ gem 'pg'
 gem 'rails_12factor', group: :production
 gem 'rails_admin', '~> 2.0'
 gem 'seed_dump'
+gem 'roadie-rails', '~> 2.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.4'
