@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    <%= stylesheet_link_tag 'membership_mailer/signup_confirmation', media: 'all' %>
+  </head>
+  <body>
+    <div class="header">
+      <%= image_tag 'redrock/sncc_logo' %>
+    </div>
+    <div class="banner">
+      <h3>Thank you for your support!</h3>
+      <p><i>Payment Confirmation: <%= @application.order_id %></i></p>
+    </div>
+    <div class="thank-you-box">
+      <p><%= @application.first_name %>,</p>
+      <p>
+        Thank you for joining the Access Fund and supporting the Southern Nevada Climbers Coalition! Your support
+        is critical in allowing our coalition to maintain access to existing climbing areas as well as support
+        rebolting efforts around the Vegas area.
+      </p>
+      <p>
+        You will receivce an official receipt and further information about your beneits within 1-2 weeks. If you can any
+        questions or concerns feel free to reach out to <a href="mailto:snclimberscoalition@gmail.com">snclimberscoalition@gmail.com</a>
+      </p>
+    </div>
+    <div class="order-details">
+      <h3>Membership Details</h3>
+      <ul>
+        <li><%= @application.first_name %> <%= @application.last_name %> (<%= @application.email %>)</li>
+        <li><%= @application.street_line_one %></li>
+        <% if (@application.street_line_two && !@application.street_line_two.empty?) %>
+          <li><%= @application.street_line_two %></li>
+        <% end %>
+        <li><%= @application.city %>, <%= @application.state %></li>
+        <li><%= @application.zipcode %></li>
+      </ul>
+    </div>
+  </body>
+</html>
