@@ -1,0 +1,32 @@
+body {
+  background-color: #eee;
+  font-family: 'Raleway', sans-serif;
+}
+
+.header {
+  text-align: center;
+}
+
+.header img {
+  max-width: 150px;
+}
+
+.banner {
+  background-color: rgba(154, 41, 44, 0.5);
+  margin-top: 10px;
+  padding: 20px;
+  text-align: center;
+  color: #272727;
+}
+
+.banner p {
+  font-size: 12px;
+}
+
+.thank-you-box p {
+  font-size: 14px;
+}
+
+.order-details li {
+  list-style: none;
+}
