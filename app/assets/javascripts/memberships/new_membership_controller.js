@@ -16,40 +16,29 @@ function NewMembershipController(options) {
     this.initShirtCheckboxListeners();
 
     $('.order-note').click(function () {
-        console.log('yes');
         this.submitMembership('123456FFF');
     }.bind(this));
 }
 
 NewMembershipController.prototype.initShirtCheckboxListeners = function () {
     this.$shirtCheckboxes = $('[data-role="shirtCheckbox"]');
-    this.$disabledShirtField = $('select[disabled]');
+    this.$disabledShirtFields = $('select[disabled]');
 
     this.$shirtCheckboxes.change(
         this.swapDisabledFieldState.bind(this)
     );
 }
 
-NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheckboxes, $disabledShirtField) {
+NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheckboxes) {
     var shirtCheckedCount = $(this.$shirtCheckboxes.selector + ':checked').length;
 
     if (shirtCheckedCount > 0) {
-        this.$disabledShirtField.prop('disabled', false);
+        this.$disabledShirtFields.prop('disabled', false);
     } else {
         this.$disabledShirtFields.prop('disabled', true);
     }
 
-    // this.updateCheckboxValues();
     this.updatePrice(shirtCheckedCount);
-}
-
-NewMembershipController.prototype.updateCheckboxValues = function () {
-    this.$shirtCheckboxes.val(0);
-
-    var $checked = $(this.$shirtCheckboxes.selector + ':checked');
-
-    $checked.val(1);
-    $checked.parent().find('input[type="hidden"]').val(1);
 }
 
 NewMembershipController.prototype.updatePrice = function (shirtCheckedCount) {
