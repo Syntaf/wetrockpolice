@@ -2,24 +2,33 @@ function NewMembershipController(options) {
     this.options = $.extend(options, {
         'paymentContainer': '#paypal',
         'validationButton': 'button[data-role="validate"]',
-        'formSelector': '#membership-form',
-        'orderIdFieldSelector': 'input[data-role="orderId"]',
-        'totalSelector': 'strong[data-role="total"]',
+        'form': '#membership-form',
+        'orderIdField': 'input[data-role="orderId"]',
+        'shirtCheckboxes': '[data-role="shirtCheckbox"]',
+        'shirtSizeField': 'select',
+        'priceLabel': 'strong[data-role="price"]',
+        'paymentView': '[data-page="2"]',
+        'editAgainButton': '[data-role="editAgain"]',
         'membershipFee': 35,
         'shirtPrice': 15
     });
 
-    this.$form = $(this.options.formSelector);
+    this.$form = $(this.options.form);
+    this.$shirtCheckboxes = $(this.options.shirtCheckboxes);
+    this.$disabledShirtFields = $(this.options.shirtSizeField);
+    this.$orderIdField = $(this.options.orderIdField);
+    this.$totalPrice = $(this.options.priceLabel);
+    this.$paymentView = $(this.options.paymentView);
+    this.$editAgainButton = $(this.options.editAgainButton);
 
     $('#joint_membership_application_phone_number').usPhoneFormat({
         'format': '(xxx) xxx-xxxx'
     });
 
-    $('[data-page="2"]').hide();
-
     this.initValidationListener();
-    this.initPayPal();
     this.initShirtCheckboxListeners();
+    this.initPaymentView();
+    this.initPayPal();
 
     $('.order-note').click(function () {
         this.submitMembership('1234fFFF');
@@ -33,9 +42,17 @@ NewMembershipController.prototype.initValidationListener = function () {
 NewMembershipController.prototype.validateFormFields = function (event) {
     event.preventDefault();
 
+    this.removeExistingValidationErrors();
+
+    //this.showPaymentView();
     this.submitValidateForm()
         .done(this.showPaymentView.bind(this))
         .fail(this.showValidationErrors.bind(this));
+}
+
+NewMembershipController.prototype.removeExistingValidationErrors = function () {
+    $('form input, form select').removeClass('is-invalid');
+    $('[data-role="errorContainer"]').addClass('d-none');
 }
 
 NewMembershipController.prototype.submitValidateForm = function () {
@@ -53,10 +70,6 @@ NewMembershipController.prototype.submitValidateForm = function () {
     return df;
 }
 
-NewMembershipController.prototype.showPaymentView = function (response) {
-    alert('Showing page 2!');
-}
-
 NewMembershipController.prototype.showValidationErrors = function (errors) {
     errors = errors.responseJSON['errors'];
 
@@ -66,16 +79,13 @@ NewMembershipController.prototype.showValidationErrors = function (errors) {
 }
 
 NewMembershipController.prototype.initShirtCheckboxListeners = function () {
-    this.$shirtCheckboxes = $('[data-role="shirtCheckbox"]');
-    this.$disabledShirtFields = $('select[disabled]');
-
     this.$shirtCheckboxes.change(
         this.swapDisabledFieldState.bind(this)
     );
 }
 
 NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheckboxes) {
-    var shirtCheckedCount = $(this.$shirtCheckboxes.selector + ':checked').length;
+    var shirtCheckedCount = $(this.options.shirtCheckboxes + ':checked').length;
 
     if (shirtCheckedCount > 0) {
         this.$disabledShirtFields.prop('disabled', false);
@@ -87,17 +97,23 @@ NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheck
 }
 
 NewMembershipController.prototype.updatePrice = function (shirtCheckedCount) {
-    var $totalPrice = $('[data-role="price"]');
     var newPrice = shirtCheckedCount * this.options.shirtPrice + this.options.membershipFee;
 
-    $totalPrice.html('$' + newPrice);
+    this.$totalPrice.html('$' + newPrice);
 }
 
+NewMembershipController.prototype.initPaymentView = function () {
+    this.$editAgainButton.click(this.hidePaymentView.bind(this));
+}
 
+NewMembershipController.prototype.showPaymentView = function (response) {
+    this.disableForm();
+    this.$paymentView.slideDown();
+}
 
-NewMembershipController.prototype.markValid = function () {
-    this.isFormValid = true;
-    $(this.options.paymentContainer).trigger('click');
+NewMembershipController.prototype.hidePaymentView = function () {
+    this.enableForm();
+    this.$paymentView.slideUp();
 }
 
 NewMembershipController.prototype.initPayPal = function () {
@@ -126,25 +142,15 @@ NewMembershipController.prototype.onApproval = function (data, actions) {
 }
 
 NewMembershipController.prototype.submitMembership = function (orderId, details) {
-    var $form = $(this.options.formSelector);
-    var $orderIdField = $form.find(this.options.orderIdFieldSelector);
-
-    $orderIdField.val(orderId);
+    this.$orderIdField.val(orderId);
 
     $.ajax({
         'type': 'POST',
-        'url': $form.attr('action'),
-        'data': $form.serialize(),
+        'url': this.$form.attr('action'),
+        'data': this.$form.serialize(),
         'success': this.onSubmitSuccess.bind(this),
         'error': this.onSubmitError.bind(this)
     });
-
-    this.removeInvalidClasses();
-}
-
-NewMembershipController.prototype.removeInvalidClasses = function () {
-    $('form input, form select').removeClass('is-invalid');
-    $('[data-role="errorContainer"]').addClass('d-none');
 }
 
 NewMembershipController.prototype.onSubmitSuccess = function (res) {
@@ -156,7 +162,7 @@ NewMembershipController.prototype.onSubmitError = function (res) {
 
     switch (response['status']) {
         case 'validation_errors':
-            this.highlightInvalidFields(response['errors']);
+            this.showValidationErrors(res);
             break;
         case 'unhandled_error':
         default:
@@ -173,4 +179,13 @@ NewMembershipController.prototype.invalidateField = function (field) {
 NewMembershipController.prototype.displayErrorText = function (errorText) {
     $('[data-role="errorContainer"]').removeClass('d-none');
     $('[data-role="errorText"]').html(errorText);
+}
+
+NewMembershipController.prototype.disableForm = function () {
+    $('form input, form select').prop('disabled', true);
+}
+
+NewMembershipController.prototype.enableForm = function () {
+    $('form input, form select').prop('disabled', false);
+    this.swapDisabledFieldState();
 }
