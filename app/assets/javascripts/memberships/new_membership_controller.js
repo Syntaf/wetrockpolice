@@ -1,7 +1,7 @@
 function NewMembershipController(options) {
-    this.isFormValid = false;
     this.options = $.extend(options, {
-        'containerSelector': '#paypal',
+        'paymentContainer': '#paypal',
+        'validationButton': 'button[data-role="validate"]',
         'formSelector': '#membership-form',
         'orderIdFieldSelector': 'input[data-role="orderId"]',
         'totalSelector': 'strong[data-role="total"]',
@@ -9,19 +9,60 @@ function NewMembershipController(options) {
         'shirtPrice': 15
     });
 
+    this.$form = $(this.options.formSelector);
+
     $('#joint_membership_application_phone_number').usPhoneFormat({
         'format': '(xxx) xxx-xxxx'
     });
 
     $('[data-page="2"]').hide();
 
-    this.initPayPal();
     this.initValidationListener();
+    this.initPayPal();
     this.initShirtCheckboxListeners();
 
     $('.order-note').click(function () {
-        this.submitMembership('123456FFF');
+        this.submitMembership('1234fFFF');
     }.bind(this));
+}
+
+NewMembershipController.prototype.initValidationListener = function () {
+    $(this.options.validationButton).click(this.validateFormFields.bind(this));
+}
+
+NewMembershipController.prototype.validateFormFields = function (event) {
+    event.preventDefault();
+
+    this.submitValidateForm()
+        .done(this.showPaymentView.bind(this))
+        .fail(this.showValidationErrors.bind(this));
+}
+
+NewMembershipController.prototype.submitValidateForm = function () {
+    var validationEndpoint = this.$form.attr('action') + '/validate';
+    var df = $.Deferred();
+
+    $.ajax({
+        'type': 'POST',
+        'url': validationEndpoint,
+        'data': this.$form.serialize(),
+        'success': function (response) { df.resolve(response); },
+        'error': function (response) { df.reject(response); }
+    });
+
+    return df;
+}
+
+NewMembershipController.prototype.showPaymentView = function (response) {
+    alert('Showing page 2!');
+}
+
+NewMembershipController.prototype.showValidationErrors = function (errors) {
+    errors = errors.responseJSON['errors'];
+
+    for (var invalid_field of Object.keys(errors)) {
+        this.invalidateField(invalid_field);
+    }
 }
 
 NewMembershipController.prototype.initShirtCheckboxListeners = function () {
@@ -52,37 +93,18 @@ NewMembershipController.prototype.updatePrice = function (shirtCheckedCount) {
     $totalPrice.html('$' + newPrice);
 }
 
-NewMembershipController.prototype.initValidationListener = function () {
-    $(this.options.containerSelector).click(this.validateFormFields.bind(this));
-}
 
-NewMembershipController.prototype.validateFormFields = function (event) {
-    if (this.isFormValid == true) {
-        this.isFormValid = false;
-        return;
-    }
-
-    event.preventDefault();
-
-    $.ajax({
-        'type': 'POST',
-        'url': $form.attr('action'),
-        'data': $form.serialize(),
-        'success': this.markValid.bind(this),
-        'error': this.onSubmitError.bind(this)
-    });
-}
 
 NewMembershipController.prototype.markValid = function () {
     this.isFormValid = true;
-    $(this.options.containerSelector).trigger('click');
+    $(this.options.paymentContainer).trigger('click');
 }
 
 NewMembershipController.prototype.initPayPal = function () {
     paypal.Buttons({
         createOrder: this.orderConfigurator.bind(this),
         onApprove: this.onApproval.bind(this)
-    }).render(this.options.containerSelector);
+    }).render(this.options.paymentContainer);
 }
 
 NewMembershipController.prototype.orderConfigurator = function (data, actions) {
@@ -138,13 +160,7 @@ NewMembershipController.prototype.onSubmitError = function (res) {
             break;
         case 'unhandled_error':
         default:
-            this.displayErrorText('Something went wrong :( Please show this to the desk');
-    }
-}
-
-NewMembershipController.prototype.highlightInvalidFields = function (error) {
-    for (var invalid_field of Object.keys(error)) {
-        this.invalidateField(invalid_field);
+            this.displayErrorText('Something went wrong :(');
     }
 }
 
