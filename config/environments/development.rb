@@ -4,7 +4,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'localhost', port: '3000', protocol: 'http' }
 
   # Change this line to true if you would like to perform mail deliveries on dev
-  config.action_mailer.perform_deliveries = false
+  config.action_mailer.perform_deliveries = true
   config.action_mailer.perform_caching = false
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
