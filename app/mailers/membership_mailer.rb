@@ -3,7 +3,7 @@
 class MembershipMailer < ApplicationMailer
   include Roadie::Rails::Automatic
 
-  default from: 'admin@wetrockpolice.com'
+  default from: 'Southern Nevada Climbers Coalition <admin@wetrockpolice.com>'
 
   def signup_confirmation
     @application = params[:application]
