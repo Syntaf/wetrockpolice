@@ -8,6 +8,7 @@ class MembershipsController < ApplicationController
 
   def create
     order_id = params[:joint_membership_application][:order_id]
+    order_id = '8Y7241789T5516533'
     paid_cash = ActiveRecord::Type::Boolean.new.cast(
       params[:joint_membership_application][:paid_cash]
     )
