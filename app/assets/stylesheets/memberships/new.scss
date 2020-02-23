@@ -59,7 +59,7 @@
 
         .validate-button {
             text-align: center;
-            margin: 25px 0;
+            margin-bottom: 25px;
         }
 
         .error {
@@ -80,6 +80,13 @@
     }
 
     .payment-content {
+        .flex-wrapper {
+            min-height: calc(100vh - #{$footerHeight});
+            align-content: center;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+        }
         display: none;
     }
 
