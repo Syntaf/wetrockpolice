@@ -45,10 +45,10 @@ NewMembershipController.prototype.validateFormFields = function (event) {
 
     this.removeExistingValidationErrors();
 
-    this.showPaymentView();
-    // this.submitValidateForm()
-    //     .done(this.showPaymentView.bind(this))
-    //     .fail(this.showValidationErrors.bind(this));
+    // this.showPaymentView();
+    this.submitValidateForm()
+        .done(this.showPaymentView.bind(this))
+        .fail(this.showValidationErrors.bind(this));
 }
 
 NewMembershipController.prototype.removeExistingValidationErrors = function () {
@@ -74,9 +74,22 @@ NewMembershipController.prototype.submitValidateForm = function () {
 NewMembershipController.prototype.showValidationErrors = function (errors) {
     errors = errors.responseJSON['errors'];
 
+    var aboveFoldFields = ['first_name', 'last_name', 'email', 'phone_number'];
+    var scrollBelowFold = true;
+
     for (var invalid_field of Object.keys(errors)) {
-        this.invalidateField(invalid_field);
+        this.getFieldByName(invalid_field).addClass('is-invalid');
+
+        if ($.inArray(invalid_field, aboveFoldFields) > -1) {
+            scrollBelowFold = false;
+        }
     }
+
+    var $elementToScrollTo = scrollBelowFold ?
+        $(this.getFieldByName('street_line_one').closest('.form-group')).find('label') :
+        this.$form;
+
+    this.scrollTo($elementToScrollTo, -50);
 }
 
 NewMembershipController.prototype.initShirtCheckboxListeners = function () {
@@ -109,12 +122,12 @@ NewMembershipController.prototype.initPaymentView = function () {
 
 NewMembershipController.prototype.showPaymentView = function (response) {
     this.$paymentView.show();
-    this.scrollTo(this.$paymentView)
+    this.scrollTo(this.$paymentView, 0)
         .then(this.disableForm.bind(this));
 }
 
 NewMembershipController.prototype.hidePaymentView = function () {
-    this.scrollTo(this.$form)
+    this.scrollTo(this.$form, 0)
         .then(this.$paymentView.slideUp.bind(this.$paymentView));
 
     this.$validationButton.prop('disabled', false);
@@ -175,40 +188,26 @@ NewMembershipController.prototype.onSubmitError = function (res) {
     }
 }
 
-NewMembershipController.prototype.invalidateField = function (field) {
-    var $field = $('[name="joint_membership_application[' + field + ']"]');
-
-    $field.addClass('is-invalid');
-}
-
 NewMembershipController.prototype.displayErrorText = function (errorText) {
     $('[data-role="errorContainer"]').removeClass('d-none');
     $('[data-role="errorText"]').html(errorText);
 }
 
-NewMembershipController.prototype.animateIntoView = function ($element) {
-    var df = $.Deferred();
-
-    $element.show();
-    df.resolve();
-    // $element.slideDown({
-    //     'complete': function () { df.resolve(); }
-    // });
-
-    return df;
-}
-
-NewMembershipController.prototype.scrollTo = function ($element) {
+NewMembershipController.prototype.scrollTo = function ($element, offset) {
     var df = $.Deferred();
 
     $('html, body').animate({
-        'scrollTop': $element.offset().top,
+        'scrollTop': $element.offset().top + offset,
     }, {
         'duration': 1000,
         'complete': function () { df.resolve(); }
     });
 
     return df;
+}
+
+NewMembershipController.prototype.getFieldByName = function (name) {
+    return $('[name="joint_membership_application[' + name + ']"]');
 }
 
 NewMembershipController.prototype.disableForm = function () {
