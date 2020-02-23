@@ -162,6 +162,8 @@ NewMembershipController.prototype.onApproval = function (data, actions) {
 NewMembershipController.prototype.submitMembership = function (orderId, details) {
     this.$orderIdField.val(orderId);
 
+    this.enableForm();
+
     $.ajax({
         'type': 'POST',
         'url': this.$form.attr('action'),
@@ -169,6 +171,8 @@ NewMembershipController.prototype.submitMembership = function (orderId, details)
         'success': this.onSubmitSuccess.bind(this),
         'error': this.onSubmitError.bind(this)
     });
+
+    this.disableForm();
 }
 
 NewMembershipController.prototype.onSubmitSuccess = function (res) {
