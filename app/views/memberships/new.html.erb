@@ -7,7 +7,7 @@
     <h2>Failure!</h2>
   <% end %>
 </div>
-<div class="membership-join page-content">
+<div class="membership-join page-content" data-page="1">
   <%= form_for @joint_membership,
     url: { action: "create" },
     builder: MaterialFormsHelper::MaterialFormBuilder,
@@ -94,22 +94,39 @@
         <h3 class="total">Total: <strong data-role="price">$35</strong></h3>
       </div>
       <div class="col-md-6 col-12">
-        <p class="order-note">
+        <p class="order-note d-none d-md-block">
           <i>Note:</i>  SNCC Event Signups are processed post-event and do not immeditely take effect. Upon payment you will receive a receipt immeditely,
           and at a date in the near future you will receive your membership confirmation email from the access fund.
         </p>
       </div>
     </div>
 
-    <div class="row divider invisible" data-role="errorContainer">
+    <div class="row divider d-none" data-role="errorContainer">
       <div class="col-md-12">
         <p class="error" data-role="errorText"></p>
       </div>
     </div>
 
-    <div class="row" id="paypal"></div>
+    <div class="row">
+      <div class="col-12 center">
+          <button class="validate-button btn btn-primary btn-large">Continue to Payment</button>
+      </div>
+    </div>
 
+    <div class="row d-md-none">
+      <div class="col-12 center">
+        <p class="order-note mobile">
+          <i>Note:</i>  SNCC Event Signups are processed post-event and do not immeditely take effect. Upon payment you will receive a receipt immeditely,
+          and at a date in the near future you will receive your membership confirmation email from the access fund.
+        </p>
+      </div>
+    </div>
   <% end %>
+</div>
+
+<div class="payment-content" data-page="2">
+  <button class="btn btn-link" data-role="back">Go Back</button>
+  <div class="row" id="paypal"></div>
 </div>
 
 <script>
