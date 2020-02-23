@@ -80,14 +80,19 @@
     }
 
     .payment-content {
+        display: none;
+
         .flex-wrapper {
             min-height: calc(100vh - #{$footerHeight});
             align-content: center;
             justify-content: center;
             display: flex;
             flex-direction: column;
+
+            .btn-link {
+                padding: 0;
+            }
         }
-        display: none;
     }
 
     #paypal {
