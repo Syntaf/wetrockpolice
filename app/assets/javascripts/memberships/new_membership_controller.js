@@ -1,4 +1,5 @@
 function NewMembershipController(options) {
+    this.isFormValid = false;
     this.options = $.extend(options, {
         'containerSelector': '#paypal',
         'formSelector': '#membership-form',
@@ -12,7 +13,10 @@ function NewMembershipController(options) {
         'format': '(xxx) xxx-xxxx'
     });
 
+    $('[data-page="2"]').hide();
+
     this.initPayPal();
+    this.initValidationListener();
     this.initShirtCheckboxListeners();
 
     $('.order-note').click(function () {
@@ -46,6 +50,32 @@ NewMembershipController.prototype.updatePrice = function (shirtCheckedCount) {
     var newPrice = shirtCheckedCount * this.options.shirtPrice + this.options.membershipFee;
 
     $totalPrice.html('$' + newPrice);
+}
+
+NewMembershipController.prototype.initValidationListener = function () {
+    $(this.options.containerSelector).click(this.validateFormFields.bind(this));
+}
+
+NewMembershipController.prototype.validateFormFields = function (event) {
+    if (this.isFormValid == true) {
+        this.isFormValid = false;
+        return;
+    }
+
+    event.preventDefault();
+
+    $.ajax({
+        'type': 'POST',
+        'url': $form.attr('action'),
+        'data': $form.serialize(),
+        'success': this.markValid.bind(this),
+        'error': this.onSubmitError.bind(this)
+    });
+}
+
+NewMembershipController.prototype.markValid = function () {
+    this.isFormValid = true;
+    $(this.options.containerSelector).trigger('click');
 }
 
 NewMembershipController.prototype.initPayPal = function () {
@@ -92,6 +122,7 @@ NewMembershipController.prototype.submitMembership = function (orderId, details)
 
 NewMembershipController.prototype.removeInvalidClasses = function () {
     $('form input, form select').removeClass('is-invalid');
+    $('[data-role="errorContainer"]').addClass('d-none');
 }
 
 NewMembershipController.prototype.onSubmitSuccess = function (res) {
@@ -124,6 +155,6 @@ NewMembershipController.prototype.invalidateField = function (field) {
 }
 
 NewMembershipController.prototype.displayErrorText = function (errorText) {
-    $('[data-role="errorContainer"]').removeClass('invisible');
+    $('[data-role="errorContainer"]').removeClass('d-none');
     $('[data-role="errorText"]').html(errorText);
 }

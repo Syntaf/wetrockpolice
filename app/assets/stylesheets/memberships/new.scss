@@ -48,9 +48,18 @@
                 padding-right: 2px;
             }
 
+            &.mobile {
+                margin-bottom: 25px;
+            }
+
             @media (max-width: $mobileBreakpoint) {
                 margin: 25px 0 0 0;
             }
+        }
+
+        .validate-button {
+            text-align: center;
+            margin: 25px 0;
         }
 
         .error {
@@ -58,10 +67,6 @@
             text-align: center;
         }
 
-        #paypal {
-            margin-top: 40px;
-            justify-content: center;
-        }
 
         @media (max-width: $mobileBreakpoint) {
             .custom-control + .custom-control {
@@ -72,5 +77,14 @@
                 margin-bottom: 25px;
             }
         }
+    }
+
+    #paypal {
+        margin-top: 40px;
+        justify-content: center;
+    }
+
+    .center {
+        text-align: center;
     }
 }
