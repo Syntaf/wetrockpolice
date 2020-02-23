@@ -174,8 +174,11 @@ NewMembershipController.prototype.submitMembership = function (orderId, details)
     this.disableForm();
 }
 
-NewMembershipController.prototype.onSubmitSuccess = function (res) {
-    console.log(res);
+NewMembershipController.prototype.onSubmitSuccess = function (response) {
+    var confirmationModal = response['modal'];
+
+    $('body').append(confirmationModal);
+    $('.modal').modal('show');
 }
 
 NewMembershipController.prototype.onSubmitError = function (res) {

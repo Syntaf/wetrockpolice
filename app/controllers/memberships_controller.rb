@@ -8,6 +8,7 @@ class MembershipsController < ApplicationController
 
   def create
     order_id = params[:joint_membership_application][:order_id]
+    order_id = '8Y7241789T5516533'
     paid_cash = ActiveRecord::Type::Boolean.new.cast(
       params[:joint_membership_application][:paid_cash]
     )
@@ -27,7 +28,14 @@ class MembershipsController < ApplicationController
       if @submitted_application.save(context: :create)
         MembershipMailer.with(application: @submitted_application).signup_confirmation.deliver_later
 
-        format.json { render json: { status: :created } }
+        format.json do
+          render json: {
+            status: :created,
+            modal: render_to_string(
+              partial: 'membership_confirmation_modal.html.erb'
+            )
+          }
+        end
       else
         format.json do
           render json: {
