@@ -1,0 +1,27 @@
+<div class="modal fade membership-signup-complete" tabindex="-1" data-backdrop="static" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">You're all signed up!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= image_tag 'redrock/backdrop.jpeg' %>
+        <p>
+          You've successfully signed up for a joint membership through the Access Fund
+          and Southern Nevada Climbers Coalition. You should receive an email shortly
+          with further information about your membership.
+        </p>
+        <p>
+          Show this prompt to the signup desk to receive your wrist band and raffle ticket.
+          Enjoy the show and thank you for your support!
+        </p>
+        <p class="order-info">
+          Order Confirmation: <strong><%= @submitted_application.order_id %></strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
