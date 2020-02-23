@@ -20,6 +20,7 @@ function NewMembershipController(options) {
     this.$totalPrice = $(this.options.priceLabel);
     this.$paymentView = $(this.options.paymentView);
     this.$editAgainButton = $(this.options.editAgainButton);
+    this.$validationButton = $(this.options.validationButton);
 
     $('#joint_membership_application_phone_number').usPhoneFormat({
         'format': '(xxx) xxx-xxxx'
@@ -36,7 +37,7 @@ function NewMembershipController(options) {
 }
 
 NewMembershipController.prototype.initValidationListener = function () {
-    $(this.options.validationButton).click(this.validateFormFields.bind(this));
+    this.$validationButton.click(this.validateFormFields.bind(this));
 }
 
 NewMembershipController.prototype.validateFormFields = function (event) {
@@ -44,10 +45,10 @@ NewMembershipController.prototype.validateFormFields = function (event) {
 
     this.removeExistingValidationErrors();
 
-    //this.showPaymentView();
-    this.submitValidateForm()
-        .done(this.showPaymentView.bind(this))
-        .fail(this.showValidationErrors.bind(this));
+    this.showPaymentView();
+    // this.submitValidateForm()
+    //     .done(this.showPaymentView.bind(this))
+    //     .fail(this.showValidationErrors.bind(this));
 }
 
 NewMembershipController.prototype.removeExistingValidationErrors = function () {
@@ -107,13 +108,17 @@ NewMembershipController.prototype.initPaymentView = function () {
 }
 
 NewMembershipController.prototype.showPaymentView = function (response) {
-    this.disableForm();
-    this.$paymentView.slideDown();
+    this.$paymentView.show();
+    this.scrollTo(this.$paymentView)
+        .then(this.disableForm.bind(this));
 }
 
 NewMembershipController.prototype.hidePaymentView = function () {
+    this.scrollTo(this.$form)
+        .then(this.$paymentView.slideUp.bind(this.$paymentView));
+
+    this.$validationButton.prop('disabled', false);
     this.enableForm();
-    this.$paymentView.slideUp();
 }
 
 NewMembershipController.prototype.initPayPal = function () {
@@ -181,11 +186,38 @@ NewMembershipController.prototype.displayErrorText = function (errorText) {
     $('[data-role="errorText"]').html(errorText);
 }
 
+NewMembershipController.prototype.animateIntoView = function ($element) {
+    var df = $.Deferred();
+
+    $element.show();
+    df.resolve();
+    // $element.slideDown({
+    //     'complete': function () { df.resolve(); }
+    // });
+
+    return df;
+}
+
+NewMembershipController.prototype.scrollTo = function ($element) {
+    var df = $.Deferred();
+
+    $('html, body').animate({
+        'scrollTop': $element.offset().top,
+    }, {
+        'duration': 1000,
+        'complete': function () { df.resolve(); }
+    });
+
+    return df;
+}
+
 NewMembershipController.prototype.disableForm = function () {
     $('form input, form select').prop('disabled', true);
+    this.$validationButton.prop('disabled', true);
 }
 
 NewMembershipController.prototype.enableForm = function () {
     $('form input, form select').prop('disabled', false);
+    this.$validationButton.prop('disabled', false);
     this.swapDisabledFieldState();
 }
