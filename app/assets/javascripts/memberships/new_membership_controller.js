@@ -78,13 +78,13 @@ NewMembershipController.prototype.showValidationErrors = function (errors) {
     var aboveFoldFields = ['first_name', 'last_name', 'email', 'phone_number'];
     var scrollBelowFold = true;
 
-    for (var invalid_field of Object.keys(errors)) {
+    $.each(Object.keys(errors), function (index, invalid_field) {
         this.getFieldByName(invalid_field).addClass('is-invalid');
 
         if ($.inArray(invalid_field, aboveFoldFields) > -1) {
             scrollBelowFold = false;
         }
-    }
+    }.bind(this));
 
     var $elementToScrollTo = scrollBelowFold ?
         $(this.getFieldByName('street_line_one').closest('.form-group')).find('label') :
