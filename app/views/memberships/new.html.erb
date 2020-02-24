@@ -10,6 +10,7 @@
 
     <%= f.hidden_field :organization, :value => @watched_area.local_climbing_org.name %>
     <%= f.hidden_field :order_id, :value => nil, data: { :role => 'orderId' } %>
+    <%= f.hidden_field :paid_cash, :value => false, data: { :role => 'paidCashField' }%>
 
     <div class="row">
       <div class="col-md-6 col-12 form-group">

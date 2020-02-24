@@ -6,10 +6,12 @@ function NewMembershipController(options) {
         'orderIdField': 'input[data-role="orderId"]',
         'shirtCheckboxes': '[data-role="shirtCheckbox"]',
         'shirtSizeField': 'select',
+        'paidCashField': 'input[data-role="paidCashField"]',
         'priceLabel': 'strong[data-role="price"]',
         'paymentView': '[data-page="2"]',
         'editAgainButton': '[data-role="editAgain"]',
         'loaderIndicator': '[data-role="loader"]',
+        'cashButton': 'button[data-role="cashPayment"]',
         'membershipFee': 35,
         'shirtPrice': 15
     });
@@ -20,6 +22,8 @@ function NewMembershipController(options) {
     this.$shirtCheckboxes = $(this.options.shirtCheckboxes);
     this.$disabledShirtFields = $(this.options.shirtSizeField);
     this.$orderIdField = $(this.options.orderIdField);
+    this.$paidCashField = $(this.options.paidCashField);
+    this.$payCashButton = $(this.options.cashButton);
     this.$totalPrice = $(this.options.priceLabel);
     this.$paymentView = $(this.options.paymentView);
     this.$editAgainButton = $(this.options.editAgainButton);
@@ -34,6 +38,7 @@ function NewMembershipController(options) {
     this.initShirtCheckboxListeners();
     this.initPaymentView();
     this.initPayPal();
+    this.initCashPayments();
 
     $('.order-note').click(function () {
         this.submitMembership('1234fFFF');
@@ -49,6 +54,7 @@ NewMembershipController.prototype.validateFormFields = function (event) {
 
     this.removeExistingValidationErrors();
 
+    //this.showPaymentView();
     this.submitValidateForm()
         .done(this.showPaymentView.bind(this))
         .fail(this.showValidationErrors.bind(this));
@@ -166,7 +172,9 @@ NewMembershipController.prototype.onApproval = function (data, actions) {
 }
 
 NewMembershipController.prototype.submitMembership = function (orderId, details) {
-    this.$orderIdField.val(orderId);
+    if (orderId) {
+        this.$orderIdField.val(orderId);
+    }
 
     this.enableForm();
 
@@ -203,6 +211,15 @@ NewMembershipController.prototype.onSubmitError = function (res) {
         default:
             this.displayErrorText('Something went wrong :(');
     }
+}
+
+NewMembershipController.prototype.initCashPayments = function () {
+    this.$payCashButton.click(this.submitMembershipWithCash.bind(this));
+}
+
+NewMembershipController.prototype.submitMembershipWithCash = function () {
+    this.$paidCashField.val('true');
+    this.submitMembership();
 }
 
 NewMembershipController.prototype.displayErrorText = function (errorText) {
