@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     get '/sncc', to: '/memberships#new', as: 'sncc'
     post '/sncc', to: '/memberships#create', as: 'new_sncc_membership'
     post '/sncc/validate', to: '/memberships#validate'
+    get '/sncc/confirm_cash', to: '/memberships#confirm_cash_payments'
   end
 
   namespace :castlerock, defaults: { watched_area_id: 2 } do
