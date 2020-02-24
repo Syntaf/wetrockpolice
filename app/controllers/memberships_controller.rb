@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class MembershipsController < ApplicationController
+  before_action :authenticate_user!, only: %i[confirm_cash_payments]
+
   def new
     @watched_area = WatchedArea.find_by(id: params[:watched_area_id])
     @joint_membership = JointMembershipApplication.new
@@ -61,6 +63,10 @@ class MembershipsController < ApplicationController
         }, status: 400
       end
     end
+  end
+
+  def confirm_cash_payments
+
   end
 
   private
