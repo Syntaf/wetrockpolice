@@ -32,7 +32,7 @@ module PayPalPayments
             ENV['PAYPAL_CLIENT_SECRET']
           )
         else
-          PayPal::ProductionEnvironment.new(
+          PayPal::SandboxEnvironment.new(
             ENV['PAYPAL_CLIENT_ID'],
             ENV['PAYPAL_CLIENT_SECRET']
           )

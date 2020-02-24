@@ -9,6 +9,7 @@ function NewMembershipController(options) {
         'priceLabel': 'strong[data-role="price"]',
         'paymentView': '[data-page="2"]',
         'editAgainButton': '[data-role="editAgain"]',
+        'loaderIndicator': '[data-role="loader"]',
         'membershipFee': 35,
         'shirtPrice': 15
     });
@@ -23,6 +24,7 @@ function NewMembershipController(options) {
     this.$paymentView = $(this.options.paymentView);
     this.$editAgainButton = $(this.options.editAgainButton);
     this.$validationButton = $(this.options.validationButton);
+    this.$loaderIndicator = $(this.options.loaderIndicator);
 
     $('#joint_membership_application_phone_number').usPhoneFormat({
         'format': '(xxx) xxx-xxxx'
@@ -165,6 +167,7 @@ NewMembershipController.prototype.submitMembership = function (orderId, details)
     this.$orderIdField.val(orderId);
 
     this.enableForm();
+    this.$loaderIndicator.show();
 
     $.ajax({
         'type': 'POST',
@@ -180,12 +183,16 @@ NewMembershipController.prototype.submitMembership = function (orderId, details)
 NewMembershipController.prototype.onSubmitSuccess = function (response) {
     var confirmationModal = response['modal'];
 
+    this.$loaderIndicator.hide();
+
     $('body').append(confirmationModal);
     $('.modal').modal('show');
 }
 
 NewMembershipController.prototype.onSubmitError = function (res) {
     var response = res.responseJSON;
+
+    this.$loaderIndicator.hide();
 
     switch (response['status']) {
         case 'validation_errors':
