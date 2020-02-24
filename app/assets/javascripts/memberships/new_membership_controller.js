@@ -13,6 +13,8 @@ function NewMembershipController(options) {
         'shirtPrice': 15
     });
 
+    this.price = this.options.membershipFee;
+
     this.$form = $(this.options.form);
     this.$shirtCheckboxes = $(this.options.shirtCheckboxes);
     this.$disabledShirtFields = $(this.options.shirtSizeField);
@@ -113,6 +115,7 @@ NewMembershipController.prototype.updatePrice = function (shirtCheckedCount) {
     var newPrice = shirtCheckedCount * this.options.shirtPrice + this.options.membershipFee;
 
     this.$totalPrice.html('$' + newPrice);
+    this.price = newPrice;
 }
 
 NewMembershipController.prototype.initPaymentView = function () {
@@ -144,7 +147,7 @@ NewMembershipController.prototype.orderConfigurator = function (data, actions) {
     var config = {
         'purchase_units': [{
             'amount': {
-                'value': this.options.membershipFee
+                'value': this.price
             }
         }]
     };
