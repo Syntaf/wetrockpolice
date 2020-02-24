@@ -7,6 +7,10 @@
         font-family: 'Montserrat', sans-serif;
     }
 
+    i.material-icons {
+        font-family: 'Material Icons';
+    }
+
     &.header {
         height: 400px;
         background-image: asset_url("redrock/signup-header-desktop.jpeg");

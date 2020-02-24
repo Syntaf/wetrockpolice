@@ -49,9 +49,10 @@ NewMembershipController.prototype.validateFormFields = function (event) {
 
     this.removeExistingValidationErrors();
 
-    this.submitValidateForm()
-        .done(this.showPaymentView.bind(this))
-        .fail(this.showValidationErrors.bind(this));
+    this.showPaymentView();
+    // this.submitValidateForm()
+    //     .done(this.showPaymentView.bind(this))
+    //     .fail(this.showValidationErrors.bind(this));
 }
 
 NewMembershipController.prototype.removeExistingValidationErrors = function () {
@@ -154,6 +155,8 @@ NewMembershipController.prototype.orderConfigurator = function (data, actions) {
         }]
     };
 
+    this.$loaderIndicator.show();
+
     return actions.order.create(config);
 }
 
@@ -167,7 +170,6 @@ NewMembershipController.prototype.submitMembership = function (orderId, details)
     this.$orderIdField.val(orderId);
 
     this.enableForm();
-    this.$loaderIndicator.show();
 
     $.ajax({
         'type': 'POST',
