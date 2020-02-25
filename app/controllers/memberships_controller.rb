@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class MembershipsController < ApplicationController
+  respond_to
   before_action :authenticate_user!, only: %i[confirm_cash_payments]
 
   def new
@@ -15,6 +16,7 @@ class MembershipsController < ApplicationController
     )
 
     @submitted_application = JointMembershipApplication.new(membership_params)
+    @submitted_application.pending = true if paid_cash
 
     respond_to do |format|
       unless paid_cash == true || PayPalPayments::OrderValidator.call(order_id)
@@ -27,13 +29,18 @@ class MembershipsController < ApplicationController
       end
 
       if @submitted_application.save(context: :create)
-        MembershipMailer.with(application: @submitted_application).signup_confirmation.deliver_later
+        if @submitted_application.pending == true
+          @partial = 'membership_pending_modal.html.erb'
+        else
+          @partial = 'membership_confirmation_modal.html.erb'
+          MembershipMailer.with(application: @submitted_application).signup_confirmation.deliver_later
+        end
 
         format.json do
           render json: {
             status: :created,
             modal: render_to_string(
-              partial: 'membership_confirmation_modal.html.erb'
+              partial: @partial
             )
           }
         end
@@ -52,9 +59,7 @@ class MembershipsController < ApplicationController
     application = JointMembershipApplication.new(membership_params)
 
     respond_to do |format|
-      if application.valid?
-        format.json { render json: { status: :valid } }
-      end
+      format.json { render json: { status: :valid } } if application.valid?
 
       format.json do
         render json: {
@@ -66,7 +71,7 @@ class MembershipsController < ApplicationController
   end
 
   def confirm_cash_payments
-
+    @pending_memberships = JointMembershipApplication.where(pending: true)
   end
 
   private

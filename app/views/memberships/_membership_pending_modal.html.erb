@@ -1,0 +1,31 @@
+<div class="modal fade membership-signup-complete" tabindex="-1" data-backdrop="static" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">You're all signed up!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= image_tag 'redrock/pending-backdrop.jpeg' %>
+        <p>
+          Please show this screen to the signup desk so they can accept your cash and confirm
+          your membership!
+        </p>
+        <p>
+          Upon confirmation you will receive an email with further information
+        </p>
+        <p>
+          Thanks for your support and enjoy the event!
+        </p>
+        <p><strong>Membership Details (Show Desk):</strong></p>
+        <ul>
+          <li>First Name: <strong><%= @submitted_application.first_name %></strong></li>
+          <li>Last Name: <strong><%= @submitted_application.last_name %></strong></li>
+          <li>Email: <strong><%= @submitted_application.email %></strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
