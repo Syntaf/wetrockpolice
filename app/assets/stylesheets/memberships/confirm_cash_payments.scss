@@ -3,3 +3,7 @@
 .cash-payments-content {
   min-height: calc(100vh - #{$footerHeight});
 }
+
+i {
+  cursor: pointer;
+}
