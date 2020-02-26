@@ -11,7 +11,7 @@
     </div>
     <div style="text-align: center; margin-bottom: 40px;">
       <img src="https://www.wetrockpolice.com/assets/redrock/checkmark.png" style="width: 100px;">
-      <h3 style="font-weight: normal; font-size: 25px; margin-top: 15px; margin-bottom: 10px; font-family: 'Open Sans';">Thank you for your support</h3>
+      <h3 style="font-weight: normal; font-size: 23px; margin-top: 15px; margin-bottom: 10px; font-family: 'Open Sans';">Thank you for your support</h3>
       <p style="font-size: 14px; font-family: 'Open Sans';">Payment Confirmation <%= @application.order_id %></p>
     </div>
     <div>
@@ -39,7 +39,7 @@
         <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';"><%= @application.zipcode %></li>
       </ul>
       <div>
-        <strong style="display: inline-block">Shirts:</strong>
+        <strong style="font-size: 16px; display: inline-block">Shirts:</strong>
         <ul style="padding: 0; list-style: none; display: inline-block; margin: 0; margin-right: 5px;">
             <% if @application.local_shirt == false && @application.access_fund_shirt == false %>
               <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';">None</li>
@@ -54,7 +54,7 @@
         </ul>
       </div>
       <div>
-        <strong style="display: inline-block; margin: 0; margin-right: 5px; margin-top: 5px;">Total: </strong><span>$<%= @application.amount_paid %>.00</span>
+        <strong style="font-size: 16px; display: inline-block; margin: 0; margin-right: 5px; margin-top: 5px;">Total: </strong><span>$<%= @application.amount_paid %>.00</span>
       </div>
     </div>
   </body>
