@@ -80,6 +80,8 @@ class MembershipsController < ApplicationController
 
     respond_to do |format|
       if pending_membership.save
+        MembershipMailer.with(application: pending_application).signup_confirmation.deliver_later
+
         format.json { render json: {status: :updated } }
       end
 
