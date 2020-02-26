@@ -2,16 +2,18 @@
 <html>
   <head>
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
     <%= stylesheet_link_tag 'membership_mailer/signup_confirmation', media: 'all' %>
   </head>
   <body>
-    <div class="header">
+    <div class="logo">
       <%= image_tag 'redrock/sncc_logo' %>
     </div>
-    <div class="banner">
-      <h3>Thank you for your support!</h3>
-      <p><i>Payment Confirmation: <%= @application.order_id %></i></p>
+    <div class="header">
+      <i class="material-icons">check_circle_outline</i>
+      <h3>Thank you for your support</h3>
+      <p>Payment Confirmation <%= @application.order_id %></p>
     </div>
     <div class="thank-you-box">
       <p><%= @application.first_name %>,</p>
@@ -25,8 +27,9 @@
         questions or concerns feel free to reach out to <a href="mailto:snclimberscoalition@gmail.com">snclimberscoalition@gmail.com</a>
       </p>
     </div>
+    <hr class="divider">
     <div class="order-details">
-      <h3>Membership Details</h3>
+      <strong>Membership Details</strong>
       <ul>
         <li><%= @application.first_name %> <%= @application.last_name %> (<%= @application.email %>)</li>
         <li><%= @application.street_line_one %></li>
@@ -36,20 +39,21 @@
         <li><%= @application.city %>, <%= @application.state %></li>
         <li><%= @application.zipcode %></li>
       </ul>
-      <ul>
-        <li>
-          Shirts:
-          <% if @application.local_shirt == true %>
-            SNCC T-Shirt
-          <% end %>
-          <% if @application.access_fund_shirt == true %>
+      <div>
+        <strong class="shirts">Shirts:</strong>
+        <ul class="shirt-list">
             <% if @application.local_shirt == true %>
-              ,
+              <li>SNCC T-Shirt</li>
             <% end %>
-            Access Fund T-Shirt
-          <% end %>
-        </li>
-      </ul>
+            <% if @application.access_fund_shirt == true %>
+              <li><%= @application.local_shirt == true ? ', ' : '' %>Access Fund T-Shirt</li>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <strong class="total">Total: </strong><span><%= @application.amount_paid %></span>
+      </div>
     </div>
   </body>
 </html>
