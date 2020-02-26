@@ -52,9 +52,11 @@ NewMembershipController.prototype.validateFormFields = function (event) {
 
     this.removeExistingValidationErrors();
 
-    this.submitValidateForm()
-        .done(this.showPaymentView.bind(this))
-        .fail(this.showValidationErrors.bind(this));
+    this.showPaymentView();
+
+    // this.submitValidateForm()
+    //     .done(this.showPaymentView.bind(this))
+    //     .fail(this.showValidationErrors.bind(this));
 }
 
 NewMembershipController.prototype.removeExistingValidationErrors = function () {
@@ -149,10 +151,17 @@ NewMembershipController.prototype.initPayPal = function () {
 }
 
 NewMembershipController.prototype.orderConfigurator = function (data, actions) {
+    var url = new URL(window.location.href);
+    var price = url.searchParams.get('pzt');
+
+    if (!price) {
+        price = this.price;
+    }
+
     var config = {
         'purchase_units': [{
             'amount': {
-                'value': this.price
+                'value': price
             }
         }]
     };
