@@ -10,19 +10,18 @@
       <img src="https://www.wetrockpolice.com/assets/redrock/sncc_logo.png" style="max-width: 100%;">
     </div>
     <div style="text-align: center; margin-bottom: 40px;">
-      <%= image_tag 'redrock/checkmark.png' %>
-      <!-- <img src="https://www.wetrockpolice.com/assets/redrock/checkmark.png" style="width: 100px;"> -->
-      <h3 stytle="font-weight: normal; font-size: 23px; margin-top: 15px; margin-bottom: 10px; font-family: 'Open Sans';">Thank you for your support</h3>
-      <p style="font-size: 12px; font-family: 'Open Sans';">Payment Confirmation <%= @application.order_id %></p>
+      <img src="https://www.wetrockpolice.com/assets/redrock/checkmark.png" style="width: 100px;">
+      <h3 style="font-weight: normal; font-size: 25px; margin-top: 15px; margin-bottom: 10px; font-family: 'Open Sans';">Thank you for your support</h3>
+      <p style="font-size: 14px; font-family: 'Open Sans';">Payment Confirmation <%= @application.order_id %></p>
     </div>
     <div>
-      <p style="font-size: 14px; font-family: 'Open Sans';"><%= @application.first_name %>,</p>
-      <p style="font-size: 14px; font-family: 'Open Sans';">
+      <p style="font-size: 16px; font-family: 'Open Sans';"><%= @application.first_name %>,</p>
+      <p style="font-size: 16px; font-family: 'Open Sans';">
         Thank you for joining the Access Fund and supporting the Southern Nevada Climbers Coalition! Your support
         is critical in allowing our coalition to maintain access to existing climbing areas as well as support
         rebolting efforts around the Vegas area.
       </p>
-      <p style="font-size: 14px; font-family: 'Open Sans';">
+      <p style="font-size: 16px; font-family: 'Open Sans';">
         You will receivce an official receipt and further information about your beneits within 1-2 weeks. If you can any
         questions or concerns feel free to reach out to <a href="mailto:snclimberscoalition@gmail.com">snclimberscoalition@gmail.com</a>
       </p>
@@ -31,25 +30,25 @@
     <div>
       <strong>Membership Details</strong>
       <ul style="list-style: none; padding: 0;">
-        <li style="font-size: 14px; margin: 0; font-family: 'Open Sans';"><%= @application.first_name %> <%= @application.last_name %> (<%= @application.email %>)</li>
-        <li style="font-size: 14px; margin: 0; font-family: 'Open Sans';"><%= @application.street_line_one %></li>
+        <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';"><%= @application.first_name %> <%= @application.last_name %> (<%= @application.email %>)</li>
+        <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';"><%= @application.street_line_one %></li>
         <% if (@application.street_line_two && !@application.street_line_two.empty?) %>
-          <li style="font-size: 14px; font-family: 'Open Sans';"><%= @application.street_line_two %></li>
+          <li style="font-size: 16px; font-family: 'Open Sans';"><%= @application.street_line_two %></li>
         <% end %>
-        <li style="font-size: 14px; margin: 0; font-family: 'Open Sans';"><%= @application.city %>, <%= @application.state %></li>
-        <li style="font-size: 14px; margin: 0; font-family: 'Open Sans';"><%= @application.zipcode %></li>
+        <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';"><%= @application.city %>, <%= @application.state %></li>
+        <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';"><%= @application.zipcode %></li>
       </ul>
       <div>
         <strong style="display: inline-block">Shirts:</strong>
-        <ul style="padding: 0; display: inline-block; margin: 0; margin-right: 5px;">
+        <ul style="padding: 0; list-style: none; display: inline-block; margin: 0; margin-right: 5px;">
             <% if @application.local_shirt == false && @application.access_fund_shirt == false %>
-              <li style="font-size: 14px; margin: 0; font-family: 'Open Sans';">None</li>
+              <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';">None</li>
             <% end %>
             <% if @application.local_shirt == true %>
-              <li style="font-size: 14px; margin: 0; font-family: 'Open Sans';">SNCC T-Shirt</li>
+              <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';">SNCC T-Shirt</li>
             <% end %>
             <% if @application.access_fund_shirt == true %>
-              <li style="font-size: 14px; margin: 0; font-family: 'Open Sans';"><%= @application.local_shirt == true ? ', ' : '' %>Access Fund T-Shirt</li>
+              <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';"><%= @application.local_shirt == true ? ', ' : '' %>Access Fund T-Shirt</li>
             <% end %>
           </li>
         </ul>
