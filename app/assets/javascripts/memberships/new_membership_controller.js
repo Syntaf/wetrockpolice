@@ -7,6 +7,7 @@ function NewMembershipController(options) {
         'shirtCheckboxes': '[data-role="shirtCheckbox"]',
         'shirtSizeField': 'select',
         'paidCashField': 'input[data-role="paidCashField"]',
+        'amountPaidField': 'input[data-role="amountPaidField"]',
         'priceLabel': 'strong[data-role="price"]',
         'paymentView': '[data-page="2"]',
         'editAgainButton': '[data-role="editAgain"]',
@@ -23,6 +24,7 @@ function NewMembershipController(options) {
     this.$disabledShirtFields = $(this.options.shirtSizeField);
     this.$orderIdField = $(this.options.orderIdField);
     this.$paidCashField = $(this.options.paidCashField);
+    this.$amountPaidfield = $(this.options.amountPaidField);
     this.$payCashButton = $(this.options.cashButton);
     this.$totalPrice = $(this.options.priceLabel);
     this.$paymentView = $(this.options.paymentView);
@@ -167,11 +169,13 @@ NewMembershipController.prototype.onApproval = function (data, actions) {
 }
 
 NewMembershipController.prototype.submitMembership = function (orderId, details) {
+    this.enableForm();
+
     if (orderId) {
         this.$orderIdField.val(orderId);
     }
 
-    this.enableForm();
+    this.$amountPaidfield.val(this.price);
 
     $.ajax({
         'type': 'POST',

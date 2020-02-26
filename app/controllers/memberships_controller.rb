@@ -109,6 +109,7 @@ class MembershipsController < ApplicationController
       :last_name,
       :order_id,
       :organization,
+      :amount_paid,
       :email,
       :phone_number,
       :street_line_one,
