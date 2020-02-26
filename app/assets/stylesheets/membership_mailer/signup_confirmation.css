@@ -1,63 +1,80 @@
-.logo {
+.email-body {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.email-body p,
+.email-body h3,
+.email-body strong,
+.email-body li,
+.email-body span {
+  font-family: 'Open Sans';
+}
+
+.email-body span {
+  font-size: 12px;
+}
+
+.email-body .logo {
   width: 80px;
   margin-bottom: 40px;
 }
 
-.logo img {
+.email-body .logo img {
   max-width: 100%;
 }
 
-.header {
+.email-body .header {
   text-align: center;
   margin-bottom: 40px;
 }
 
-.header i {
+.email-body .header i {
   font-size: 100px;
   color: green;
 }
 
-.header h3 {
+.email-body .header h3 {
   font-weight: normal;
   font-size: 23px;
   margin-top: 15px;
   margin-bottom: 10px;
 }
 
-.header p {
+.email-body .header p {
   font-size: 12px;
 }
 
-.banner p {
+.email-body .banner p {
   font-size: 12px;
 }
 
-.thank-you-box p {
+.email-body .thank-you-box p {
   font-size: 14px;
 }
 
-.order-details ul {
+.email-body .order-details ul {
   list-style: none;
   padding: 0;
 }
 
-.order-details li {
+.email-body .order-details li {
   list-style: none;
   font-size: 14px;
 }
 
-.order-details .shirts {
+.email-body .order-details .shirts {
   display: inline-block;
 }
 
-.order-details .shirt-list {
+.email-body .order-details .shirt-list {
   padding: 0;
   display: inline-block;
   margin: 0;
   margin-right: 5px;
 }
 
-.order-details .total {
+.email-body .order-details .total {
   display: inline-block;
   margin: 0;
   margin-right: 5px;
