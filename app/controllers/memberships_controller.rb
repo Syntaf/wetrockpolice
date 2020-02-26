@@ -71,7 +71,7 @@ class MembershipsController < ApplicationController
   end
 
   def pending_cash_payments
-    @pending_memberships = JointMembershipApplication.where(pending: true)
+    @pending_memberships = JointMembershipApplication.where(pending: true).order(:first_name)
   end
 
   def confirm_cash_payments
