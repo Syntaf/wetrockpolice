@@ -218,6 +218,7 @@ NewMembershipController.prototype.initCashPayments = function () {
 
 NewMembershipController.prototype.submitMembershipWithCash = function () {
     this.$paidCashField.val('true');
+    this.$loaderIndicator.show();
     this.submitMembership();
 }
 
