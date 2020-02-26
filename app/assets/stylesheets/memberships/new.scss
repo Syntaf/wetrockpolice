@@ -135,8 +135,12 @@
             }
 
             .cash-button {
-                width: 100%;
+                width: 60%;
                 margin-top: 25px;
+
+                @media (max-width: 820px) {
+                    width: 100%;
+                }
             }
         }
 
