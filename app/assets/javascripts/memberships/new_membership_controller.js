@@ -39,10 +39,6 @@ function NewMembershipController(options) {
     this.initPaymentView();
     this.initPayPal();
     this.initCashPayments();
-
-    $('.order-note').click(function () {
-        this.submitMembership('1234fFFF');
-    }.bind(this));
 }
 
 NewMembershipController.prototype.initValidationListener = function () {
@@ -54,7 +50,6 @@ NewMembershipController.prototype.validateFormFields = function (event) {
 
     this.removeExistingValidationErrors();
 
-    //this.showPaymentView();
     this.submitValidateForm()
         .done(this.showPaymentView.bind(this))
         .fail(this.showValidationErrors.bind(this));
