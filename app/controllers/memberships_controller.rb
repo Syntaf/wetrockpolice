@@ -70,8 +70,33 @@ class MembershipsController < ApplicationController
     end
   end
 
-  def confirm_cash_payments
+  def pending_cash_payments
     @pending_memberships = JointMembershipApplication.where(pending: true)
+  end
+
+  def confirm_cash_payments
+    pending_membership = JointMembershipApplication.find(params[:id])
+    pending_membership.pending = false
+
+    respond_to do |format|
+      if pending_membership.save
+        format.json { render json: {status: :updated } }
+      end
+
+      format.json { render json: { status: :unhandled_error, errors: pending_membership.errors } }
+    end
+  end
+
+  def deny_cash_payments
+    pending_membership = JointMembershipApplication.find(params[:id])
+
+    respond_to do |format|
+      if pending_membership.delete
+        format.json { render json: {status: :updated } }
+      end
+
+      format.json { render json: { status: :unhandled_error, errors: pending_membership.errors } }
+    end
   end
 
   private
