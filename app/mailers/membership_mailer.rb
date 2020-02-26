@@ -2,7 +2,6 @@
 
 class MembershipMailer < ApplicationMailer
   include Roadie::Rails::Automatic
-  self.asset_host = nil
 
   default from: 'Southern Nevada Climbers Coalition <admin@wetrockpolice.com>'
 
