@@ -52,11 +52,9 @@ NewMembershipController.prototype.validateFormFields = function (event) {
 
     this.removeExistingValidationErrors();
 
-    this.showPaymentView();
-
-    // this.submitValidateForm()
-    //     .done(this.showPaymentView.bind(this))
-    //     .fail(this.showValidationErrors.bind(this));
+    this.submitValidateForm()
+        .done(this.showPaymentView.bind(this))
+        .fail(this.showValidationErrors.bind(this));
 }
 
 NewMembershipController.prototype.removeExistingValidationErrors = function () {
