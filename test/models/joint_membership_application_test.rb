@@ -3,12 +3,6 @@
 require 'test_helper'
 
 class JointMembershipApplicationTest < ActiveSupport::TestCase
-  test 'Missing required info' do
-    assert_raises ActiveRecord::RecordInvalid do
-      JointMembershipApplication.create!({})
-    end
-  end
-
   test 'Telephone number formatted' do
     app = joint_membership_applications(:valid_application)
 
@@ -51,14 +45,17 @@ class JointMembershipApplicationTest < ActiveSupport::TestCase
     assert_raises ActiveRecord::RecordInvalid do
       app.order_id = nil
       app.paid_cash = false
-      app.save!(context: :create)
+      app.save!
     end
   end
 
   test 'Allows nil order_id for validation' do
     app = joint_membership_applications(:valid_application)
+    app.order_id = nil
+    app.paid_cash = false
+    app.prevalidate = true
 
-    app.save!
+    assert app.valid?
   end
 
   test 'Can have no order_id with cash payment' do

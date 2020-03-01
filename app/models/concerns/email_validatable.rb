@@ -7,7 +7,7 @@ module EmailValidatable
 
   class EmailValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)
-      return if value.match?(Devise.email_regexp) == true
+      return if value.match?(Devise.email_regexp) || value.nil?
 
       record.errors[attribute] << (options[:message] || 'is not an email')
     end

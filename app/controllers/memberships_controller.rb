@@ -27,20 +27,21 @@ class MembershipsController < ApplicationController
     )
   rescue ActiveRecord::RecordInvalid
     respond_json(
-      status: :validation_errors,
+      status: :bad_request,
       errors: @membership.errors
     )
   end
 
   def validate
     application = JointMembershipApplication.new(membership_params)
+    application.prevalidate = true
 
     respond_to do |format|
       format.json { render json: { status: :valid } } if application.valid?
 
       format.json do
         render json: {
-          status: :validation_errors,
+          status: :bad_request,
           errors: application.errors
         }, status: 400
       end
@@ -91,7 +92,7 @@ class MembershipsController < ApplicationController
     return if paid_cash? || PayPalPayments::OrderValidator.call(order_id)
 
     respond_json(
-      status: :unhandled_error,
+      status: :payment_required,
       message: 'Invalid order ID Supplied'
     )
   end
@@ -107,7 +108,7 @@ class MembershipsController < ApplicationController
 
     render(
       json: content,
-      status: STATUS_CODE_REMAPPED[status] || status
+      status: status
     )
   end
 
