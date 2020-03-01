@@ -3,11 +3,13 @@
 class JointMembershipApplication < ApplicationRecord
   include EmailValidatable
 
+  attr_accessor :prevalidate
+
   before_validation :strip_phone_number
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :email, presence: true, email: true, if: :email_present?
+  validates :email, presence: true, email: true
   validates :phone_number, numericality: true, allow_nil: true
 
   validates :organization, presence: true
@@ -16,8 +18,11 @@ class JointMembershipApplication < ApplicationRecord
   validates :city, presence: true
   validates :state, presence: true
   validates :zipcode, numericality: true, length: { is: 5 }
-  validates :order_id, presence: true, if: :paid_with_card?, on: :prevalidated
   validates :shirt_size, presence: true, if: :selected_shirt?
+  validates :order_id,
+            presence: true,
+            if: :paid_with_card?,
+            unless: :prevalidating?
 
   def paid_with_card?
     paid_cash == false
@@ -29,13 +34,13 @@ class JointMembershipApplication < ApplicationRecord
 
   private
 
+  def prevalidating?
+    prevalidate || false
+  end
+
   def strip_phone_number
     return if phone_number.nil?
 
     self.phone_number = phone_number.tr('^0-9', '')
-  end
-
-  def email_present?
-    email.present?
   end
 end
