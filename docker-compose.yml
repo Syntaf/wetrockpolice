@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/psql_password
+      - POSTGRES_DB_FILE=/run/secrets/psql_db
+    secrets:
+      - psql_password
+      - psql_db
+    volumes:
+      - postgres_database:/var/lib/postgresql/data:Z
+
+  web:
+    build: .
+    image: syntaf/wetrockpolice
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/psql_password
+      - PORT=3001
+    secrets:
+      - psql_password
+    volumes:
+      - .:/opt/wetrockpolice
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+
+volumes:
+  postgres_database:
+    external: true
+
+secrets:
+  psql_password:
+    file: ./dev-secrets/psql_password.txt
+  psql_db:
+    file: ./dev-secrets/psql_db.txt
