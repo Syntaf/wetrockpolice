@@ -7,7 +7,7 @@ class JointMembershipApplication < ApplicationRecord
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :email, email: true
+  validates :email, presence: true, email: true, if: :email_present?
   validates :phone_number, numericality: true, allow_nil: true
 
   validates :organization, presence: true
@@ -33,5 +33,9 @@ class JointMembershipApplication < ApplicationRecord
     return if phone_number.nil?
 
     self.phone_number = phone_number.tr('^0-9', '')
+  end
+
+  def email_present?
+    email.present?
   end
 end
