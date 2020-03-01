@@ -2,6 +2,7 @@
 
 class MembershipsController < ApplicationController
   respond_to
+  before_action :verify_order_id, only: %i[create]
   before_action :authenticate_user!, only: %i[confirm_cash_payments]
 
   def new
@@ -10,49 +11,26 @@ class MembershipsController < ApplicationController
   end
 
   def create
-    order_id = params[:joint_membership_application][:order_id]
-    paid_cash = ActiveRecord::Type::Boolean.new.cast(
-      params[:joint_membership_application][:paid_cash]
-    )
+    @membership = JointMembershipApplication.new(membership_params)
+    @membership.pending = true if paid_cash?
 
-    @submitted_application = JointMembershipApplication.new(membership_params)
-    @submitted_application.pending = true if paid_cash
+    @membership.save!(context: :create)
 
-    respond_to do |format|
-      unless paid_cash == true || PayPalPayments::OrderValidator.call(order_id)
-        format.json do
-          render json: {
-            status: :unhandled_error,
-            message: 'Think you\'re sneaky eh?'
-          }, status: 400
-        end
-      end
-
-      if @submitted_application.save(context: :create)
-        if @submitted_application.pending == true
-          @partial = 'membership_pending_modal.html.erb'
-        else
-          @partial = 'membership_confirmation_modal.html.erb'
-          MembershipMailer.with(application: @submitted_application).signup_confirmation.deliver_later
-        end
-
-        format.json do
-          render json: {
-            status: :created,
-            modal: render_to_string(
-              partial: @partial
-            )
-          }
-        end
-      else
-        format.json do
-          render json: {
-            status: :validation_errors,
-            errors: @submitted_application.errors
-          }, status: 400
-        end
-      end
+    unless @membership.pending
+      MembershipMailer.with(membership: @membership).signup.deliver_later
     end
+
+    respond_json(
+      status: :created,
+      modal: render_to_string(
+        partial: signup_partial(@membership)
+      )
+    )
+  rescue ActiveRecord::RecordInvalid
+    respond_json(
+      status: :validation_errors,
+      errors: @membership.errors
+    )
   end
 
   def validate
@@ -102,6 +80,37 @@ class MembershipsController < ApplicationController
   end
 
   private
+
+  def signup_partial(membership)
+    'membership_confirmation_modal.html.erb' if membership.pending
+    'membership_pending_modal.html.erb'
+  end
+
+  def verify_order_id
+    order_id = params[:joint_membership_application][:order_id]
+
+    return if paid_cash? || PayPalPayments::OrderValidator.call(order_id)
+
+    respond_json(
+      status: :unhandled_error,
+      message: 'Invalid order ID Supplied'
+    )
+  end
+
+  def paid_cash?
+    ActiveRecord::Type::Boolean.new.cast(
+      params[:joint_membership_application][:paid_cash]
+    )
+  end
+
+  def respond_json(content)
+    status = content[:status]
+
+    render(
+      json: content,
+      status: STATUS_CODE_REMAPPED[status] || status
+    )
+  end
 
   def membership_params
     params.require(:joint_membership_application).permit(
