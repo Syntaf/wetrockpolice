@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class MembershipsController < ApplicationController
-  respond_to
   before_action :verify_order_id, only: %i[create]
   before_action :authenticate_user!, only: %i[confirm_cash_payments]
 
