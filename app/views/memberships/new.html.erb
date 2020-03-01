@@ -152,5 +152,20 @@
   </div>
 
 <script>
-  new NewMembershipController();
+  var membershipController = new NewMembershipController();
+
+  <% if Rails.env.development? %>
+    membershipController.$form.find('input[name="joint_membership_application[first_name]"]').val('John');
+    membershipController.$form.find('input[name="joint_membership_application[last_name]"]').val('Doe');
+    membershipController.$form.find('input[name="joint_membership_application[email]"]').val('JohnDoe@email.com');
+    membershipController.$form.find('input[name="joint_membership_application[phone_number]"]').val('(123) 456-7891');
+    membershipController.$form.find('input[name="joint_membership_application[street_line_one]"]').val('123 Lane Street');
+    membershipController.$form.find('input[name="joint_membership_application[street_line_two]"]').val('Suite 100');
+    membershipController.$form.find('input[name="joint_membership_application[zipcode]"]').val('12345');
+    membershipController.$form.find('input[name="joint_membership_application[city]"]').val('Cityville');
+    membershipController.$form.find('input[name="joint_membership_application[state]"]').val('California');
+    membershipController.$form.find('input[name="joint_membership_application[access_fund_shirt]"]').attr('checked', true);
+    membershipController.$form.find('select[name="joint_membership_application[shirt_size]"]').prop('disabled', false);
+    membershipController.$form.find('select[name="joint_membership_application[shirt_size]"]').val('ML');
+  <% end %>
 </script>
