@@ -24,6 +24,7 @@ module SnccApplication
         city: app.city,
         state: app.state,
         zipcode: app.zipcode,
+        amount_paid: app.amount_paid,
         organization: app.organization,
         shirt_size: app.shirt_size,
         order_id: app.order_id,

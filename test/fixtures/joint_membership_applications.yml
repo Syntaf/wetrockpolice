@@ -14,6 +14,7 @@ valid_application:
   city: 'City'
   state: 'State'
   zipcode: '12345'
+  amount_paid: '34'
   organization: 'Organization'
   amount_paid: '35'
   shirt_size: 'ML'
