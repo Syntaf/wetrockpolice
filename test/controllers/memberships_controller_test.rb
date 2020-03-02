@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'json'
 
 class MembershipsControllerTest < ActionDispatch::IntegrationTest
   include SnccApplication
 
-  VALID_ORDER_ID = '1234FFF'.freeze
-  INVALID_ORDER_ID = 'FFF321'.freeze
+  VALID_ORDER_ID = '1234FFF'
+  INVALID_ORDER_ID = 'FFF321'
 
   setup do
     stub_request(
@@ -32,43 +34,47 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     )
   end
 
-  test 'valid_order_submitted' do
+  test 'Accepts card payment' do
     submit_sncc_application(joint_membership_applications(:valid_application))
 
-    assert_response :redirect
-    assert flash[:membership_successful]
+    assert_response :created
   end
 
-  test 'invalid_order_submitted' do
+  test 'Rejects invalid card payment' do
     app = joint_membership_applications(:valid_application)
     app.order_id = INVALID_ORDER_ID
 
     submit_sncc_application(app)
 
-    assert_response :redirect
-    assert_nil flash[:membership_successful]
-    assert flash[:invalid_order]
+    assert_response :payment_required
   end
 
-  test 'valid_cash_payment' do
+  test 'Accepts cash payment' do
     app = joint_membership_applications(:valid_application)
     app.order_id = nil
     app.paid_cash = true
 
     submit_sncc_application(app)
 
-    assert_response :redirect
-    assert flash[:membership_successful]
+    assert_response :created
   end
 
-  test 'invalid_card_payment' do
+  test 'Rejects empty order_id' do
     app = joint_membership_applications(:valid_application)
     app.order_id = nil
     app.paid_cash = false
 
     submit_sncc_application(app)
 
-    assert_response :redirect
-    assert flash[:invalid_order]
+    assert_response :payment_required
+  end
+
+  test 'Fails validation' do
+    app = joint_membership_applications(:valid_application)
+    app.first_name = nil
+
+    submit_sncc_application(app)
+
+    assert_response :bad_request
   end
 end
