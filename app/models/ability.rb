@@ -4,35 +4,38 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+    return unless user&.admin?
 
-    if user && user.admin?
-      can :access, :rails_admin
-      can :read, :dashboard
+    can :access, :rails_admin
+    can :read, :dashboard
 
-      # Only allow admins to view watched areas (Red Rock / Castle Rock)
-      can :read, WatchedArea, WatchedArea.where(:id => user.manages) do |watched_area|
-        watched_area.present?
-      end
+    # Only allow admins to view watched areas (Red Rock / Castle Rock)
+    can :read,
+        WatchedArea,
+        WatchedArea.where(:id => user.manages),
+        &:present?
 
-      # Allow Admins to manage models related to the watched areas they manage
-      can :manage, RainyDayArea, RainyDayArea.where(:watched_area => user.manages) do |area|
-        area.present?
-      end
+    # Allow Admins to manage models related to the watched areas they belong
+    can :manage,
+        RainyDayArea,
+        RainyDayArea.where(:watched_area => user.manages),
+        &:present?
 
-      can :manage, ClimbingArea, ClimbingArea.joins(:watched_areas).where(:watched_areas => { :id => user.manages }) do |climbing_area|
-        climbing_area.present?
-      end
+    can :manage,
+        ClimbingArea,
+        ClimbingArea.joins(:watched_areas)
+                    .where(:watched_areas => {id: user.manages }),
+        &:present?
 
-      can :manage, Location, Location.joins(:watched_areas).where(:watched_areas => { :id => user.manages }) do |location|
-        location.present?
-      end
+    can :manage,
+        Location,
+        Location.joins(:watched_areas)
+                .where(:watched_areas => { id: user.manages }),
+        &:present?
 
-      can :manage, JointMembershipApplication
+    can :manage, JointMembershipApplication
 
-      # Give super admins (me) full access to everything
-      if user.super_admin?
-        can :manage, :all
-      end
-    end
+    # Give super admins (me) full access to everything
+    can :manage, :all if user.super_admin?
   end
 end
