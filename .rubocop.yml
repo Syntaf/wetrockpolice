@@ -2,6 +2,8 @@ AllCops:
   Exclude:
     - "db/**/*.rb"
     - "config/environments/*.rb"
+  TargetRubyVersion: 2.5
+
 Style/Documentation:
   Enabled: false
 
