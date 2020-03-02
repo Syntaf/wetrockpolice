@@ -12,6 +12,16 @@ class JointMembershipApplicationTest < ActiveSupport::TestCase
     assert_equal '1110002345', app.phone_number
   end
 
+  test 'Rejects invalid email' do
+    app = joint_membership_applications(:valid_application)
+
+    app.email = 'abcd'
+
+    assert_raises ActiveRecord::RecordInvalid do
+      app.save!
+    end
+  end
+
   test 'Accepts empty telephone number' do
     app = joint_membership_applications(:valid_application)
 
@@ -39,7 +49,7 @@ class JointMembershipApplicationTest < ActiveSupport::TestCase
     end
   end
 
-  test 'Requires order_id for card payments on create' do
+  test 'Requires order_id for card payments on save' do
     app = joint_membership_applications(:valid_application)
 
     assert_raises ActiveRecord::RecordInvalid do
@@ -58,11 +68,11 @@ class JointMembershipApplicationTest < ActiveSupport::TestCase
     assert app.valid?
   end
 
-  test 'Can have no order_id with cash payment' do
+  test 'Accepts nil order_id on cash payment' do
     app = joint_membership_applications(:valid_application)
 
     app.order_id = nil
     app.paid_cash = true
-    app.save!(context: :create)
+    app.save!
   end
 end
