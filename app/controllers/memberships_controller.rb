@@ -82,7 +82,8 @@ class MembershipsController < ApplicationController
   private
 
   def signup_partial(membership)
-    'membership_confirmation_modal.html.erb' if membership.pending
+    return 'membership_confirmation_modal.html.erb' unless membership.pending
+
     'membership_pending_modal.html.erb'
   end
 
