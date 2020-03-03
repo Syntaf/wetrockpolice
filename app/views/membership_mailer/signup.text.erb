@@ -1,0 +1,22 @@
+Thank you for your support!
+=========================================
+
+<%= @membership.first_name %>,
+
+Thank you for joining the Access Fund and supporting the Southern Nevada Climbers Coalition! Your support
+is critical in allowing our coalition to maintain access to existing climbing areas as well as support
+rebolting efforts around the Vegas area.
+
+You will receivce an official receipt and further information about your beneits within 1-2 weeks. If you can any
+questions or concerns feel free to reach out to snclimberscoalition@gmail.com
+
+----------Membership-Details-------------
+
+<%= @membership.first_name %> <%= @membership.last_name %>
+<%= @membership.street_line_one %>
+<% if @membership.street_line_two %>
+    <%= @membership.street_line_two %>
+<% end %>
+<%= @membership.city %>, <%= @membership.state %>
+<%= @membership.zipcode %>
+Shirts: <% if !@membership.local_shirt && !@membership.access_fund_shirt %>None<% else %><%= @membership.local_shirt ? 'SNCC T-Shirt ' : '' %><%= @membership.access_fund_shirt ? 'Access Fund Shirt' : '' %><% end %>
