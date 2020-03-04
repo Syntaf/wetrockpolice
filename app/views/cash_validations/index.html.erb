@@ -1,0 +1,59 @@
+<div class="cash-payments-content">
+  <h1>Pending Cash Payments</h1>
+  <table class="table">
+    <tr>
+      <th scope="col">First Name</th>
+      <th scope="col">Last name</th>
+      <th scope="col">Email </th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+    <% @pending_payments.each do |membership| %>
+      <tr>
+        <td><%= membership.first_name %></td>
+        <td><%= membership.last_name %></td>
+        <td><%= membership.email %></td>
+        <td><i data-role="confirm" data-id="<%= membership.id %>" class="material-icons">done</i></td>
+        <td><i data-role="deny" data-id="<%= membership.id %>" class="material-icons">close</i></td>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+<script>
+$.ajaxSetup({
+  'headers': { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') }
+});
+
+$('[data-role="confirm"]').click(function (event) {
+  var $element = $(event.target);
+  var membershipId = $element.data('id');
+
+  $.ajax({
+    'type': 'PATCH',
+    'url': '/cash/' + membershipId,
+    'success': function (data) {
+      $element.closest('tr').remove();
+    },
+    'errors': function (error) {
+      console.error(error);
+    }
+  });
+});
+
+$('[data-role="deny"]').click(function () {
+  var $element = $(event.target);
+  var membershipId = $element.data('id');
+
+  $.ajax({
+    'type': 'DELETE',
+    'url': '/cash/' + membershipId,
+    'success': function (data) {
+      $element.closest('tr').remove();
+    },
+    'errors': function (error) {
+      console.error(error);
+    }
+  });;
+});
+</script>

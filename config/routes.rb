@@ -21,8 +21,9 @@ Rails.application.routes.draw do
     get '/rainy-day-options', to: '/castlerock#rainy_day_options'
     get '/climbing_area', to: '/castlerock#climbing_area'
   end
-
-  resources :memberships, only: %i[destroy]
+  
+  resources :cash, controller: 'cash_validations', only: %i( index update destroy )
+  resources :memberships, only: %i( destroy )
 
   root :to => redirect('redrock')
 end
