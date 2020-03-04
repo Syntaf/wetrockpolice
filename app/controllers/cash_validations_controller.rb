@@ -3,6 +3,7 @@
 class CashValidationsController < ApplicationController
   respond_to :html, only: %i[index]
   respond_to :json, except: %i[index]
+  before_action :authenticate_user!
 
   def index
     @pending_payments = JointMembershipApplication.where(pending: true)
