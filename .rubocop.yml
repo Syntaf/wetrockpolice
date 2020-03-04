@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - "db/**/*.rb"
+    - "config/**/*.rb"
     - "config/environments/*.rb"
   TargetRubyVersion: 2.5
 
