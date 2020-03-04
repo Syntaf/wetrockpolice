@@ -1,6 +1,7 @@
 RailsAdmin.config do |config|
 
   ### Popular gems integration
+  config.main_app_name = Proc.new{|controller| [ 'Wetrockpolice', "Admin - #{controller.params[:action].try(:titleize)}"]}
 
   ## == Devise ==
   config.authenticate_with do
