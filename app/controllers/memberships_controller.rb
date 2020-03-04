@@ -36,47 +36,16 @@ class MembershipsController < ApplicationController
     application = JointMembershipApplication.new(membership_params)
     application.prevalidate = true
 
-    respond_to do |format|
-      format.json { render json: { status: :valid } } if application.valid?
-
-      format.json do
-        render json: {
-          status: :bad_request,
-          errors: application.errors
-        }, status: 400
-      end
+    unless application.valid?
+      respond_json(
+        status: :bad_request,
+        errors: membership.errors
+      )
     end
-  end
 
-  def pending_cash_payments
-    @pending_memberships = JointMembershipApplication.where(pending: true).order(:first_name)
-  end
-
-  def confirm_cash_payments
-    pending_membership = JointMembershipApplication.find(params[:id])
-    pending_membership.pending = false
-
-    respond_to do |format|
-      if pending_membership.save
-        MembershipMailer.with(application: pending_membership).signup_confirmation.deliver_later
-
-        format.json { render json: {status: :updated } }
-      end
-
-      format.json { render json: { status: :unhandled_error, errors: pending_membership.errors } }
-    end
-  end
-
-  def deny_cash_payments
-    pending_membership = JointMembershipApplication.find(params[:id])
-
-    respond_to do |format|
-      if pending_membership.delete
-        format.json { render json: {status: :updated } }
-      end
-
-      format.json { render json: { status: :unhandled_error, errors: pending_membership.errors } }
-    end
+    respond_json(
+      status: :ok
+    )
   end
 
   private
