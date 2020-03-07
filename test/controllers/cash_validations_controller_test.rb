@@ -27,4 +27,16 @@ class CashValidationsControllerTest < ActionDispatch::IntegrationTest
     updated_membership = JointMembershipApplication.find(pending_application.id)
     assert_not updated_membership.pending
   end
+
+  test 'deny cash paid' do
+    sign_in users(:super_admin)
+
+    pending_application = joint_membership_applications(:pending_application)
+    delete cash_url pending_application
+    assert_response :success
+
+    assert_raises ActiveRecord::RecordNotFound do
+      JointMembershipApplication.find(pending_application.id)
+    end
+  end
 end
