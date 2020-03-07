@@ -4,18 +4,16 @@ require 'test_helper'
 
 class CashValidationsControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
-  include Warden::Test::Helpers
-
-  # setup do
-  #   get '/users/sign_in'
-    
-  #   post user_session_url
-  # end
 
   test 'should get index' do
-    login_as(FactoryBot.create(:user), :scope => :user)
+    sign_in users(:super_admin)
     get cash_index_url
     assert_response :success
+  end
+
+  test 'should redirect to login' do
+    get cash_index_url
+    assert_response :redirect
   end
 
   # test 'validate cash paid' do
