@@ -7,6 +7,7 @@ class CashValidationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should get index' do
     sign_in users(:super_admin)
+
     get cash_index_url
     assert_response :success
   end
@@ -16,13 +17,14 @@ class CashValidationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
-  # test 'validate cash paid' do
-  #   patch cash_url(1)
-  #   assert_response :success
-  # end
+  test 'confirm cash paid' do
+    sign_in users(:super_admin)
 
-  # test 'remove membership application' do
-  #   delete cash_url
-  #   assert_response :success
-  # end
+    pending_application = joint_membership_applications(:pending_application)
+    patch cash_url pending_application
+    assert_response :success
+
+    updated_membership = JointMembershipApplication.find(pending_application.id)
+    assert_not updated_membership.pending
+  end
 end
