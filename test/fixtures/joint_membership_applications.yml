@@ -14,7 +14,6 @@ valid_application:
   city: 'City'
   state: 'State'
   zipcode: '12345'
-  amount_paid: '34'
   organization: 'Organization'
   amount_paid: '35'
   shirt_size: 'ML'
@@ -23,5 +22,16 @@ valid_application:
   access_fund_shirt: true
   paid_cash: false
 
-two: {}
-# column: value
+pending_application:
+  first_name: 'Jane'
+  last_name: 'Smith'
+  email: 'janesmith@gmail.com'
+  phone_number: '(405) 232 7856'
+  street_line_one: '321 Avenue Rd'
+  city: 'Newberg'
+  state: 'Maryland'
+  zipcode: '99999'
+  amount_paid: '50'
+  organization: 'Org'
+  paid_cash: true
+  pending: true
