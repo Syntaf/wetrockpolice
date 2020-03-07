@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/ClassAndModuleChildren, Style/ExpandPathArguments
+
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'webmock/minitest'
 
 class ActiveSupport::TestCase
-  include FactoryBot::Syntax::Methods
   fixtures :all
 end
 
@@ -33,3 +34,5 @@ module SnccApplication
     }
   end
 end
+
+# rubocop:enable Style/ClassAndModuleChildren, Style/ExpandPathArguments
