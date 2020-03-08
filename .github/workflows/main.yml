@@ -22,6 +22,8 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout
       uses: actions/checkout@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
 
     # Runs a single command using the runners shell
     - name: Rubocop Lint
