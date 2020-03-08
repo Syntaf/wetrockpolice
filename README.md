@@ -1,3 +1,5 @@
+![](https://github.com/syntaf/wetrockpolice/workflows/Tests/badge.svg)
+
 ## Table of Contents
 
 - [Overview](#Overview)
