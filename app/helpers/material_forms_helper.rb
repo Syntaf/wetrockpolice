@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/HelperInstanceVariable
 module MaterialFormsHelper
   class MaterialFormBuilder < ActionView::Helpers::FormBuilder
     def validation_message(attribute)
@@ -11,17 +12,17 @@ module MaterialFormsHelper
       )
     end
 
-    def text_field(attribute, options={})
+    def text_field(attribute, options = {})
       options = append_material_class(options)
       super
     end
 
-    def email_field(attribute, options={})
+    def email_field(attribute, options = {})
       options = append_material_class(options)
       super
     end
 
-    def telephone_field(attribute, options={})
+    def telephone_field(attribute, options = {})
       options = append_material_class(options)
       super
     end
@@ -37,7 +38,7 @@ module MaterialFormsHelper
       super
     end
 
-    def submit(value=nil, options={})
+    def submit(value = nil, options = {})
       options = append_material_class(options, 'btn btn-primary')
       super
     end
@@ -53,3 +54,5 @@ module MaterialFormsHelper
     end
   end
 end
+
+# rubocop:enable Rails/HelperInstanceVariable
