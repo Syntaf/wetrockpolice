@@ -2,3 +2,5 @@ versions:
   - rubocop
   - rubocop-rails
   - rubocop-minitest
+
+check_scope: 'modified'
