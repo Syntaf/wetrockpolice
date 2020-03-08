@@ -34,7 +34,7 @@ class WatchedAreaController < ApplicationController
                                    .first
 
     respond_to do |format|
-      format.json {
+      format.json do
         render :json => @rainy_day_area,
                :include => {
                  :climbing_area => {
@@ -47,7 +47,7 @@ class WatchedAreaController < ApplicationController
                  }
                },
                :except => %i[created_at updated_at id]
-      }
+      end
     end
   end
 
