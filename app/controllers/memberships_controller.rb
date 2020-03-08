@@ -2,7 +2,6 @@
 
 class MembershipsController < ApplicationController
   before_action :verify_order_id, only: %i[create]
-  before_action :authenticate_user!, only: %i[confirm_cash_payments]
 
   def new
     @watched_area = WatchedArea.find_by(id: params[:watched_area_id])

@@ -2,7 +2,7 @@
 
 class CastlerockController < WatchedAreaController
   def base_keywords
-    super + ", California, San Francisco"
+    super + ', California, San Francisco'
   end
 
   def index

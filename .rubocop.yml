@@ -4,9 +4,13 @@ require:
 
 AllCops:
   Exclude:
-    - "db/**/*.rb"
-    - "config/**/*.rb"
-    - "Gemfile.lock"
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'script/**/*'
+    - 'bin/**/*'
+  Include:
+    - '**/*.rb'
+    - '**/Gemfile'
   TargetRubyVersion: 2.5
 
 Layout/EndOfLine:

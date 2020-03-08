@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   #   end
   # end
 
-  def after_sign_in_path_for(resource)
+  def after_sign_in_path_for(_resource)
     rails_admin_path
   end
 end
