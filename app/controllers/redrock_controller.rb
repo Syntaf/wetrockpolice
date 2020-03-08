@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RedrockController < WatchedAreaController
   def base_keywords
     super + ", Las Vegas, Nevada"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MaterialFormsHelper
   class MaterialFormBuilder < ActionView::Helpers::FormBuilder
     def validation_message(attribute)

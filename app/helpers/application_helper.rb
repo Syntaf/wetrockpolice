@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def current_faq_path(watched_area)
     "/#{watched_area.slug}/faq"
