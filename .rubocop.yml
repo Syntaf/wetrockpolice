@@ -1,27 +1,43 @@
+require:
+  - rubocop-rails
+
 AllCops:
   Exclude:
     - "db/**/*.rb"
     - "config/**/*.rb"
-    - "config/environments/*.rb"
+    - "Gemfile.lock"
   TargetRubyVersion: 2.5
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Style/AndOr:
+  EnforcedStyle: conditionals
+
+# Version 0.80 Cops
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+# Disabled Cops
+
+Style/HashSyntax:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
 
 Style/Documentation:
   Enabled: false
 
 Metrics/MethodLength:
   Enabled: false
-
-Metrics/AbcSize:
-  Enabled: false
-
-Merics/ClassLength:
-  Enabled: false
-
-Layout/EndOfLine:
-  EnforcedStyle: lf
-
-Style/HashSyntax:
-  Enabled: false
-
-Style/AndOr:
-  EnforcedStyle: conditionals

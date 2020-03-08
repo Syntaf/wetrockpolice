@@ -60,6 +60,7 @@ group :development do
   # using <%= console %> anywhere in the code.
   gem 'debase'
   gem 'rubocop'
+  gem 'rubocop-rails', require: false
   gem 'ruby-debug-ide'
   gem 'solargraph'
   gem 'web-console', '>= 3.3.0'
