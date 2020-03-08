@@ -1,0 +1,4 @@
+versions:
+  - rubocop
+  - rubocop-rails
+  - rubocop-minitest
