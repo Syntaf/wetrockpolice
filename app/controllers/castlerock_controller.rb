@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CastlerockController < WatchedAreaController
   def base_keywords
     super + ", California, San Francisco"

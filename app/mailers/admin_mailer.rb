@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AdminMailer < Devise::Mailer
     default from: 'wetrockpolice@gmail.com'
     layout 'mailer'

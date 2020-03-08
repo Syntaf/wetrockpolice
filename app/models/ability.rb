@@ -24,7 +24,7 @@ class Ability
     can :manage,
         ClimbingArea,
         ClimbingArea.joins(:watched_areas)
-                    .where(:watched_areas => {id: user.manages }),
+                    .where(:watched_areas => { id: user.manages }),
         &:present?
 
     can :manage,
