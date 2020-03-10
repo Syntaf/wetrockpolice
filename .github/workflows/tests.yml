@@ -23,7 +23,11 @@ jobs:
     services:
       db:
         image: postgres:11
-        ports: ['5432:5432']
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -43,9 +47,9 @@ jobs:
           bundle install --jobs 4 --retry 3
       - name: Create Database
         env:
-            DATABASE_URL: postgres://postgres:@localhost:5432/wetrockpolice_test
-            RAILS_ENV: test
-            RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          DATABASE_URL: postgres://postgres:@localhost:5432/wetrockpolice_test
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           bundle exec rake db:create
           bundle exec rake db:migrate
