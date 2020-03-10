@@ -37,6 +37,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+      - name: Configure Cache
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
@@ -44,6 +51,7 @@ jobs:
       - name: Install Bundle
         run: |
           gem install bundler
+          bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
       - name: Create Database
         env:
