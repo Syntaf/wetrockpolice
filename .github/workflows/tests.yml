@@ -11,19 +11,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Rubocop Lint
-      uses: andrewmcodes/rubocop-linter-action@v3.0.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Rubocop Lint
+        uses: andrewmcodes/rubocop-linter-action@v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   test:
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:11
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Test
-      run: rails test
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.x
+      - name: Install Bundle
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+      - name: Create Database
+        env:
+            DATABASE_URL: postgres://postgres:@localhost:5432/wetrockpolice_test
+            RAILS_ENV: test
+            RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        run: |
+          bundle exec rake db:create
+          bundle exec rake db:migrate
+      - name: Run Tests
+        env:
+          DATABASE_URL: postgres://postgres:@localhost:5432/wetrockpolice_test
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        run: |
+          bundle exec rails test
