@@ -1,4 +1,4 @@
-![](https://github.com/syntaf/wetrockpolice/workflows/Tests/badge.svg)
+![Test](https://github.com/Syntaf/wetrockpolice/workflows/Test/badge.svg)
 
 ## Table of Contents
 
