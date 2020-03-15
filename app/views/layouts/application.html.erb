@@ -53,7 +53,7 @@
 
   </head>
 
-  <body <% if @watched_area %> data-area="<%= @watched_area.name %>*<% end %>">
+  <body <% if @watched_area %> data-area="<%= @watched_area.name %><% end %>">
     <% if notice %>
       <div class="notice opaque alert alert-warning alert-dismissible fade show">
         <%= notice %>
