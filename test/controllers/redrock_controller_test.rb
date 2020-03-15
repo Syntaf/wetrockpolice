@@ -1,10 +1,10 @@
-# frozen_string_literal: true
+# # frozen_string_literal: true
 
-require 'test_helper'
+# require 'test_helper'
 
-class RedrockControllerTest < ActionDispatch::IntegrationTest
-  test 'should get index' do
-    get redrock_index_url
-    assert_response :success
-  end
-end
+# class RedrockControllerTest < ActionDispatch::IntegrationTest
+#   test 'should get index' do
+#     get redrock_index_url
+#     assert_response :success
+#   end
+# end
