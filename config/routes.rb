@@ -10,7 +10,7 @@ Rails.application.routes.draw do
         as: :watched_area,
         module: :area do
     resources :rainy_day_options, path: 'rainy-day-options', only: %i( index )
-    get'/faq', action: :faq, as: :faq
+    resources :faq, only: %i( index )
     get '/', action: :index
   end
 
