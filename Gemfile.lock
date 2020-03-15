@@ -101,8 +101,8 @@ GEM
     e2mmap (0.1.0)
     erubi (1.9.0)
     execjs (2.7.0)
-    ffi (1.11.3)
-    ffi (1.11.3-x64-mingw32)
+    ffi (1.12.2)
+    ffi (1.12.2-x64-mingw32)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     haml (5.1.2)
@@ -344,6 +344,7 @@ DEPENDENCIES
   debase
   devise
   dotenv-rails
+  ffi (~> 1.12.2)
   jbuilder (~> 2.5)
   jquery-rails
   material-sass (= 4.1.1)
