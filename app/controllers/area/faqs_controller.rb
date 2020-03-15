@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Area
-  class FaqController < BaseController
+  class FaqsController < BaseController
     def index; end
   end
 end
