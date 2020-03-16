@@ -1,7 +1,6 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 redrock:
-  id: 1
   name: Red Rock
   slug: redrock
   local_climbing_org: sncc
