@@ -10,7 +10,7 @@ module PayPalPayments
     end
 
     def call
-      return false if @order_id.nil?
+      return false if @order_id.blank?
 
       request = OrdersGetRequest.new(@order_id)
       @client.execute(request)

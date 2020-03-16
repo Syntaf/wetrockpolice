@@ -5,12 +5,16 @@ Rails.application.routes.draw do
   resources :cash, controller: 'cash_validations', only: %i( index update destroy )
   resources :memberships, only: %i( destroy )
 
-  scope '/:slug', 
-        controller: 'watched_area',
-        as: :watched_area,
-        module: :area do
+  scope '/:slug', controller: 'watched_area', module: :area, as: :watched_area do
     resources :rainy_day_options, path: 'rainy-day-options', only: %i( index )
     resources :faqs, path: 'faq', only: %i( index )
+    
+    scope '/:coalition_slug', controller: 'memberships', as: :local_climbing_org do
+      get '/', action: :new
+      post '/', action: :create, as: :new_membership
+      post '/validate', action: :validate
+    end
+
     get '/', action: :index
   end
 

@@ -7,7 +7,7 @@ User.new(
   :super_admin => true
 ).confirm
 LocalClimbingOrg.create!([
-  {name: "Southern Nevada Climbing Coalition"}
+  {name: "Southern Nevada Climbing Coalition", slug: "sncc"}
 ])
 WatchedArea.create!([
   {name: "Red Rock", slug: "redrock", local_climbing_org_id: 1}

@@ -12,7 +12,7 @@ end
 
 module SnccApplication
   def submit_sncc_application(app)
-    post redrock_new_sncc_membership_url, params: {
+    post watched_area_local_climbing_org_new_membership_url :redrock, :sncc, params: {
       joint_membership_application: {
         first_name: app.first_name,
         last_name: app.last_name,
