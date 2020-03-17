@@ -2,7 +2,8 @@
 
 module Area
   class WatchedAreaController < BaseController
-    def index
-    end
+    before_action :set_watched_area
+
+    def index; end
   end
 end
