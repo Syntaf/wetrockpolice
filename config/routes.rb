@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :memberships, only: %i( destroy )
 
   scope '/:slug', controller: 'watched_area', module: :area, as: :watched_area do
-    resources :rainy_day_options, path: 'rainy-day-options', only: %i( index )
+    resources :rainy_day_options, path: 'rainy-day-options', only: %i( index show )
     resources :faqs, path: 'faq', only: %i( index )
     
     scope '/:coalition_slug', controller: 'memberships', as: :local_climbing_org do

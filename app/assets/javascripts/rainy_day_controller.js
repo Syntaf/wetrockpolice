@@ -51,8 +51,8 @@ RainyDayController.prototype.buildMountainProjectUrl = function (longitude, lati
 
 RainyDayController.prototype.handleAreaSelection = function (ev) {
     var $target = $(ev.target);
-    var area = $target.data('name');
-    var $selectedItems = $('[data-name="' + $target.data('name') + '"]');
+    var areaId = $target.data('id');
+    var $selectedItems = $('[data-id="' + $target.data('id') + '"]');
 
     // Do nothing if the clicked element is already active
     if ($target.hasClass(this.options.activeSelectorClass))
@@ -60,12 +60,12 @@ RainyDayController.prototype.handleAreaSelection = function (ev) {
         return;
     }
 
-    this.fetchArea(area)
+    this.fetchArea(areaId)
         .then(this.displayArea.bind(this, $selectedItems));
 }
 
-RainyDayController.prototype.fetchArea = function (name) {
-    return $.get('/redrock/climbing_area', { 'name': name });
+RainyDayController.prototype.fetchArea = function (id) {
+    return $.get('/redrock/rainy-day-options/' + id);
 }
 
 RainyDayController.prototype.displayArea = function ($newActiveListItem, response) {
