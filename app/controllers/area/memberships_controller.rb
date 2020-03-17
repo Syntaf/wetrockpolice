@@ -3,6 +3,7 @@
 module Area
   class MembershipsController < BaseController
     before_action :verify_order_id, only: %i[create]
+    before_action :set_watched_area, only: %i[new]
 
     def new
       @joint_membership = JointMembershipApplication.new

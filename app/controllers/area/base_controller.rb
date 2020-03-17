@@ -2,7 +2,7 @@
 
 module Area
   class BaseController < ApplicationController
-    before_action :set_watched_area
+    private
 
     def set_watched_area
       @watched_area = WatchedArea.find_by slug: params[:slug]

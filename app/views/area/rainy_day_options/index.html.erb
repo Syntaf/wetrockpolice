@@ -19,6 +19,7 @@
                     <% @watched_area.climbing_areas.each_with_index do |area, index| %>
                         <a class="dropdown-item <% if index == 0 %>active<% end %>"
                             data-role="rainy-day-list-option"
+                            data-id="<%= area.id %>"
                             data-name="<%= area.name %>"
                             data-lat="<%= area.location.latitude.to_f %>"
                             data-lon="<%= area.location.longitude.to_f %>"
@@ -32,6 +33,7 @@
                 <% @watched_area.climbing_areas.each_with_index do |area, index| %>
                     <li class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
                         data-role="rainy-day-list-option"
+                        data-id="<%= area.id %>"
                         data-name="<%= area.name %>"
                         data-lat="<%= area.location.latitude.to_f %>"
                         data-lon="<%= area.location.longitude.to_f %>"
