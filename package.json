@@ -1,6 +1,9 @@
 {
   "name": "wetrockpolice",
   "private": true,
+  "engines": {
+    "node": "12.16.x"
+  },
   "dependencies": {
     "@rails/webpacker": "4.2.2"
   },
