@@ -1,5 +1,10 @@
 {
   "name": "wetrockpolice",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "@rails/webpacker": "4.2.2"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.10.3"
+  }
 }

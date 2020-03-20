@@ -23,8 +23,10 @@ gem 'rails_admin', '~> 2.0'
 gem 'roadie-rails', '~> 2.1'
 gem 'seed_dump'
 
+# Use webpacker js bundler
+gem 'webpacker'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.4'
+gem 'rails', '~> 6.0.2'
 # Use Puma as the app server
 gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
