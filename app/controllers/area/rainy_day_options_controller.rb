@@ -31,9 +31,5 @@ module Area
       end
       end
     end
-
-    def set_watched_area
-      @watched_area = WatchedArea.includes(:rainy_day_areas, :climbing_areas).find_by slug: params[:slug]
-    end
   end
 end
