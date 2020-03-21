@@ -3,6 +3,8 @@
 module Area
   class RainyDayOptionsController < BaseController
     before_action :set_watched_area
+    respond_to :html, only: %i[index]
+    respond_to :json, only: %i[show]
 
     def index
       @active_rainy_day_option = @watched_area.rainy_day_areas.first
@@ -11,27 +13,11 @@ module Area
     def show
       @rainy_day_area = @watched_area
                         .rainy_day_areas
-                        .select do |area|
-                          area.climbing_area.id == params[:id].to_i
-                        end
+                        .joins(:climbing_area)
+                        .where(climbing_areas: { id: params[:id].to_i })
                         .first
 
-      respond_to do |format|
-        format.json do
-          render :json => @rainy_day_area,
-                 :include => {
-                   :climbing_area => {
-                     :except => %i[created_at updated_at id],
-                     :include => {
-                       :location => {
-                         :except => %i[created_at updated_at id]
-                       }
-                     }
-                   }
-                 },
-                 :except => %i[created_at updated_at id]
-        end
-      end
+      respond_with(@rainy_day_area)
     end
   end
 end
