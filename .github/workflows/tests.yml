@@ -47,12 +47,14 @@ jobs:
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: '2.5'
+          ruby-version: '2.6'
       - name: Install Bundle
         run: |
           gem install bundler
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
+          gem uninstall sassc
+          gem install sassc
       - name: Create Database
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/wetrockpolice_test
