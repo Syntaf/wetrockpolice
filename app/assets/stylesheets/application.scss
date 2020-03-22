@@ -19,7 +19,7 @@
 @import "material";
 @import "animations";
 @import "aos";
-
+@import "vars";
 
 html, body {
     width: 100%;
@@ -78,18 +78,49 @@ html, body {
 }
 
 .footer {
-    height: 150px;
-    background-color: #eee;
+    height: 80px;
+    background-color: #444444;
 
     .footer-container {
         max-width: 700px;
+        height: 100%;
+        color: white;
         margin: auto;
         text-align: center;
-        padding-top: 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
 
         p {
             margin: 0;
         }
+
+        .contribute {
+            display: flex;
+            align-items: center;
+
+           .repo-link {
+                padding-right: 10px;
+
+                i {
+                    font-size: 20px;
+                    color: #ffffff;
+                }
+            }
+
+            span:first-of-type {
+                padding-right: 10px;
+            }
+        }
+
+        @media (max-width: $mobileBreakpoint) {
+            padding: 10px 0;
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: $mobileBreakpoint) {
+        height: 100px;
     }
 }
 
