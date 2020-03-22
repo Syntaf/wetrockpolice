@@ -3,12 +3,14 @@
 ## Table of Contents
 
 - [Overview](#Overview)
-  - [Frontend Structure](#Frontend-Structure)
-  - [Entity Overview](#Entity-Overview)
-- [Development Guide](#Development-Guide)
+  - [Running Locally](#Frontend-Structure)
+  - [Using PayPal in Development](#Entity-Overview)
+- [Contributing](#Contributing-Guide)
   - [Coding Standards](#Coding-Standards)
-  - [Creating a New Watched Area Site Section](#Creating-a-New-Watched-Area-Site-Section)
-  - [Creating or Updating Hero Images](#Creating-or-Updating-Hero-Images)
+- [Development Guide](#Development-Guide)
+  - [Model Overview](#Creating-a-New-Watched-Area-Site-Section)
+  - [Frontend Assets](#Models-Overview)
+  - [Creating or Updating Landing Page Images](#Creating-or-Updating-Hero-Images)
 # Overview
 
 WetRockPolice is an open source project written in Rails 6 + PostgreSQL and deployed to Heroku. The project has three key goals:
@@ -18,11 +20,11 @@ WetRockPolice is an open source project written in Rails 6 + PostgreSQL and depl
 
 Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wetrockpolice/issues) tab for active work being done.
 
-## Running locally
+## Running Locally
 
-Docker is in progress, but at the moment WetRockPolice can only be run locally with:
-- Ruby 2.6.5
-- PostgreSQL 11.1
+Running WRP via Docker is a work in progress, so at the moment WetRockPolice can only be run locally with:
+- Ruby 2.6.x
+- PostgreSQL 11.x
 
 Steps:
 
@@ -40,6 +42,8 @@ Steps:
     POSTGRES_PASSWORD='...'     # default 'dev'
     ```
 
+    * Note this is the username and password you setup when installing PostgreSQL on your machine
+
 3. Create and migrate the database:
 
     ```
@@ -54,28 +58,104 @@ Steps:
     ~$: rails server
     ```
 
-## Configuring third party keys
+## Using PayPal in Development
 
 ```
 # .env.local
 
-# Paypal integration on membership checkout page
+# Paypal integration on membership checkout page - Ensure these are SANDBOX credentials
 PAYPAL_CLIENT_ID="..."
 PAYPAL_CLIENT_SECRET="..."
-
-# Email sending capabilities for memberships
-SENDGRID_USERNAME='apikey'
-SENDGRID_API_KEY='...'
-SMTP_EMAIL='youremail@gmail.com'
 ```
 
+# Contributing
+
+This repository uses [Github Actions](https://github.com/features/actions) for continuous integration. Before a pull request can be merged into master it must pass all existing / new tests *as well* as linting (Rubocop). It is **highly** recommended that you use Rubcop during development as to not have to go back and forth between CI results and your code.
+
+#### Using Rubocop on Visual Studio Code:
+
+- Download the [Solargraph Extension](https://github.com/castwide/vscode-solargraph) and use these settings:
+
+  ```
+    // settings.json
+
+    {
+        "solargraph.diagnostics": true,
+        "solargraph.formatting": true
+    }
+    
+  ```
+
+  **Note: If your solargraph server ever crashes and VSCode stops linting your work, use the developer window reload command to restart it.
+
+#### Using Rubocop from the command line
+
+If you're opposed to VSCode or prefer using a different editor, you can always run rubocop from the command line inside the project:
+
+```
+~$: cd wetrockpolice
+~$: rubocop
+```
+
+By default the configuration files should be detected and used, so no arguments are needed.
+
+## Coding Standards
+
+For a full manifesto on coding standards, Rubocop will adhere mostly to the [Ruby Style Guide](https://rubystyle.guide/). In short, keep these key things in mind:
+
+- Keep lines under **80** characters
+- Use standard `snake_case` for varible and method naming
+- Use `do end` instead of `{ }` when writing multi-line blocks
+- Keep the length of blocks under **25** lines.
+- Don't put business logic inside controllers. Skinny controllers, fat models
+
+While WRP only supports Red Rock currently, the backend is designed to support multiple areas in the future and that should be kept in mind during development. Make sure any changes made consider a future where there are many active areas that can display precipitation data.
+
+
+# Development Guide
+
+## Models Overview
+
+The database is designed to support a site that one day may have many watched areas (Red Rock, Moe's Valley, Etc). Below is an Entity Relationship Diagram that can be used to gain an understanding of the models defined in this project.
+
+![ERB via LucidChards](/docs/WetRockPolice_ERD.png)
+
+#### LocalClimbingOrg
+
+A not-for-profit climbing coalition managing one or more watched areas. The **slug** field is used for displaying the coalitions membership signup form within the watched area, i.e. `/redrock/sncc` where `sncc` is the slug of the climbing org instance.
+
+#### WatchedArea
+
+Represents an area being monitored for rain. Uses it's `slug` field to define a unique "microsite" within WRP consisting of a:
+- Landing page (`/redrock`)
+- Rainy day options page (`/redrock/rainy-day-options`)
+- FAQ page (`/redrock/faq`)
+- Membership signup page (`/redrock/sncc`)
+
+#### RainyDayArea
+
+Links a climbing area to a watched area. Does not contain any information itself, just serves to define relationships between climbing areas and a watched area.
+
+#### ClimbingArea
+
+A climbing crag / area. Does not contain any associations to a watched area so that the same climbing area can be a "rainy day option" for multiple watched areas if needed.
+
+#### Location
+
+Contains a pair of coodinates in the EPSG:3857 WGS 84 / Pseudo-Mercator system, and an optional zoom attribute.
+
+#### User
+
+A standard devise-based user model. The one unique thing worth mentioning is the _manages_ attribute, which contains an array of watched area IDs. I.e. `user.manages == [1]` means the user can manage all db data relating to Red Rock.
 
 ## Frontend Structure
 
-The asset pipeline is kept very simple intentionally. All assets are compressed, loaded and cached on a users first page visit, meaning there are no page specific JS/SCSS files. JS code is logically separated into controllers, which manage all functionality on a given type of page. Since all of these controllers are loaded globally, you can immeditely use them at the bottom of your view template:
+The asset pipeline is kept very simple intentionally. All assets are compressed, loaded and cached on a users first page visit, meaning there are no *page specific* JS/SCSS files.
+
+JS code is encapsulated into "controllers"; each controller is responsible for managing the functionality on a given type of page. Since all of these controllers are loaded globally, you can immeditely use them at the bottom of your view template:
 
 ```erb
-<!-- rainy_day_options.html.erb -->
+<!-- area/rainy_day_options/index.html.erb -->
 
 <div class="rainy-day-content">
   <!-- ... -->
@@ -86,80 +166,17 @@ The asset pipeline is kept very simple intentionally. All assets are compressed,
 </script>
 ```
 
-## Entity Overview
-
-The database is designed to support a site that one day may have many watched areas (Red Rock, Moe's Valley, Etc). Below is an Entity Relationship Diagram that can be used to gain an understanding of the models defined in this project.
-
-![ERB via LucidChards](/docs/WetRockPolice_ERD.png)
-
-#### WatchedArea
-
-Represents the area being monitored for rain (big picture). Red Rock is one such watched area
-
-#### ClimbingArea
-
-A climbing crag / area. Does not contain any associations to a watched area so that the same climbing area can be a "rainy day option" for multiple watched areas if needed. This avoids the need to duplicate climbing crags.
-
-#### RainyDayArea
-
-Links a climbing area to a watched area. Does not contain any information itself, just serves to define relationships between climbing areas and a watched area.
-
-#### Location
-
-Contains a pair of coodinates in the EPSG:3857 WGS 84 / Pseudo-Mercator system, and an optional zoom attribute.
-
-#### User
-
-A standard devise-based user model. The one unique thing worth mentioning is the _manages_ attribute, which contains an array of watched area IDs. I.e. `user.manages == [1]` means the user can manage all db data relating to Red Rock.
-## Template & Controller Layout
-
-If I could go back in time I'd change the base structure of this project, but alas. 
-
-`WatchedAreaController` is a base controller which implements all basic functionality needed for a sub-site section like `/redrock`. Watched areas (like Red Rock) then have their own controller and inherit from the base controller. The child controller only needs supply basic page text.
-
-# Development Guide
-
-## Coding Standards
-
-## Creating a New Watched Area Site Section
-
-To create a new site section similar to `/redrock`, follow these steps:
-
-1. Create a new watched area entry in the database via `/admin`
-
-2. Run `rails g controller <watched-area>` to create a new controller for the site section
-
-3. Route requests to the slug to the new controller. Replace `:watchedarea` with the _slug_ of your watched area and `id` with the _id_ of your watched area:
-```rb
-# config/routes.rb
-
-Rails.application.routes.draw do
-  # ...
-
-  namespace :watchedarea, defaults: { watched_area_id: id } do
-    get '/', to: '/watchedarea#index'
-    get '/faq', to: '/watchedarea#faq'
-    get '/rainy-day-options', to: '/watchedarea#rainy_day_options'
-    get '/climbing_area', to: '/watchedarea#climbing_area'
-  end
-end
-```
-
-4. Copy all view templates from an existing watched area to your new controllers views directly. This is obviously not an ideal workflow, but suffices for now while there are very little watched areas (one at this time).
-
-5. Load the site section and start modifying the copied templates as needed.
-
 ## Creating or Updating Hero Images
 
-WetRockPolice uses it's own custom strategy for loading large background images to ensure the first-load experience isn't poor. Without this strategy, the page would load with the large image missing, then slowly load the image top-down as if the page was being printed out.
+This repository uses it's own custom strategy for loading large background images on the client to ensure the first-load experience isn't poor. Without this strategy, the page would load with the large image missing, then slowly load the image top-down as if the page was being printed out.
 
-To avoid this, WRP will first load an extremely small version of the image (20x20 pixels for example) and apply a large gussian blur to distort the pixel borders. Once the actual large image has been loaded in the background the images are swapped out with a blur transition applied. The end results makes it seem like the large image was loaded immeditely on view, and blurred into view without the viewer knowing there were actually two images at play.
+On page load, the browser will first load and display an extremely small version of the image (20x20 pixels for example) and apply a large gussian blur to distort the pixel borders. In the background, javascript is used to fetch the fully sized background image; once finished the full image will be swapped for the blurred image with a fade-in transition. The end result is a page load that looks like the background image is just being animated into view rather than slowly loaded.
 
-Follow these steps for creating or updating hero images:
+Because of this strategy however, updating landing page images can be a little more involved. Follow these steps for creating or updating hero images:
 
 1. Create two copies of your desired hero image: One which is the original (high quality) image and another which has had it's size dramatically scaled down (less then 50x50 pixels). Ensure you've maintained the aspect ratio when scaling the image down.
 
-2. Move your two copies into `app/assets/images/yourwachedarea`, calling the original image `hero-image.jpg` and the small image `hero-image-small.jpg`.
+2. Move your two copies into `app/assets/images/watched-area-slug`, calling the original image `hero-image.jpg` and the small image `hero-image-small.jpg`.
 
 3. Go to https://www.base64-image.de/ and load your small image to receive a base64 encoded string. Copy that string to your clipboard and open `application.html.erb`. In the custom style block at the head, add (or change) the following SCSS rules:
     ```css
