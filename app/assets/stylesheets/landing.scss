@@ -233,7 +233,7 @@
     }
 
     .content {
-        padding-top: 40px;
+        padding: 40px 0;
 
         .graph {
             position: relative;
@@ -280,6 +280,10 @@
                     margin-top: 20px;
                 }
             }
+        }
+
+        @media (max-width: $mobileBreakpoint) {
+            padding-bottom: 0;
         }
     }
 }
