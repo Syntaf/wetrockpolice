@@ -20,7 +20,7 @@ WetRockPolice is an open source project written in Rails 6 + PostgreSQL and depl
 - Display historical rain information to help climbers make informed decisions
 - Enable organizations to connect with visiting climbers
 
-Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wetrockpolice/issues) tab for active work being done.
+Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wetrockpolice/issues) tab for ideas on how to contribute.
 
 ## Running Locally
 
