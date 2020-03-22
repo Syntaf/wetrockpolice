@@ -1,4 +1,6 @@
-![Test](https://github.com/Syntaf/wetrockpolice/workflows/Test/badge.svg)
+# WetRockPolice ![](/docs/police-logo.png)
+
+![Tests](https://github.com/Syntaf/wetrockpolice/workflows/Test/badge.svg)
 
 ## Table of Contents
 
