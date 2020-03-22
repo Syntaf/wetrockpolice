@@ -1,10 +1,19 @@
-FROM ruby:2.5.3
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
-RUN gem update --system && gem install bundler -v 2.0.1
+FROM ruby:2.6.5
+
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | \
+    apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | \
+    tee /etc/apt/sources.list.d/yarn.list
+
+RUN apt-get update -qq \
+    && apt-get install -y build-essential nodejs yarn
+RUN gem update --system && gem install bundler -v 2.1.4
 WORKDIR /opt/wetrockpolice
 
 COPY Gemfile /opt/wetrockpolice
 COPY Gemfile.lock /opt/wetrockpolice
+RUN yarn install --check-files
 RUN bundle install
 COPY . /opt/wetrockpolice
 

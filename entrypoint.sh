@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Remove a potentially pre-existing server.pid file for Rails
-rm -f /opt/wagbag/tmp/pids/server.pid
+rm -f /opt/wetrockpolice/tmp/pids/server.pid
 
 # usage: file_env VAR [DEFAULT]
 #    ie: file_env 'XYZ_DB_PASSWORD' 'example'
