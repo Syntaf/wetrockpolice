@@ -11,7 +11,64 @@
   - [Creating or Updating Hero Images](#Creating-or-Updating-Hero-Images)
 # Overview
 
-WetRockPolice is a standard rails >5 project using postgres for it's database. Heroku is used for hosting the application.
+WetRockPolice is an open source project written in Rails 6 + PostgreSQL and deployed to Heroku. The project has three key goals:
+- Spread awareness about the ethics of climbing on wet rock at an at-risk area.
+- Display historical rain information to help climbers make informed decisions
+- Enable organizations to connect with visiting climbers
+
+Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wetrockpolice/issues) tab for active work being done.
+
+## Running locally
+
+Docker is in progress, but at the moment WetRockPolice can only be run locally with:
+- Ruby 2.6.5
+- PostgreSQL 11.1
+
+Steps:
+
+1. Clone the repository
+    ```
+    ~$: git clone git@github.com:Syntaf/wetrockpolice.git
+    ```
+
+2. With postgreSQL running in the background, set your username and password in `.env.local`.
+
+    ```
+    # .env.local
+
+    POSTGRES_USER='...'         # default 'postgres'
+    POSTGRES_PASSWORD='...'     # default 'dev'
+    ```
+
+3. Create and migrate the database:
+
+    ```
+    ~$: rails db:create
+    ~$: rails db:migrate
+    ~$: rails db:seed
+    ```
+
+4. Run the server and visit http://localhost:3000
+
+    ```
+    ~$: rails server
+    ```
+
+## Configuring third party keys
+
+```
+# .env.local
+
+# Paypal integration on membership checkout page
+PAYPAL_CLIENT_ID="..."
+PAYPAL_CLIENT_SECRET="..."
+
+# Email sending capabilities for memberships
+SENDGRID_USERNAME='apikey'
+SENDGRID_API_KEY='...'
+SMTP_EMAIL='youremail@gmail.com'
+```
+
 
 ## Frontend Structure
 
