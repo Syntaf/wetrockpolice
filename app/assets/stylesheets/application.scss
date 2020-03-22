@@ -95,9 +95,21 @@ html, body {
             margin: 0;
         }
 
-        .contact i {
-            color: #e00d0d;
+        .contact {
+            .freepik-callout {
+                margin-top: 5px;
+                font-size: 8px;
+
+                @media (max-width: $mobileBreakpoint) {
+                    margin-bottom: 10px;
+                }
+            }
+
+            i {
+                color: #e00d0d;
+            }
         }
+        
 
         .contribute {
             display: flex;
@@ -124,7 +136,7 @@ html, body {
     }
 
     @media (max-width: $mobileBreakpoint) {
-        height: 100px;
+        height: 120px;
     }
 }
 
