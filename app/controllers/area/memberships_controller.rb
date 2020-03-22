@@ -4,6 +4,7 @@ module Area
   class MembershipsController < BaseController
     before_action :verify_order_id, only: %i[create]
     before_action :set_watched_area, only: %i[new]
+    before_action :set_meta, only: %i[new]
 
     def new
       @joint_membership = JointMembershipApplication.new
@@ -101,6 +102,15 @@ module Area
         :shirt_size,
         :paid_cash
       )
+    end
+
+    def set_meta
+      @page_title = 'Support local coalitions'
+      @page_description = <<~TEXT
+        Signup for a membership today with your local coalition and help make
+        a difference in the climbing community. Foster service projects and
+        maintain access to our climbing areas through coalition memberships
+      TEXT
     end
   end
 end
