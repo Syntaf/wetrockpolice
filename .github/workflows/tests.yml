@@ -52,8 +52,8 @@ jobs:
         run: |
           gem install bundler
           bundle config path vendor/bundle
+          bundle config --local build.sassc --disable-march-tune-native
           bundle install --jobs 4 --retry 3
-          gem install sassc
       - name: Create Database
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/wetrockpolice_test
