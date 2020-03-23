@@ -1,0 +1,18 @@
+name: Code Coverage
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  jobs:
+    coverage:
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        
+        - name: Run Report
+          uses: codecov/codecov-action@v1
