@@ -40,6 +40,23 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     assert_response :created
   end
 
+  test 'Validates membership' do
+    app = joint_membership_applications(:valid_application)
+
+    validate_sncc_application(app)
+
+    assert_response :success
+  end
+
+  test 'Rejects invalid membership' do
+    app = joint_membership_applications(:valid_application)
+    app.first_name = nil
+
+    validate_sncc_application(app)
+
+    assert_response :bad_request
+  end
+
   test 'Rejects invalid card payment' do
     app = joint_membership_applications(:valid_application)
     app.order_id = INVALID_ORDER_ID
