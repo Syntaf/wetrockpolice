@@ -23,6 +23,8 @@
 /yarn-error.log
 
 .byebug_history
+.resultset*
+.last_run*
 
 /public/packs
 /public/packs-test
