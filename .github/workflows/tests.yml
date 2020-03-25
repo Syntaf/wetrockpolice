@@ -71,3 +71,5 @@ jobs:
           bundle exec rails test
       - name: Run Coverage Report
         uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
