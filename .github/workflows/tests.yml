@@ -67,9 +67,6 @@ jobs:
           DATABASE_URL: postgres://postgres:@localhost:5432/wetrockpolice_test
           RAILS_ENV: test
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           bundle exec rails test
-      - name: Run Coverage Report
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}

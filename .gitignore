@@ -26,6 +26,8 @@
 .resultset*
 .last_run*
 
+coverage
+
 /public/packs
 /public/packs-test
 /node_modules
