@@ -40,8 +40,8 @@ module Area
       unless application.valid?
         respond_json(
           status: :bad_request,
-          errors: membership.errors
-        )
+          errors: application.errors
+        ) and return
       end
 
       respond_json(
