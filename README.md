@@ -1,6 +1,7 @@
 # WetRockPolice ![](/docs/police-logo.png)
 
 ![Tests](https://github.com/Syntaf/wetrockpolice/workflows/Test/badge.svg)
+[![codecov](https://codecov.io/gh/Syntaf/wetrockpolice/branch/master/graph/badge.svg)](https://codecov.io/gh/Syntaf/wetrockpolice)
 
 ## Table of Contents
 
