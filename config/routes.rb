@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     scope '/:coalition_slug', controller: 'memberships', as: :local_climbing_org do
       get '/', action: :new
       post '/', action: :create, as: :new_membership
-      post '/validate', action: :validate
+      post '/validate', action: :validate, as: :validate
     end
 
     get '/', action: :index
