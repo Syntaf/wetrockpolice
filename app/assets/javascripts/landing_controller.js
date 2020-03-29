@@ -12,6 +12,10 @@ function LandingController(apiOptions) {
 LandingController.prototype.initLandingView = function () {
     $('button[data-role="scroll-to-weather"]').click(this.scrollToWeather.bind(this));
 
+    setTimeout(function () {
+        $('.call-to-action.covid').removeClass('hide');
+    }, 2000);
+
     this.fetchPrecipitation()
         .then(this.renderView.bind(this));
 }
