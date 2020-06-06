@@ -1,5 +1,11 @@
 @import "vars";
 
+.faq-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .faq-hero {
     height: 400px;
     display: flex;
@@ -17,6 +23,7 @@
 }
 
 .faq-content {
+    flex: 1;
     padding-top: 50px;
     padding-bottom: 100px;
 
