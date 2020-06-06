@@ -4,19 +4,22 @@ services:
   db:
     image: postgres
     environment:
-      - POSTGRES_PASSWORD_FILE=/run/secrets/psql_password
-      - POSTGRES_DB_FILE=/run/secrets/psql_db
-    secrets:
-      - psql_password
-      - psql_db
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=wrp
+      - POSTGRES_DB=wetrockpolice_development
+    ports:
+      - '5432:5432'
     volumes:
-      - postgres_database:/var/lib/postgresql/data:Z
+      - wrp_postgres_database:/var/lib/postgresql/data:Z
 
   web:
     build: .
     image: syntaf/wetrockpolice
     environment:
-      - POSTGRES_PASSWORD_FILE=/run/secrets/psql_password
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=wrp
+      - POSTGRES_DB=wetrockpolice_development
+      - POSTGRES_HOST=db
       - PORT=3001
     secrets:
       - psql_password
@@ -28,7 +31,7 @@ services:
       - db
 
 volumes:
-  postgres_database:
+  wrp_postgres_database:
     external: true
 
 secrets:
