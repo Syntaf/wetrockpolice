@@ -72,8 +72,8 @@
     <div class="row">
       <div class="col-md-6 col-12 row form-group mobile-divider">
         <div class="col-sm-6 col-md-12 custom-control custom-checkbox">
-          <%= f.check_box :local_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" }, disabled: true %>
-          <%= f.label :local_shirt, raw("SNCC T-Shirt <strong>(+$15)</strong> - Out of Stock"), class: "custom-control-label" %>
+          <%= f.check_box :local_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" } %>
+          <%= f.label :local_shirt, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
         </div>
         <div class="col-sm-6 col-md-12 custom-control custom-checkbox">
           <%= f.check_box :access_fund_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" } %>
@@ -133,11 +133,13 @@
 
       <div class="row col-12" id="paypal"></div>
 
+      <!-- Re-enable for cash payments support
       <div class="row">
         <div class="col-12 center">
           <button class="btn btn-success cash-button" data-role="cashPayment">Pay with Cash</button>
         </div>
       </div>
+      -->
 
       <div class="row loading" data-role="loader">
         <div class="col-12 center">
