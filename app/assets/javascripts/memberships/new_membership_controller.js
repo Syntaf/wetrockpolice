@@ -102,6 +102,8 @@ NewMembershipController.prototype.initShirtCheckboxListeners = function () {
     this.$shirtCheckboxes.change(
         this.swapDisabledFieldState.bind(this)
     );
+
+    this.swapDisabledFieldState();
 }
 
 NewMembershipController.prototype.swapDisabledFieldState = function ($shirtCheckboxes) {
