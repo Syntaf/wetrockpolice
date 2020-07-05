@@ -20,6 +20,7 @@ valid_application:
   order_id: '1234FFF'
   local_shirt: true
   access_fund_shirt: true
+  delivery_method: 'shipped'
   paid_cash: false
 
 pending_application:

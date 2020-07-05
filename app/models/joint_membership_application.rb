@@ -19,6 +19,7 @@ class JointMembershipApplication < ApplicationRecord
   validates :state, presence: true
   validates :zipcode, numericality: true, length: { is: 5 }
   validates :shirt_size, presence: true, if: :selected_shirt?
+  validates :delivery_method, presence: true, if: :selected_shirt?
   validates :order_id,
             presence: true,
             if: :paid_with_card?,
