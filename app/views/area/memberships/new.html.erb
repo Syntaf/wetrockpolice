@@ -69,10 +69,46 @@
 
     <div class="row divider"></div>
 
+        
+
+        
+
+        
+
+
     <div class="row">
-      <div class="col-md-6 col-12 row form-group mobile-divider">
-        <div class="col-sm-6 col-md-12 custom-control custom-checkbox">
-          <%= f.check_box :local_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" } %>
+      <div class="col-md-6 col-12 form-group">
+        <div class="row">
+          <div class="col-md-6 col-12 custom-control custom-checkbox mobile-divider">
+            <%= f.check_box :local_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" }, checked: true %>
+            <%= f.label :local_shirt, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
+          </div>
+          <div class="col-md-6 col-12 mobile-center">
+            <img src="https://via.placeholder.com/150">
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <div class="row">
+          <div class="col-12 form-group">
+            <%= f.label :shirt_size %>
+            <%= f.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WS", "WM", "WL", "WXL" ], {prompt: ""}, disabled: true %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 form-group">
+            <%= f.label :delivery_method %>
+            <%= f.select :delivery_method, [ "Shipped (+$5)", "Local Pickup - Refuge", "Local Pickup - Red Rock Climbing Center", "Local Pickup - Nevada Climbing Center", "Local Pickup - Origin"], {prompt: ""} %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- disabled until future events
+    <div class="row">
+      <div class="col-md-4 col-12 form-group mobile-divider">
+        <div class="col-md-6 custom-control custom-checkbox">
+          <%= f.check_box :local_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" }, checked: true %>
           <%= f.label :local_shirt, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
         </div>
         <div class="col-sm-6 col-md-12 custom-control custom-checkbox">
@@ -85,6 +121,7 @@
         <%= f.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WS", "WM", "WL", "WXL" ], {prompt: ""}, disabled: true %>
       </div>
     </div>
+    -->
 
     <div class="row">
       <div class="col-md-6 col-12">
@@ -92,8 +129,14 @@
       </div>
       <div class="col-md-6 col-12">
         <p class="order-note d-none d-md-block">
+          <i>
+            Note: You will receive an email when your shirt is ready for pickup, please allow 1-2 weeks for
+            your membership to be processed.
+          </i> 
+          <!-- 
           <i>Note:</i>  SNCC Event Signups are processed post-event and do not immeditely take effect. Upon payment you will receive a receipt immeditely,
           and at a date in the near future you will receive your membership confirmation email from the access fund.
+          -->
         </p>
       </div>
     </div>
@@ -166,7 +209,6 @@
     membershipController.$form.find('input[name="joint_membership_application[zipcode]"]').val('12345');
     membershipController.$form.find('input[name="joint_membership_application[city]"]').val('Cityville');
     membershipController.$form.find('input[name="joint_membership_application[state]"]').val('California');
-    membershipController.$form.find('input[name="joint_membership_application[access_fund_shirt]"]').attr('checked', true);
     membershipController.$form.find('select[name="joint_membership_application[shirt_size]"]').prop('disabled', false);
     membershipController.$form.find('select[name="joint_membership_application[shirt_size]"]').val('ML');
   <% end %>
