@@ -25,6 +25,7 @@ services:
       - psql_password
     volumes:
       - .:/opt/wetrockpolice
+      - /opt/wetrockpolice/tmp
     ports:
       - "3001:3001"
     depends_on:
