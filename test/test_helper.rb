@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/ClassAndModuleChildren, Style/ExpandPathArguments, Style/LineLength
+# rubocop:disable Style/ClassAndModuleChildren, Style/ExpandPathArguments, Layout/LineLength
 
 unless ENV['CODECOV_TOKEN'].nil?
   require 'simplecov'
@@ -68,4 +68,4 @@ module SnccApplication
   end
 end
 
-# rubocop:enable Style/ClassAndModuleChildren, Style/ExpandPathArguments, Style/LineLength
+# rubocop:enable Style/ClassAndModuleChildren, Style/ExpandPathArguments, Layout/LineLength
