@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 2020_07_05_182528) do
     t.boolean "access_fund_shirt"
     t.boolean "paid_cash", default: false, null: false
     t.boolean "pending", default: false, null: false
-    t.string "delivery_method", null: false
+    t.string "delivery_method"
   end
 
   create_table "local_climbing_orgs", force: :cascade do |t|

@@ -37,7 +37,8 @@ module SnccApplication
         order_id: app.order_id,
         local_shirt: app.local_shirt,
         access_fund_shirt: app.access_fund_shirt,
-        paid_cash: app.paid_cash
+        paid_cash: app.paid_cash,
+        delivery_method: app.delivery_method
       }
     }
   end
@@ -60,7 +61,8 @@ module SnccApplication
         order_id: app.order_id,
         local_shirt: app.local_shirt,
         access_fund_shirt: app.access_fund_shirt,
-        paid_cash: app.paid_cash
+        paid_cash: app.paid_cash,
+        delivery_method: app.delivery_method
       }
     }
   end
