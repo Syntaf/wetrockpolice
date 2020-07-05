@@ -69,13 +69,6 @@
 
     <div class="row divider"></div>
 
-        
-
-        
-
-        
-
-
     <div class="row">
       <div class="col-md-6 col-12 form-group">
         <div class="row">
@@ -199,7 +192,7 @@
 <script>
   var membershipController = new NewMembershipController();
 
-  <% if Rails.env.development? %>
+  <% if Rails.env.development? && false %>
     membershipController.$form.find('input[name="joint_membership_application[first_name]"]').val('John');
     membershipController.$form.find('input[name="joint_membership_application[last_name]"]').val('Doe');
     membershipController.$form.find('input[name="joint_membership_application[email]"]').val('JohnDoe@email.com');
