@@ -100,6 +100,7 @@ module Area
         :local_shirt,
         :access_fund_shirt,
         :shirt_size,
+        :shirt_color,
         :delivery_method,
         :paid_cash
       )
