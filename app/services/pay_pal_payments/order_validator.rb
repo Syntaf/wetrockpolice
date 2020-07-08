@@ -26,7 +26,7 @@ module PayPalPayments
 
     def client
       PayPal::PayPalHttpClient.new(
-        if Rails.env.development? || Rails.env.test?
+        if Rails.env.development? || Rails.env.test? || ENV['LIVE_TEST']
           PayPal::SandboxEnvironment.new(
             ENV['PAYPAL_CLIENT_ID'],
             ENV['PAYPAL_CLIENT_SECRET']
