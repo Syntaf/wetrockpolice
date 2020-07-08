@@ -2,8 +2,11 @@
 
 class JointMembershipApplication < ApplicationRecord
   include EmailValidatable
-
   attr_accessor :prevalidate
+
+  has_many :shirt_orders, dependent: :destroy
+  accepts_nested_attributes_for :shirt_orders
+  validates_associated :shirt_orders
 
   before_validation :strip_phone_number
 
@@ -17,10 +20,6 @@ class JointMembershipApplication < ApplicationRecord
   validates :state, presence: true
   validates :zipcode, numericality: true, length: { is: 5 }
 
-  validates :shirt_size, presence: true, if: :selected_shirt?
-  validates :shirt_color, presence: true, if: :selected_shirt?
-  validates :delivery_method, presence: true, if: :selected_shirt?
-
   validates :order_id,
             presence: true,
             if: :paid_with_card?,
@@ -28,10 +27,6 @@ class JointMembershipApplication < ApplicationRecord
 
   def paid_with_card?
     paid_cash == false
-  end
-
-  def selected_shirt?
-    local_shirt == true || access_fund_shirt == true
   end
 
   private

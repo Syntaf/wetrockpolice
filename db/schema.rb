@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_08_164359) do
+ActiveRecord::Schema.define(version: 2020_07_08_170458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,16 +35,12 @@ ActiveRecord::Schema.define(version: 2020_07_08_164359) do
     t.string "zipcode"
     t.string "organization"
     t.string "amount_paid"
-    t.string "shirt_size"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "order_id"
-    t.boolean "local_shirt"
-    t.boolean "access_fund_shirt"
     t.boolean "paid_cash", default: false, null: false
     t.boolean "pending", default: false, null: false
     t.string "delivery_method"
-    t.string "shirt_color"
   end
 
   create_table "local_climbing_orgs", force: :cascade do |t|
@@ -73,6 +69,16 @@ ActiveRecord::Schema.define(version: 2020_07_08_164359) do
     t.integer "driving_time"
     t.index ["climbing_area_id"], name: "index_rainy_day_areas_on_climbing_area_id"
     t.index ["watched_area_id"], name: "index_rainy_day_areas_on_watched_area_id"
+  end
+
+  create_table "shirt_orders", force: :cascade do |t|
+    t.string "shirt_type", null: false
+    t.string "shirt_size", null: false
+    t.string "shirt_color", null: false
+    t.bigint "joint_membership_application_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["joint_membership_application_id"], name: "index_shirt_orders_on_joint_membership_application_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -110,5 +116,6 @@ ActiveRecord::Schema.define(version: 2020_07_08_164359) do
   add_foreign_key "locations", "climbing_areas"
   add_foreign_key "rainy_day_areas", "climbing_areas"
   add_foreign_key "rainy_day_areas", "watched_areas"
+  add_foreign_key "shirt_orders", "joint_membership_applications"
   add_foreign_key "watched_areas", "local_climbing_orgs"
 end

@@ -16,12 +16,8 @@ valid_application:
   zipcode: '12345'
   organization: 'Organization'
   amount_paid: '35'
-  shirt_size: 'ML'
   order_id: '1234FFF'
-  local_shirt: true
-  access_fund_shirt: true
   delivery_method: 'shipped'
-  shirt_color: 'Purple'
   paid_cash: false
 
 pending_application:

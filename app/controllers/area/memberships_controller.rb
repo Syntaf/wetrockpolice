@@ -97,12 +97,13 @@ module Area
         :city,
         :state,
         :zipcode,
-        :local_shirt,
-        :access_fund_shirt,
-        :shirt_size,
-        :shirt_color,
         :delivery_method,
-        :paid_cash
+        :paid_cash,
+        shirt_orders_attributes: [
+          :shirt_type,
+          :shirt_size,
+          :shirt_color
+        ]
       )
     end
 
