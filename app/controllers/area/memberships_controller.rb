@@ -8,6 +8,7 @@ module Area
 
     def new
       @joint_membership = JointMembershipApplication.new
+      @joint_membership.shirt_orders.build
     end
 
     def create

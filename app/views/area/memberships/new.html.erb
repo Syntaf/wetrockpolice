@@ -69,52 +69,38 @@
 
     <div class="row divider"></div>
 
-    <div class="row">
-      <div class="col-md-6 col-12 form-group">
-        <div class="row">
-          <div class="col-md-6 col-12 custom-control custom-checkbox mobile-divider">
-            <%= f.check_box :local_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" }, checked: true %>
-            <%= f.label :local_shirt, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
-          </div>
-          <div class="col-md-6 col-12 mobile-center">
-            <img src="https://via.placeholder.com/150">
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 col-12">
-        <div class="row">
-          <div class="col-12 form-group">
-            <%= f.label :shirt_size %>
-            <%= f.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WS", "WM", "WL", "WXL" ], {prompt: ""}, disabled: true %>
+    <%= f.fields_for :shirt_orders do |shirt_order| %>
+      <div class="row">
+        <div class="col-md-6 col-12 form-group">
+          <div class="row">
+            <div class="col-md-6 col-12 custom-control custom-checkbox mobile-divider">
+              <%= shirt_order.check_box :shirt_type, { class: "custom-control-input", data: { :role => "shirtCheckbox" }}, 'local_shirt', false %>
+              <%= shirt_order.label :shirt_type, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
+            </div>
+            <div class="col-md-6 col-12 mobile-center">
+              <img src="https://via.placeholder.com/150">
+            </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-12 form-group">
-            <%= f.label :delivery_method %>
-            <%= f.select :delivery_method, [ "Local Pickup - Refuge", "Local Pickup - Red Rock Climbing Center", "Local Pickup - Nevada Climbing Center", "Local Pickup - Origin"], {prompt: ""} %>
-          </div>
-        </div>
-      </div>
-    </div>
+        <div class="col-md-6 col-12">
+          <div class="row">
+            <div class="col-12 form-group">
+              <%= shirt_order.label :shirt_size %>
+              <%= shirt_order.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WXS", "WS", "WM", "WL", "WXL" ], {prompt: ""}, disabled: true, data: { role: 'shirtSizeSelect' } %>
 
-    <!-- disabled until future events
-    <div class="row">
-      <div class="col-md-4 col-12 form-group mobile-divider">
-        <div class="col-md-6 custom-control custom-checkbox">
-          <%= f.check_box :local_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" }, checked: true %>
-          <%= f.label :local_shirt, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
-        </div>
-        <div class="col-sm-6 col-md-12 custom-control custom-checkbox">
-          <%= f.check_box :access_fund_shirt, class: "custom-control-input", data: { :role => "shirtCheckbox" } %>
-          <%= f.label :access_fund_shirt, raw("Access Fund T-Shirt <strong>(+$15)</strong>") , class: "custom-control-label" %>
+              <%= shirt_order.hidden_field :shirt_color, value: 'Stone', data: { role: 'stoneColorField' }, disabled: true %>
+              <%= shirt_order.hidden_field :shirt_color, value: 'Purple', data: { role: 'purpleColorField' }, disabled: true%>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 form-group">
+              <%= f.label :delivery_method %>
+              <%= f.select :delivery_method, [ "Local Pickup - Refuge", "Local Pickup - Red Rock Climbing Center", "Local Pickup - Nevada Climbing Center", "Local Pickup - Origin"], {prompt: ""} %>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-md-6 col-12 form-group">
-        <%= f.label :shirt_size %>
-        <%= f.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WS", "WM", "WL", "WXL" ], {prompt: ""}, disabled: true %>
-      </div>
-    </div>
-    -->
+    <% end %>
 
     <div class="row">
       <div class="col-md-6 col-12">
@@ -192,7 +178,7 @@
 <script>
   var membershipController = new NewMembershipController();
 
-  <% if Rails.env.development? && false %>
+  <% if Rails.env.development? %>
     membershipController.$form.find('input[name="joint_membership_application[first_name]"]').val('John');
     membershipController.$form.find('input[name="joint_membership_application[last_name]"]').val('Doe');
     membershipController.$form.find('input[name="joint_membership_application[email]"]').val('JohnDoe@email.com');
@@ -202,7 +188,5 @@
     membershipController.$form.find('input[name="joint_membership_application[zipcode]"]').val('12345');
     membershipController.$form.find('input[name="joint_membership_application[city]"]').val('Cityville');
     membershipController.$form.find('input[name="joint_membership_application[state]"]').val('California');
-    membershipController.$form.find('select[name="joint_membership_application[shirt_size]"]').prop('disabled', false);
-    membershipController.$form.find('select[name="joint_membership_application[shirt_size]"]').val('ML');
   <% end %>
 </script>
