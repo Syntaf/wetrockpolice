@@ -86,9 +86,18 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     assert_response :payment_required
   end
 
-  test 'Fails validation' do
+  test 'Rejects empty first name' do
     app = joint_membership_applications(:valid_application)
     app.first_name = nil
+
+    submit_sncc_application(app)
+
+    assert_response :bad_request
+  end
+
+  test 'Rejects incomplete shirt order' do
+    app = joint_membership_applications(:valid_application)
+    app.shirt_color = nil
 
     submit_sncc_application(app)
 
