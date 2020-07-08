@@ -19,6 +19,7 @@ class JointMembershipApplication < ApplicationRecord
   validates :city, presence: true
   validates :state, presence: true
   validates :zipcode, numericality: true, length: { is: 5 }
+  validates :delivery_method, presence: true, if: proc { |a| a.shirt_orders.any? }
 
   validates :order_id,
             presence: true,
