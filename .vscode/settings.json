@@ -34,5 +34,6 @@
 
     // Ruby Test Explorer
     "rubyTestExplorer.testFramework": "minitest",
-    "rubyTestExplorer.logpanel": true
+    "rubyTestExplorer.logpanel": true,
+    "rubyTestExplorer.minitestCommand": "bundle exec rails"
 }

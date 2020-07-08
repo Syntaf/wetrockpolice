@@ -67,18 +67,4 @@ class JointMembershipApplicationTest < ActiveSupport::TestCase
 
     assert app.valid?
   end
-
-  test 'Requires shirt size when shirt selected' do
-    app = joint_membership_applications(:valid_application)
-    app.shirt_size = nil
-
-    assert_not app.valid?
-  end
-
-  test 'Requires shirt color when shirt selected' do
-    app = joint_membership_applications(:valid_application)
-    app.shirt_color = nil
-
-    assert_not app.valid?
-  end
 end

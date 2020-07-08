@@ -95,9 +95,27 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     assert_response :bad_request
   end
 
-  test 'Rejects incomplete shirt order' do
+  test 'Rejects incomplete shirt order - color' do
     app = joint_membership_applications(:valid_application)
-    app.shirt_color = nil
+    app.shirt_orders.create({ shirt_type: 'local_shirt', shirt_size: 'MS', shirt_color: nil })
+
+    submit_sncc_application(app)
+
+    assert_response :bad_request
+  end
+
+  test 'Rejects incomplete shirt order - size' do
+    app = joint_membership_applications(:valid_application)
+    app.shirt_orders.create({ shirt_type: 'access_fund_shirt', shirt_size: nil, shirt_color: 'Stone' })
+
+    submit_sncc_application(app)
+
+    assert_response :bad_request
+  end
+
+  test 'Rejects invalid shirt order - type' do
+    app = joint_membership_applications(:valid_application)
+    app.shirt_orders.create({ shirt_type: 'invalid', shirt_size: 'MS', shirt_color: 'Stone' })
 
     submit_sncc_application(app)
 

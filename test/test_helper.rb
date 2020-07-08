@@ -33,13 +33,17 @@ module SnccApplication
         zipcode: app.zipcode,
         amount_paid: app.amount_paid,
         organization: app.organization,
-        shirt_size: app.shirt_size,
-        shirt_color: app.shirt_color,
         order_id: app.order_id,
-        local_shirt: app.local_shirt,
-        access_fund_shirt: app.access_fund_shirt,
         paid_cash: app.paid_cash,
-        delivery_method: app.delivery_method
+        delivery_method: app.delivery_method,
+        shirt_orders_attributes:
+          app.shirt_orders.map do |order|
+            {
+              shirt_type: order.shirt_type,
+              shirt_size: order.shirt_size,
+              shirt_color: order.shirt_color
+            }
+          end
       }
     }
   end
@@ -58,13 +62,17 @@ module SnccApplication
         zipcode: app.zipcode,
         amount_paid: app.amount_paid,
         organization: app.organization,
-        shirt_size: app.shirt_size,
-        shirt_color: app.shirt_color,
         order_id: app.order_id,
-        local_shirt: app.local_shirt,
-        access_fund_shirt: app.access_fund_shirt,
         paid_cash: app.paid_cash,
-        delivery_method: app.delivery_method
+        delivery_method: app.delivery_method,
+        shirt_orders_attributes:
+          app.shirt_orders.map do |order|
+            {
+              shirt_type: order.shirt_type,
+              shirt_size: order.shirt_size,
+              shirt_color: order.shirt_color
+            }
+          end
       }
     }
   end
