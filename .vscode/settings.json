@@ -1,0 +1,38 @@
+{
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "tmp": true,
+        "bin": true
+    },
+
+    // General configuration
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+
+    // Ruby configuration
+    "ruby.format": false,
+    "ruby.codeCompletion": false,
+    "ruby.intellisense": false,
+    "ruby.useLanguageServer": false,
+
+    // Solargraph configuration (When installed into the container)
+    "solargraph.useBundler": true,
+    "solargraph.completion": true,
+    "solargraph.diagnostics": true,
+    "solargraph.definitions": true,
+    "solargraph.formatting": true,
+    "solargraph.hover": true,
+    "solargraph.symbols": true,
+    "solargraph.rename": true,
+    "solargraph.folding": true,
+    "solargraph.references": true,
+    "solargraph.checkGemVersion": true,
+    "solargraph.bundlerPath": "bundle",
+    "solargraph.logLevel": "debug",
+
+    // Ruby Test Explorer
+    "rubyTestExplorer.testFramework": "minitest",
+    "rubyTestExplorer.logpanel": true
+}
