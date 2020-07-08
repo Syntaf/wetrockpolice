@@ -4,8 +4,11 @@ function NewMembershipController(options) {
         'validationButton': 'button[data-role="validate"]',
         'form': '#membership-form',
         'orderIdField': 'input[data-role="orderId"]',
+        'disabledShirtFields': 'select',
         'shirtCheckboxes': '[data-role="shirtCheckbox"]',
-        'shirtSizeField': 'select',
+        'shirtSizeField': 'select[data-role="shirtSizeSelect"]',
+        'stoneColorField': 'input[data-role="stoneColorField"]',
+        'purpleColorField': 'input[data-role="purpleColorField"]',
         'paidCashField': 'input[data-role="paidCashField"]',
         'amountPaidField': 'input[data-role="amountPaidField"]',
         'priceLabel': 'strong[data-role="price"]',
@@ -21,7 +24,10 @@ function NewMembershipController(options) {
 
     this.$form = $(this.options.form);
     this.$shirtCheckboxes = $(this.options.shirtCheckboxes);
-    this.$disabledShirtFields = $(this.options.shirtSizeField);
+    this.$disabledShirtFields = $(this.options.disabledShirtFields);
+    this.$shirtSizeField = $(this.options.shirtSizeField);
+    this.$stoneColorField = $(this.options.stoneColorField);
+    this.$purpleColorField = $(this.options.purpleColorField);
     this.$orderIdField = $(this.options.orderIdField);
     this.$paidCashField = $(this.options.paidCashField);
     this.$amountPaidfield = $(this.options.amountPaidField);
@@ -38,6 +44,7 @@ function NewMembershipController(options) {
 
     this.initValidationListener();
     this.initShirtCheckboxListeners();
+    this.initShirtSizeListener();
     this.initPaymentView();
     this.initPayPal();
     this.initCashPayments();
@@ -84,6 +91,8 @@ NewMembershipController.prototype.showValidationErrors = function (errors) {
     var scrollBelowFold = true;
 
     $.each(Object.keys(errors), function (index, invalid_field) {
+        if ('shirt_orders' == invalid_field) return;
+
         this.getFieldByName(invalid_field).addClass('is-invalid');
 
         if ($.inArray(invalid_field, aboveFoldFields) > -1) {
@@ -123,6 +132,23 @@ NewMembershipController.prototype.updatePrice = function (shirtCheckedCount) {
 
     this.$totalPrice.html('$' + newPrice);
     this.price = newPrice;
+}
+
+NewMembershipController.prototype.initShirtSizeListener = function () {
+    this.$shirtSizeField.change(this.enableColorValueForSize.bind(this));
+}
+
+NewMembershipController.prototype.enableColorValueForSize = function (e) {
+    var selectedShirtSize = e.target.value;
+    var gender = selectedShirtSize.charAt(0);
+
+    if (gender === "M") {
+        this.$stoneColorField.prop('disabled', false);
+        this.$purpleColorField.prop('disabled', true);
+    } else {
+        this.$stoneColorField.prop('disabled', true);
+        this.$purpleColorField.prop('disabled', false);
+    }
 }
 
 NewMembershipController.prototype.initPaymentView = function () {
@@ -172,6 +198,7 @@ NewMembershipController.prototype.orderConfigurator = function (data, actions) {
 }
 
 NewMembershipController.prototype.onApproval = function (data, actions) {
+    console.log(data);
     var orderId = data.orderID;
 
     actions.order.capture().then(this.submitMembership.bind(this, orderId));
@@ -249,17 +276,30 @@ NewMembershipController.prototype.scrollTo = function ($element, offset) {
     return df;
 }
 
-NewMembershipController.prototype.getFieldByName = function (name) {
-    return $('[name="joint_membership_application[' + name + ']"]');
+NewMembershipController.prototype.getFieldByName = function (field) {
+    var name = this.translateFieldToName(field);
+
+    return $(name);
 }
 
 NewMembershipController.prototype.disableForm = function () {
-    $('form input, form select').prop('disabled', true);
+    $('form input, form select').not('input[type="hidden"]').prop('disabled', true);
     this.$validationButton.prop('disabled', true);
 }
 
 NewMembershipController.prototype.enableForm = function () {
-    $('form input, form select').prop('disabled', false);
+    $('form input, form select').not('input[type="hidden"]').prop('disabled', false);
     this.$validationButton.prop('disabled', false);
     this.swapDisabledFieldState();
+}
+
+NewMembershipController.prototype.translateFieldToName = function (field) {
+    // Nested attributes will have two parts, normal attributes will have one
+    var parts = field.split('.');
+
+    if (parts.length === 2) {
+        return '[name="joint_membership_application[shirt_orders_attributes][0][' + parts[1] + ']"]';
+    }
+
+    return '[name="joint_membership_application[' + parts[0] + ']"]';
 }
