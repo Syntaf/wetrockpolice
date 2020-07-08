@@ -19,4 +19,4 @@ questions or concerns feel free to reach out to snclimberscoalition@gmail.com
 <% end %>
 <%= @membership.city %>, <%= @membership.state %>
 <%= @membership.zipcode %>
-Shirts: <% if !@membership.local_shirt && !@membership.access_fund_shirt %>None<% else %><%= @membership.local_shirt ? 'SNCC T-Shirt ' : '' %><%= @membership.access_fund_shirt ? 'Access Fund Shirt' : '' %><% end %>
+Shirts: <% @membership.shirt_orders.each do |shirt_order| %><%= shirt_order.shirt_type.tr("_", " ").titleize %> (<%= shirt_order.shirt_size %>)<% end %>

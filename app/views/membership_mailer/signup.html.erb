@@ -41,16 +41,11 @@
       <div>
         <strong style="font-size: 16px; display: inline-block">Shirts:</strong>
         <ul style="padding: 0; list-style: none; display: inline-block; margin: 0; margin-right: 5px;">
-            <% if @membership.local_shirt == false && @membership.access_fund_shirt == false %>
-              <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';">None</li>
-            <% end %>
-            <% if @membership.local_shirt == true %>
-              <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';">SNCC T-Shirt</li>
-            <% end %>
-            <% if @membership.access_fund_shirt == true %>
-              <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';"><%= @membership.local_shirt == true ? ', ' : '' %>Access Fund T-Shirt</li>
-            <% end %>
-          </li>
+          <% @membership.shirt_orders.each do |shirt_order| %>
+            <li style="font-size: 16px; margin: 0; font-family: 'Open Sans';">
+              <%= shirt_order.shirt_type.tr("_", " ").titleize %> (<%= shirt_order.shirt_size %>)
+            </li>
+          <% end %>
         </ul>
       </div>
       <div>
