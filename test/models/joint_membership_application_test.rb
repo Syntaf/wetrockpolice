@@ -16,10 +16,7 @@ class JointMembershipApplicationTest < ActiveSupport::TestCase
     app = joint_membership_applications(:valid_application)
 
     app.email = 'abcd'
-
-    assert_raises ActiveRecord::RecordInvalid do
-      app.save!
-    end
+    assert_not app.valid?
   end
 
   test 'Accepts empty telephone number' do
@@ -34,29 +31,23 @@ class JointMembershipApplicationTest < ActiveSupport::TestCase
   test 'Rejects non-numeric zipcode' do
     app = joint_membership_applications(:valid_application)
 
-    assert_raises ActiveRecord::RecordInvalid do
-      app.zipcode = 'should error'
-      app.save!
-    end
+    app.zipcode = 'should error'
+    assert_not app.valid?
   end
 
   test 'Rejects too long zipcode' do
     app = joint_membership_applications(:valid_application)
 
-    assert_raises ActiveRecord::RecordInvalid do
-      app.zipcode = '123456789'
-      app.save!
-    end
+    app.zipcode = '123456789'
+    assert_not app.valid?
   end
 
   test 'Requires order_id for card payments on save' do
     app = joint_membership_applications(:valid_application)
 
-    assert_raises ActiveRecord::RecordInvalid do
-      app.order_id = nil
-      app.paid_cash = false
-      app.save!
-    end
+    app.order_id = nil
+    app.paid_cash = false
+    assert_not app.valid?
   end
 
   test 'Allows nil order_id for validation' do
@@ -73,6 +64,21 @@ class JointMembershipApplicationTest < ActiveSupport::TestCase
 
     app.order_id = nil
     app.paid_cash = true
-    app.save!
+
+    assert app.valid?
+  end
+
+  test 'Requires shirt size when shirt selected' do
+    app = joint_membership_applications(:valid_application)
+    app.shirt_size = nil
+
+    assert_not app.valid?
+  end
+
+  test 'Requires shirt color when shirt selected' do
+    app = joint_membership_applications(:valid_application)
+    app.shirt_color = nil
+
+    assert_not app.valid?
   end
 end
