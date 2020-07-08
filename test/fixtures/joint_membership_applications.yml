@@ -21,6 +21,7 @@ valid_application:
   local_shirt: true
   access_fund_shirt: true
   delivery_method: 'shipped'
+  shirt_color: 'Purple'
   paid_cash: false
 
 pending_application:
