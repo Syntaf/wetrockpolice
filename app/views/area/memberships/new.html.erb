@@ -73,12 +73,31 @@
       <div class="row">
         <div class="col-md-6 col-12 form-group">
           <div class="row">
-            <div class="col-md-6 col-12 custom-control custom-checkbox mobile-divider">
-              <%= shirt_order.check_box :shirt_type, { class: "custom-control-input", data: { :role => "shirtCheckbox" }}, 'local_shirt', false %>
+            <div class="col-md-5 col-12 custom-control custom-checkbox mobile-divider">
+              <%= shirt_order.check_box :shirt_type, { checked: true, class: "custom-control-input", data: { role: "shirtCheckbox" }}, 'local_shirt', false %>
               <%= shirt_order.label :shirt_type, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
             </div>
-            <div class="col-md-6 col-12 mobile-center">
-              <img src="https://via.placeholder.com/150">
+            <div id="shirtCarousel" class="col-md-7 col-12 mobile-center carousel slide" data-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <%= image_tag('redrock/stone_front.jpg', size: '106x150') %>
+                </div>
+                <div class="carousel-item">
+                  <%= image_tag('redrock/stone_back.jpg', size: '106x150') %>
+                </div>
+                <div class="carousel-item">
+                  <%= image_tag('redrock/purple_front.jpg', size: '106x150') %>
+                </div>
+                <div class="carousel-item">
+                  <%= image_tag('redrock/purple_back.jpg', size: '106x150') %>
+                </div>
+              </div>
+              <a class="carousel-control-prev" href="#shirtCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              </a>
+              <a class="carousel-control-next" href="#shirtCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              </a>
             </div>
           </div>
         </div>
@@ -86,7 +105,17 @@
           <div class="row">
             <div class="col-12 form-group">
               <%= shirt_order.label :shirt_size %>
-              <%= shirt_order.select :shirt_size, [ "MS", "MM", "ML", "MXL", "WXS", "WS", "WM", "WL", "WXL" ], {prompt: ""}, disabled: true, data: { role: 'shirtSizeSelect' } %>
+              <%= shirt_order.select :shirt_size, [
+                "Mens Small",
+                "Mens Medium",
+                "Mens Large",
+                "Mens Extra Large",
+                "Womens Extra Small",
+                "Womens Small",
+                "Womens Medium",
+                "Womens Large",
+                "Womens Extra Large"
+                ], {prompt: ""}, disabled: true, data: { role: 'shirtSizeSelect' } %>
 
               <%= shirt_order.hidden_field :shirt_color, value: 'Stone', data: { role: 'stoneColorField' }, disabled: true %>
               <%= shirt_order.hidden_field :shirt_color, value: 'Purple', data: { role: 'purpleColorField' }, disabled: true%>
