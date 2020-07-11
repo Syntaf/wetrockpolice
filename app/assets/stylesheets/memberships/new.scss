@@ -67,6 +67,21 @@
             margin: 25px 0;
         }
 
+        .carousel {
+            .carousel-item {
+                justify-content: center;
+            }
+
+            .carousel-control-prev, 
+            .carousel-control-next {
+                background-color: #ddd;
+
+                span {
+                    font-family: 'Material Icons';
+                }
+            }
+        }
+
         .submit-row {
             justify-content: center;
             margin: 50px 0;
