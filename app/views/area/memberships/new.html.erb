@@ -70,14 +70,13 @@
     <div class="row divider"></div>
 
     <%= f.fields_for :shirt_orders do |shirt_order| %>
+      <%= shirt_order.check_box :shirt_type, { checked: true, class: "shirt-type custom-control-input", data: { role: "shirtCheckbox" }}, 'local_shirt', false %>
+      <%# <%= shirt_order.label :shirt_type, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
+
       <div class="row">
         <div class="col-md-6 col-12 form-group">
           <div class="row">
-            <div class="col-md-5 col-12 custom-control custom-checkbox mobile-divider">
-              <%= shirt_order.check_box :shirt_type, { checked: true, class: "custom-control-input", data: { role: "shirtCheckbox" }}, 'local_shirt', false %>
-              <%= shirt_order.label :shirt_type, raw("SNCC T-Shirt <strong>(+$15)</strong>"), class: "custom-control-label" %>
-            </div>
-            <div id="shirtCarousel" class="col-md-7 col-12 mobile-center carousel slide" data-ride="carousel">
+            <div id="shirtCarousel" class="col-md-12 col-12 mobile-center carousel slide" data-ride="carousel">
               <div class="carousel-inner">
                 <div class="carousel-item active">
                   <%= image_tag('redrock/stone_front.jpg', size: '142x200') %>
