@@ -171,6 +171,11 @@
         .loading {
             display: none;
             margin-top: 50px;
+
+            .spinner {
+                display: inline-block;
+                width: initial;
+            }
         }
     }
 
