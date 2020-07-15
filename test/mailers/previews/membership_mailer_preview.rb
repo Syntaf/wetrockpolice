@@ -4,7 +4,7 @@
 class MembershipMailerPreview < ActionMailer::Preview
   def new_membership_email
     MembershipMailer.with(
-      application: JointMembershipApplication.where(paid_cash: false).first
-    ).signup_confirmation
+      membership: JointMembershipApplication.where(paid_cash: false).first
+    ).signup
   end
 end

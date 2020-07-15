@@ -28,3 +28,29 @@ ClimbingArea.create!([
 RainyDayArea.create!([
   {climbing_area_id: 1, watched_area_id: 1, driving_time: 120}
 ])
+JointMembershipApplication.create!([
+  {
+    first_name: 'John',
+    last_name: 'Doe',
+    email: 'johndoe@gmail.com',
+    phone_number: 7024443333,
+    street_line_one: '123 Main Street',
+    street_line_two: 'Apt 2',
+    city: 'Las Vegas',
+    state: 'Nevada',
+    zipcode: '89074',
+    organization: 'Southern Nevada Climbing Coalition',
+    amount_paid: '50',
+    order_id: '12345GHT80#',
+    paid_cash: false,
+    pending: false,
+    delivery_method: 'Local Pickup (Refuge)',
+    shirt_orders_attributes: [
+      {
+        shirt_type: 'local_shirt',
+        shirt_size: 'Mens Medium (Stone)',
+        shirt_color: 'Stone'
+      }
+    ]
+  }
+])
