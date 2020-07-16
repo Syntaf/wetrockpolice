@@ -1,5 +1,8 @@
-RailsAdmin.config do |config|
+require 'rails_admin/mark_delivered_action'
 
+RailsAdmin.config do |config|
+  RailsAdmin::Config::Actions.register(RailsAdmin::Config::Actions::MarkDelivered)
+  
   ### Popular gems integration
   config.main_app_name = Proc.new{|controller| [ 'Wetrockpolice', "Admin - #{controller.params[:action].try(:titleize)}"]}
 
@@ -55,6 +58,8 @@ RailsAdmin.config do |config|
     edit
     delete
     show_in_app
+
+    mark_delivered
 
     ## With an audit adapter, you can add:
     # history_index
