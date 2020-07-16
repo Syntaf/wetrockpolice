@@ -31,6 +31,10 @@
 
 en:
   hello: "Hello world"
+  admin:
+    actions:
+      mark_delivered:
+        bulk_link: "Mark Delivered"
   activerecord:
     errors:
       models:
