@@ -14,7 +14,7 @@ WORKDIR /opt/wetrockpolice
 COPY Gemfile /opt/wetrockpolice
 COPY Gemfile.lock /opt/wetrockpolice
 RUN yarn install --check-files
-RUN bundle install
+RUN bundle install --binstubs
 COPY . /opt/wetrockpolice
 
 COPY entrypoint.sh /usr/bin

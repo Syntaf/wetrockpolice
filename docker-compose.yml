@@ -15,6 +15,7 @@ services:
   web:
     build: .
     image: syntaf/wetrockpolice
+    command: bundle exec rdebug-ide --debug --host 0.0.0.0 --port 1234 -- bin/rails server -p 3001 -b 0.0.0.0
     environment:
       - POSTGRES_PASSWORD=admin
       - POSTGRES_USER=wrp
@@ -28,6 +29,8 @@ services:
       - /opt/wetrockpolice/tmp
     ports:
       - "3001:3001"
+      - "1234:1234"
+      - "26162:26162"
     depends_on:
       - db
 
