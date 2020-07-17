@@ -1,8 +1,6 @@
 require 'rails_admin/mark_delivered_action'
 
-RailsAdmin.config do |config|
-  RailsAdmin::Config::Actions.register(RailsAdmin::Config::Actions::MarkDelivered)
-  
+RailsAdmin.config do |config|  
   ### Popular gems integration
   config.main_app_name = Proc.new{|controller| [ 'Wetrockpolice', "Admin - #{controller.params[:action].try(:titleize)}"]}
 
@@ -48,6 +46,10 @@ RailsAdmin.config do |config|
     end
   end
 
+  config.model JointMembershipApplication do
+    include_fields :delivered, :first_name, :last_name, :amount_paid, :order_id
+  end
+
   config.actions do
     dashboard                     # mandatory
     index                         # mandatory
@@ -59,7 +61,9 @@ RailsAdmin.config do |config|
     delete
     show_in_app
 
-    mark_delivered
+    mark_delivered do
+      only ['JointMembershipApplication']
+    end
 
     ## With an audit adapter, you can add:
     # history_index
