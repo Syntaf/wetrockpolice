@@ -34,7 +34,9 @@ en:
   admin:
     actions:
       mark_delivered:
-        bulk_link: "Mark Delivered"
+        title: "Mark selected memberships as delivered"
+        bulk_link: "Mark selected as delivered"
+        breadcrumb: "Mark selected as delivered"
   activerecord:
     errors:
       models:
