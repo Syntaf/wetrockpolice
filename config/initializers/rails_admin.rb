@@ -47,7 +47,9 @@ RailsAdmin.config do |config|
   end
 
   config.model JointMembershipApplication do
-    include_fields :delivered, :first_name, :last_name, :amount_paid, :order_id
+    include_fields :delivered, :first_name, :last_name, :amount_paid, :order_id,
+      :email, :phone_number, :street_line_one, :street_line_two, :city, :state,
+      :zipcode, :organization, :delivery_method, :delivered, :shirt_orders
   end
 
   config.actions do
