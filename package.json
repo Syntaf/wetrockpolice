@@ -2,7 +2,7 @@
   "name": "wetrockpolice",
   "private": true,
   "engines": {
-    "node": "10.15.x"
+    "node": "12.16.x"
   },
   "dependencies": {
     "@rails/webpacker": "4.2.2"
