@@ -42,7 +42,7 @@
         margin-left: -6px;
     }
 
-    @media (max-width: $mobileBreakpoint) {
+    @media (max-width: 500px) {
         display: none;
     }
 }
