@@ -5,7 +5,7 @@ module Area
     private
 
     def set_watched_area
-      @watched_area = WatchedArea.find_by slug: params[:slug]
+      @watched_area = WatchedArea.find_by(slug: params[:slug]) || render_404
     end
   end
 end

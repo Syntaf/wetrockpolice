@@ -11,6 +11,10 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def render_404
+    render file: 'public/404.html', layout: false, status: :not_found
+  end
+
   def reload_rails_admin
     models = %w[ClimbingArea JointMembershipApplication LocalClimbingOrg Location RainyDayArea ShirtOrder User WatchedArea]
     models.each do |m|
