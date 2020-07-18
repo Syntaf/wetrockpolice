@@ -6,8 +6,23 @@
     text-align: left !important;
 }
 
-.popover-header {
-    font-size: 18px !important;
+.popover {
+    width: 450px;
+    max-width: 450px !important;
+
+    .popover-header {
+        font-size: 18px !important;
+    }
+
+    .popover-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .inline-link {
+            display: inline;
+        }
+    }
 }
 
 .notification-menu {
@@ -25,6 +40,10 @@
         border-radius: 100%;
         background-color: #f44336;
         margin-left: -6px;
+    }
+
+    @media (max-width: $mobileBreakpoint) {
+        display: none;
     }
 }
 
