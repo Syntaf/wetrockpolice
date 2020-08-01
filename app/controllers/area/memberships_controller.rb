@@ -7,6 +7,9 @@ module Area
     before_action :set_meta, only: %i[new]
 
     def new
+      # Disable membership signups
+      redirect_to watched_area_path('redrock')
+
       @joint_membership = JointMembershipApplication.new
       @joint_membership.shirt_orders.build
     end
