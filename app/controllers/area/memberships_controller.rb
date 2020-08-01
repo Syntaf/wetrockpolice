@@ -17,12 +17,9 @@ module Area
     def create
       @membership = JointMembershipApplication.new(membership_params)
       @membership.pending = true if paid_cash?
-
       @membership.save!(context: :create)
 
-      unless @membership.pending
-        MembershipMailer.with(membership: @membership).signup.deliver_later
-      end
+      MembershipMailer.with(membership: @membership).signup.deliver_later unless @membership.pending
 
       respond_json(
         status: :created,
@@ -103,10 +100,10 @@ module Area
         :zipcode,
         :delivery_method,
         :paid_cash,
-        shirt_orders_attributes: [
-          :shirt_type,
-          :shirt_size,
-          :shirt_color
+        shirt_orders_attributes: %i[
+          shirt_type
+          shirt_size
+          shirt_color
         ]
       )
     end

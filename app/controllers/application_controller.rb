@@ -16,7 +16,17 @@ class ApplicationController < ActionController::Base
   end
 
   def reload_rails_admin
-    models = %w[ClimbingArea JointMembershipApplication LocalClimbingOrg Location RainyDayArea ShirtOrder User WatchedArea]
+    models = %w[
+      ClimbingArea
+      JointMembershipApplication
+      LocalClimbingOrg
+      Location
+      RainyDayArea
+      ShirtOrder
+      User
+      WatchedArea
+    ]
+
     models.each do |m|
       RailsAdmin::Config.reset_model(m)
     end
