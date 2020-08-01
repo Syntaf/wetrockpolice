@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Rails/HelperInstanceVariable
 module MaterialFormsHelper
   class MaterialFormBuilder < ActionView::Helpers::FormBuilder
     def text_field(attribute, options = {})
@@ -45,5 +44,3 @@ module MaterialFormsHelper
     end
   end
 end
-
-# rubocop:enable Rails/HelperInstanceVariable
