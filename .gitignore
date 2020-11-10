@@ -35,3 +35,6 @@ coverage
 yarn-debug.log*
 .yarn-integrity
 .DS_Store
+
+/config/master.key
+secrets.yaml

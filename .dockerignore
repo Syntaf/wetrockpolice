@@ -1,2 +1,4 @@
+.git
 node_modules
-yarn.lock
+config/master.key
+config/credentials.yml.enc

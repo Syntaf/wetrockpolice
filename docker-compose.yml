@@ -13,9 +13,11 @@ services:
       - wrp_postgres_database:/var/lib/postgresql/data:Z
 
   web:
-    build: .
-    image: syntaf/wetrockpolice
-    command: bundle exec rdebug-ide --debug --host 0.0.0.0 --port 1234 -- bin/rails server -p 3001 -b 0.0.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    # image: syntaf/wetrockpolice:v3
+    # command: bundle exec rdebug-ide --debug --host 0.0.0.0 --port 1234 -- bin/rails server -p 3001 -b 0.0.0.0
     environment:
       - POSTGRES_PASSWORD=admin
       - POSTGRES_USER=wrp
