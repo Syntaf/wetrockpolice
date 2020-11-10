@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidekiq
+  labels:
+    {{- include "wetrockpolice.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.sidekiq.autoscaling.enabled }}
+  replicas: {{ .Values.sidekiq.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "wetrockpolice.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "wetrockpolice.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "wetrockpolice.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: sidekiq
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["bundle"]
+          args:
+            - "exec"
+            - "sidekiq"
+            - "-q"
+            - "mailers"
+          env:
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-rails-master-key
+                  key: key
+            - name: REDIS_URL
+              value: "redis://wetrockpolice-redis-master:6379/0"
+            - name: JOB_WORKER_URL
+              value: "redis://wetrockpolice-redis-master:6379/0"
+            - name: RAILS_SERVE_STATIC_FILES
+              value: "true"
+            - name: WETROCKPOLICE_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql
+                  key: postgresql-password
+            - name: WETROCKPOLICE_DATABASE_HOST
+              value: {{ .Release.Name }}-postgresql

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AdminMailer < Devise::Mailer
-  default from: 'wetrockpolice@gmail.com'
+  default from: 'admin@wetrockpolice.com'
   layout 'mailer'
 
   def new_user_waiting_for_approval(email)
