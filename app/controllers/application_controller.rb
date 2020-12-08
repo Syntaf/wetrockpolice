@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def render_404
+  def render404
     render file: 'public/404.html', layout: false, status: :not_found
   end
 
