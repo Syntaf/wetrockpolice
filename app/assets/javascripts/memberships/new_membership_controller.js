@@ -4,7 +4,7 @@ function NewMembershipController(options) {
         'validationButton': 'button[data-role="validate"]',
         'form': '#membership-form',
         'orderIdField': 'input[data-role="orderId"]',
-        'disabledShirtFields': 'select',
+        'disabledShirtFields': 'select[data-role="shirtSizeSelect"]',
         'shirtCheckboxes': '[data-role="shirtCheckbox"]',
         'shirtSizeField': 'select[data-role="shirtSizeSelect"]',
         'stoneColorField': 'input[data-role="stoneColorField"]',
@@ -17,7 +17,8 @@ function NewMembershipController(options) {
         'loaderIndicator': '[data-role="loader"]',
         'cashButton': 'button[data-role="cashPayment"]',
         'membershipFee': 35,
-        'shirtPrice': 15
+        'shirtPrice': 15,
+        'payProcessingFeeCheckbox': '[data-role="coverFeeCheckbox"]'
     });
 
     this.price = this.options.membershipFee;
@@ -37,6 +38,7 @@ function NewMembershipController(options) {
     this.$editAgainButton = $(this.options.editAgainButton);
     this.$validationButton = $(this.options.validationButton);
     this.$loaderIndicator = $(this.options.loaderIndicator);
+    this.$payProcessingFeeCheckbox = $(this.options.payProcessingFeeCheckbox)
 
     $('#joint_membership_application_phone_number').usPhoneFormat({
         'format': '(xxx) xxx-xxxx'
@@ -48,6 +50,7 @@ function NewMembershipController(options) {
     this.initPaymentView();
     this.initPayPal();
     this.initCashPayments();
+    this.initPayProcessingFeeCheckbox();
 }
 
 NewMembershipController.prototype.initValidationListener = function () {
@@ -73,10 +76,13 @@ NewMembershipController.prototype.submitValidateForm = function () {
     var validationEndpoint = this.$form.attr('action') + '/validate';
     var df = $.Deferred();
 
+    var data = this.$form.serialize();
+    data += '&joint_membership_application%5Ddelivery_method%5D=Local+Pickup+-+Refuge'
+    
     $.ajax({
         'type': 'POST',
         'url': validationEndpoint,
-        'data': this.$form.serialize(),
+        'data': data,
         'success': function (response) { df.resolve(response); },
         'error': function (response) { df.reject(response); }
     });
@@ -302,4 +308,21 @@ NewMembershipController.prototype.translateFieldToName = function (field) {
     }
 
     return '[name="joint_membership_application[' + parts[0] + ']"]';
+}
+
+NewMembershipController.prototype.initPayProcessingFeeCheckbox = function (field) {
+    this.$payProcessingFeeCheckbox.change(
+        function () {
+            var newPrice = this.price;
+
+            if ($(this.options.payProcessingFeeCheckbox + ':checked').length > 0) {
+                newPrice += 2;
+            } else {
+                newPrice -= 2;
+            }
+
+            this.$totalPrice.html('$' + newPrice);
+            this.price = newPrice;
+        }.bind(this)
+    );
 }
