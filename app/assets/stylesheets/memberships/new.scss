@@ -1,5 +1,21 @@
 @import "../vars.scss";
 
+@media (max-width: 500px) {
+    .membership-join + .tooltip {
+        left: -100px !important;
+    }
+}
+
+@media (max-width: 350px) {
+    .custom-control.custom-checkbox.mobile-divider {
+        padding-left: 25px;
+    }
+
+    .membership-join + .tooltip {
+        left: -150px !important;
+    }
+}
+
 .membership-join {
     position: relative;
 
@@ -9,6 +25,10 @@
 
     i.material-icons {
         font-family: 'Material Icons';
+    }
+
+    i.fas {
+        font-family: 'Font Awesome 5 Free';
     }
 
     &.header {
@@ -72,6 +92,8 @@
         }
 
         .carousel {
+            margin-top: 10px;
+
             .carousel-item {
                 justify-content: center;
             }
