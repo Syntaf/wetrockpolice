@@ -204,7 +204,6 @@ NewMembershipController.prototype.orderConfigurator = function (data, actions) {
 }
 
 NewMembershipController.prototype.onApproval = function (data, actions) {
-    console.log(data);
     var orderId = data.orderID;
 
     actions.order.capture().then(this.submitMembership.bind(this, orderId));
@@ -219,10 +218,13 @@ NewMembershipController.prototype.submitMembership = function (orderId, details)
 
     this.$amountPaidfield.val(this.price);
 
+    var data = this.$form.serialize();
+    data += '&joint_membership_application%5Ddelivery_method%5D=Local+Pickup+-+Refuge'
+
     $.ajax({
         'type': 'POST',
         'url': this.$form.attr('action'),
-        'data': this.$form.serialize(),
+        'data': data,
         'success': this.onSubmitSuccess.bind(this),
         'error': this.onSubmitError.bind(this)
     });
