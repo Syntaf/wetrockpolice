@@ -97,6 +97,7 @@ module Area
         :zipcode,
         :delivery_method,
         :paid_cash,
+        :cover_fee,
         shirt_orders_attributes: %i[
           shirt_type
           shirt_size
