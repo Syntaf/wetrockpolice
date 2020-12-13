@@ -10,8 +10,6 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
   INVALID_ORDER_ID = 'FFF321'
 
   setup do
-    skip 'Signups disabled'
-
     stub_request(
       :post,
       'https://api.sandbox.paypal.com/v1/oauth2/token'
