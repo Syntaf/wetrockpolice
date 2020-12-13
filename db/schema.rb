@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_16_043532) do
+ActiveRecord::Schema.define(version: 2020_12_13_192157) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 2020_07_16_043532) do
     t.boolean "pending", default: false, null: false
     t.string "delivery_method"
     t.boolean "delivered", default: false
+    t.boolean "cover_fee", default: false
   end
 
   create_table "local_climbing_orgs", force: :cascade do |t|
