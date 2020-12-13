@@ -5,7 +5,7 @@ module PayPalPayments
     include PayPalCheckoutSdk::Orders
 
     def initialize(order_id)
-      super
+      super()
       @order_id = order_id
       @client = client
     end
