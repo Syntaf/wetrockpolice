@@ -6,6 +6,13 @@ replicaCount: 2
 
 masterKey: rails-master-key
 
+sendgrid:
+  password: ''
+
+paypal:
+  clientId: ''
+  secret: ''
+
 sidekiq:
   replicaCount: 2
 
@@ -16,7 +23,7 @@ image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v13"
+  tag: "v14"
 
 imagePullSecrets: []
 nameOverride: ""
