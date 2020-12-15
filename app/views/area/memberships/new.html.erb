@@ -70,19 +70,22 @@
     <div class="row divider"></div>
 
     <%= f.fields_for :shirt_orders do |shirt_order| %>
-      <%= shirt_order.check_box :shirt_type, { checked: true, class: "shirt-type custom-control-input", data: { role: "shirtCheckbox" }}, 'local_shirt', false %>
       <div class="row">
         <div class="col-md-6 col-12 form-group">
           <div class="row">
             <div class="col-md-12 col-12 custom-control custom-checkbox mobile-divider">
-              <%= shirt_order.check_box :cover_fee, { checked: false, class: "custom-control-input", data: { role: "coverFeeCheckbox" }} , true, false %>
-              <%= shirt_order.label :cover_fee, raw("Cover processing fee (<strong>$2</strong>)"), class: "custom-control-label" %>
+              <%= shirt_order.check_box :shirt_type, { checked: true, class: "shirt-type custom-control-input", data: { role: "shirtCheckbox" }}, 'local_shirt', false %>
+              <%= shirt_order.label :shirt_type, raw("SNCC T-Shirt (<strong>+$15</strong>)"), class: "custom-control-label" %>
+            </div>
+            <div class="col-md-12 col-12 custom-control custom-checkbox mobile-divider">
+              <%= f.check_box :cover_fee, { checked: false, class: "custom-control-input", data: { role: "coverFeeCheckbox" }} , true, false %>
+              <%= f.label :cover_fee, raw("Cover processing fee (<strong>+$2</strong>)"), class: "custom-control-label" %>
               <i
                 class="fas fa-exclamation-circle"
                 data-role="tooltip"
                 data-toggle="tooltip"
                 data-placement="auto"
-                title="Unlike rec.gov, this $2 fee is optional. Also unlike rec.gov, this fee goes towards covering the costs associated with our payment provider (PayPal) and in no way enters our pockets">
+                title="If you'd like to cover our payment processing fee, we appreciate it! SNCC is a 501c3 non profit organization">
               </i>
             </div>
             <div id="shirtCarousel" class="col-md-12 col-12 mobile-center carousel slide" data-ride="carousel">
