@@ -14,6 +14,10 @@
     .membership-join + .tooltip {
         left: -150px !important;
     }
+
+    .custom-checkbox + .custom-checkbox {
+        padding-right: 0px
+    }
 }
 
 .membership-join {
@@ -85,10 +89,6 @@
 
         .divider {
             margin: 25px 0;
-        }
-
-        .shirt-type {
-            display: none;
         }
 
         .carousel {
