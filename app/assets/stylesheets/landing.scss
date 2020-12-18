@@ -98,6 +98,13 @@
             letter-spacing: 2px;
         }
 
+        .override {
+            display: inline-block;
+            max-width: 500px;
+            color: #FFF;
+            padding: 0 10px;
+        }
+
         .time-since-rain {
             margin-top: 25px;
             justify-content: center;
@@ -110,7 +117,7 @@
                 background-color: rgba(255, 255, 255, 0.8);
     
                 p {
-                    color: #272727;
+                    color: #D71E2B;
                     margin: 0;
                     font-size: 40px;
                     font-family: sans-serif;
