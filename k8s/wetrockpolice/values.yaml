@@ -23,7 +23,7 @@ image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v20"
+  tag: "v23"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -131,3 +131,11 @@ postgresql:
 
 redis:
   usePassword: false
+  master:
+    persistence:
+      enabled: false
+  slave:
+    persistence:
+      enabled: false
+  cluster:
+    enabled: false
