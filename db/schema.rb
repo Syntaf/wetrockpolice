@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_13_192157) do
+ActiveRecord::Schema.define(version: 2021_01_10_232052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -111,6 +111,11 @@ ActiveRecord::Schema.define(version: 2020_12_13_192157) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "local_climbing_org_id"
+    t.string "park_type_word", default: "area", null: false
+    t.text "info_bubble_excerpt", default: "", null: false
+    t.text "landing_paragraph", default: "", null: false
+    t.string "photo_credit_name", default: "", null: false
+    t.string "photo_credit_link", default: "", null: false
     t.index ["local_climbing_org_id"], name: "index_watched_areas_on_local_climbing_org_id"
     t.index ["slug"], name: "index_watched_areas_on_slug", unique: true
   end
