@@ -38,20 +38,20 @@
           data-role="tooltip"
           data-toggle="tooltip"
           data-placement="right"
-          title="Precipitation data collected from Red Rock visitor center. Use your best judgement in determening whether this information is relevant to the climbing area you will be in.">
+          title="<%= @watched_area.info_bubble_excerpt %>">
         </i>
       </div>
     </div>
-    <span data-role="excerpt">Since rain last fell in the canyon</span>
+    <span data-role="excerpt">Since rain last fell in the <%= @watched_area.park_type_word %></span>
     <div class="row call-to-action">
       <button class="btn weather" data-role="scroll-to-weather">Can I Climb?</button>
       <%= link_to 'Rainy Day Options', watched_area_rainy_day_options_path, class: 'btn rainy-day-options' %>
     </div>
   </div>
 
-  <a class="plug" target="_blank" href="https://www.instagram.com/das_gulde/?src=wetrockpolice">
+  <a class="plug" target="_blank" href="<%= @watched_area.photo_credit_link %>?src=wetrockpolice">
     <i class="fab fa-instagram"></i>
-    <p>Photography by @das_gulde</p>
+    <p>Photography by @<%= @watched_area.photo_credit_name %></p>
   </a>
 
   <p class="scroll-down"><i class="material-icons">expand_more</i> Scroll Down</p>
@@ -88,6 +88,11 @@
       </div>
       <div class="text-content" data-aos="fade-up">
         <div class="text">
+          <%= @watched_area.landing_paragraph.html_safe %>
+          <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn faq' %>
+        </div>
+        <!--
+        <div class="text">
           Generally, you should avoid climbing <strong>24</strong> to <strong>72</strong> hours after rain, depending on where you intend to climb.
           Sunny locations like <a href="https://www.mountainproject.com/area/105732132/sunny-and-steep" target="_blank">Sunny and Steep</a> or <a href="https://www.mountainproject.com/area/105813478/stratocaster-area" target="_blank">Stratocaster Wall</a> will need much less
           time to dry when compared to places like <a href="https://www.mountainproject.com/area/105732030/the-black-corridor" target="_blank">Black Corridor</a>
@@ -97,6 +102,7 @@
           Not sure why you shouldn't climb when it's wet, or want to read more on how to determine when climbing is OK? Check out <a href="http://www.southernnevadaclimberscoalition.org/local-ethics/climbing-after-rain/" target="_blank">SNCC's write up</a>
           <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn faq' %>
         </div>
+        -->
         <div class="content-widget" data-aos="fade-up" id="customize-script-container">
           <script type='text/javascript' src='https://darksky.net/widget/default/36.13234657827764,-115.43574920166014/us12/en.js?width=300&height=350&title=Calico Basin, NV &textColor=333333&bgColor=transparent&transparency=true&skyColor=undefined&fontFamily=Sans-Serif&customFont=&units=us&htColor=333333&ltColor=C7C7C7&displaySum=yes&displayHeader=yes'></script>
         </div>
