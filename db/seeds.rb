@@ -71,6 +71,33 @@ RainyDayArea.create!([
   {climbing_area_id: 1, watched_area_id: 1, driving_time: 120},
   {climbing_area_id: 2, watched_area_id: 2, driving_time: 30},
 ])
+Faq.create!([
+  {
+    question: "Where is the precipitation data coming from?",
+    answer: "Precipitation data is pulled from a rain guage located at the Red Rock visitor center. Data is updated hourly, and supplied by Synoptic Labs.",
+    watched_area_id: 1
+  },
+  {
+    question: "Can I trust Wet Rock Police to always show accurate weather information?",
+    answer: "Theoretically, yes. In reality, weather is a difficult thing to track and generalize. One should use their best judgement in determining whether the information shown on the landing page is both accurate and relevant to their climbing destination. If you're planning on climbing in Black Velvet for example, and are not sure if it rained, you may want to use other additional resources beyond this site such as a <a href=\"https://www.iweathernet.com/total-rainfall-map-24-hours-to-72-hours\" target=\"_blank\">radap map</a> or <a href=\"\" target=\"_blank\">local facebook group</a>.",
+    watched_area_id: 1
+  },
+  {
+    question: "Where can I climb if it rained?",
+    answer: "Depending on the month, Las Vegas has a handful of different rainy day options. See the Rainy Day Crags page for more detailed information.",
+    watched_area_id: 1
+  },
+  {
+    question: "Will this site support other crags?",
+    answer: "Depending on the area, yes, there are future plans to expand the site to help out other sandstone areas. Email gmercer015@gmail.com if you'd like your own crag to be considered.",
+    watched_area_id: 1
+  },
+  {
+    question: "Will this site support other crags?",
+    answer: "Depending on the area, yes, there are future plans to expand the site to help out other sandstone areas. Email gmercer015@gmail.com if you'd like your own crag to be considered.",
+    watched_area_id: 2
+  }
+])
 JointMembershipApplication.create!([
   {
     first_name: 'John',
