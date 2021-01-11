@@ -10,7 +10,6 @@
     height: 400px;
     display: flex;
     align-items: center;
-    background-image: asset_url("redrock/faq.jpg");
     background-size: cover;
     background-position: bottom;
 
@@ -20,6 +19,14 @@
         letter-spacing: 3px;
         margin-left: 15%;
     }
+}
+
+.faq-hero.redrock { 
+    background-image: asset_url("redrock/faq.jpg");
+}
+
+.faq-hero.castlerock {
+    background-image: asset_url("castlerock/faq2.jpg");
 }
 
 .faq-content {

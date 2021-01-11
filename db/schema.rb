@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_10_232052) do
+ActiveRecord::Schema.define(version: 2021_01_10_235411) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,15 @@ ActiveRecord::Schema.define(version: 2021_01_10_232052) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "faqs", force: :cascade do |t|
+    t.string "question", default: "", null: false
+    t.text "answer", default: "", null: false
+    t.bigint "watched_area_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["watched_area_id"], name: "index_faqs_on_watched_area_id"
   end
 
   create_table "joint_membership_applications", force: :cascade do |t|
