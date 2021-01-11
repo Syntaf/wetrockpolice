@@ -30,6 +30,8 @@ WatchedArea.create!([
     info_bubble_excerpt: "Precipitation data collected from Red Rock visitor center. Use your best judgement in determening whether this information is relevant to the climbing area you will be in.",
     photo_credit_name: "das_gulde",
     photo_credit_link: "https://www.instagram.com/das_gulde/",
+    longitude: "-115.4357",
+    latitude: "36.1323",
     local_climbing_org_id: 1
   },
   {
@@ -40,6 +42,8 @@ WatchedArea.create!([
     info_bubble_excerpt: "lorem ipsum lorem ipsum",
     photo_credit_name: "Kevin",
     photo_credit_link: "grantmercer.dev",
+    longitude: "-122.0983",
+    latitude: "37.2288",
     local_climbing_org_id: 2
   }
 ])

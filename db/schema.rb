@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_10_235411) do
+ActiveRecord::Schema.define(version: 2021_01_11_004022) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,6 +125,8 @@ ActiveRecord::Schema.define(version: 2021_01_10_235411) do
     t.text "landing_paragraph", default: "", null: false
     t.string "photo_credit_name", default: "", null: false
     t.string "photo_credit_link", default: "", null: false
+    t.string "longitude", default: "0", null: false
+    t.string "latitude", default: "0", null: false
     t.index ["local_climbing_org_id"], name: "index_watched_areas_on_local_climbing_org_id"
     t.index ["slug"], name: "index_watched_areas_on_slug", unique: true
   end
