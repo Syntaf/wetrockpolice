@@ -42,7 +42,7 @@
         </i>
       </div>
     </div>
-    <span data-role="excerpt">Since rain last fell in the <%= @watched_area.park_type_word %></span>
+    <span data-role="excerpt" class="override">Since rain last fell in the <%= @watched_area.park_type_word %></span>
     <div class="row call-to-action">
       <button class="btn weather" data-role="scroll-to-weather">Can I Climb?</button>
       <%= link_to 'Rainy Day Options', watched_area_rainy_day_options_path, class: 'btn rainy-day-options' %>
