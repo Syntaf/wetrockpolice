@@ -18,7 +18,7 @@
             <div class="bounce3"></div>
           </div>
         </div>
-        <p data-role="days"></p>
+        <p data-role="days" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
         <span data-role="days-label">Days</span>
       </div>
       <div class="hours card">
@@ -29,7 +29,7 @@
             <div class="bounce3"></div>
           </div>
         </div>
-        <p data-role="hours"></p>
+        <p data-role="hours" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
         <span data-role="hours-label">Hours</span>
       </div>
       <div class="warning-tooltip animated tada delay-2s">
@@ -42,7 +42,14 @@
         </i>
       </div>
     </div>
-    <span data-role="excerpt" class="override">Since rain last fell in the <%= @watched_area.park_type_word %></span>
+    <span data-role="excerpt" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>>
+      <% if @watched_area.manual_warn? %>
+        Be careful, the community has observed rain recently. The rain gauge may be inaccurate at 
+        this time. 
+      <% else %>
+        Since rain last fell in the <%= @watched_area.park_type_word %>
+      <% end %>
+    </span>
     <div class="row call-to-action">
       <button class="btn weather" data-role="scroll-to-weather">Can I Climb?</button>
       <%= link_to 'Rainy Day Options', watched_area_rainy_day_options_path, class: 'btn rainy-day-options' %>
