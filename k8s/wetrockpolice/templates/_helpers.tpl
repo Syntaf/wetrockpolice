@@ -43,11 +43,31 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
+Common sidekiq labels
+*/}}
+{{- define "wetrockpolice.sidekiq.labels" -}}
+helm.sh/chart: {{ include "wetrockpolice.chart" . }}
+{{ include "wetrockpolice.sidekiq.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
 Selector labels
 */}}
 {{- define "wetrockpolice.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "wetrockpolice.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Sidekiq Selector labels
+*/}}
+{{- define "wetrockpolice.sidekiq.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "wetrockpolice.name" . }}
+app.kubernetes.io/instance: sidekiq
 {{- end }}
 
 {{/*
