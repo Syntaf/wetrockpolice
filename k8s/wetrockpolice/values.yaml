@@ -23,7 +23,7 @@ image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v25"
+  tag: "v27"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -60,7 +60,6 @@ ingress:
   enabled: true
   annotations:
     cert-manager.io/issuer: "letsencrypt-prod-wrp"
-    kubernetes.io/ingress.class: "nginx"
     nginx.org/server-snippets: |
       gzip on;
       gzip_types text/plain text/html application/json;
@@ -107,6 +106,7 @@ affinity: {}
 
 nginx-ingress:
   controller:
+    ingressClass: "wetrockpolice-nginx"
     watchNamespace: "wetrockpolice"
 
 external-dns:
