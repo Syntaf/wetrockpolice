@@ -4,7 +4,7 @@ description: A Helm chart for Kubernetes
 
 dependencies:
   - name: nginx-ingress
-    version: "0.6.1"
+    version: "0.7.1"
     repository: "https://helm.nginx.com/stable"
   - name: external-dns
     version: "3.3.0"
