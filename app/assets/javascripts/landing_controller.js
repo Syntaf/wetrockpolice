@@ -61,7 +61,6 @@ LandingController.prototype.renderRainCounter = function (intervals) {
         $('div[data-role="loading"]').remove();
         $('p[data-role="days"]').html('&#8734;');
         $('p[data-role="hours"]').html('&#8734;');
-        $('span[data-role="excerpt"]').html('Be careful, the community has observed rain in the last 24 hours. The rain gauge is likely inaccurate at this time');
         $('div[data-role="loading-date"]').remove();
         $('strong[data-role="last-rain-date"]').remove();
         $('h2[data-role="weather-breakdown-header"]').html('Nothing to look at down here, come back when weather is looking bleak.');
