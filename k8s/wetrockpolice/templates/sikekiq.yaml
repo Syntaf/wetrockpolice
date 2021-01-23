@@ -3,18 +3,18 @@ kind: Deployment
 metadata:
   name: sidekiq
   labels:
-    {{- include "wetrockpolice.labels" . | nindent 4 }}
+    {{- include "wetrockpolice.sidekiq.labels" . | nindent 4 }}
 spec:
 {{- if not .Values.sidekiq.autoscaling.enabled }}
   replicas: {{ .Values.sidekiq.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
-      {{- include "wetrockpolice.selectorLabels" . | nindent 6 }}
+      {{- include "wetrockpolice.sidekiq.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "wetrockpolice.selectorLabels" . | nindent 8 }}
+        {{- include "wetrockpolice.sidekiq.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "wetrockpolice.serviceAccountName" . }}
       securityContext:
