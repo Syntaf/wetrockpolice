@@ -7,7 +7,7 @@
   </div>-->
 
   <div class="hero-container">
-    <h1 class="animated bounceInLeft">Did it rain in <%= @watched_area.name %>?</h1>
+    <h1 class="animated bounceInLeft">Did it <del>rain</del> snow in <%= @watched_area.name %>?</h1>
     <span>It's been...</span>
     <div class="row time-since-rain">
       <div class="days card">
@@ -47,7 +47,7 @@
         Be careful, the community has observed rain recently. The rain gauge may be inaccurate at 
         this time. 
       <% else %>
-        Since rain last fell in the <%= @watched_area.park_type_word %>
+        Since <del>rain</del> snow last fell in the <%= @watched_area.park_type_word %>
       <% end %>
     </span>
     <div class="row call-to-action">
@@ -130,6 +130,7 @@
 
         imageLoader.load();
         redRockController.initLandingView();
+        redRockController.initSnowAnimation();
 
         $('#temp-notification').popover({
             trigger: 'focus',
