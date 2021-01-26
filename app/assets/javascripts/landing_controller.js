@@ -16,6 +16,10 @@ LandingController.prototype.initLandingView = function () {
         .then(this.renderView.bind(this));
 }
 
+LandingController.prototype.initSnowAnimation = function () {
+    particlesJS.load('particles-js', '/snow.json', $.noop)
+}
+
 LandingController.prototype.scrollToWeather = function () {
     var $weatherSection = $('[data-role="weather-section"]');
     var offsetToScrollTo = $weatherSection.offset().top;
