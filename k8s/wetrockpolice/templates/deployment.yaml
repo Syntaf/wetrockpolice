@@ -40,9 +40,9 @@ spec:
                   name: {{ .Release.Name }}-rails-master-key
                   key: key
             - name: REDIS_URL
-              value: redis://wetrockpolice-redis-master:6369/0
+              value: redis://wetrockpolice-redis-master:6379/0
             - name: JOB_WORKER_URL
-              value: redis://wetrockpolice-redis-master:6369/0
+              value: redis://wetrockpolice-redis-master:6379/0
             - name: RAILS_SERVE_STATIC_FILES
               value: "true"
             - name: WETROCKPOLICE_DATABASE_PASSWORD

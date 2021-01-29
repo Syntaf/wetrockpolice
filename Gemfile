@@ -23,6 +23,9 @@ gem 'rails_admin', '~> 2.0'
 gem 'roadie-rails', '~> 2.1'
 gem 'seed_dump'
 
+# K8s health checking
+gem 'rails-healthcheck'
+
 # Use webpacker js bundler
 gem 'webpacker'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

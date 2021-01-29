@@ -30,6 +30,7 @@ spec:
             - "exec"
             - "sidekiq"
             - "-q"
+            - "default"
             - "mailers"
           env:
             - name: SECRET_KEY_BASE
@@ -41,8 +42,6 @@ spec:
               value: "redis://wetrockpolice-redis-master:6379/0"
             - name: JOB_WORKER_URL
               value: "redis://wetrockpolice-redis-master:6379/0"
-            - name: RAILS_SERVE_STATIC_FILES
-              value: "true"
             - name: WETROCKPOLICE_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
