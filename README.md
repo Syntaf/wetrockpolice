@@ -6,7 +6,8 @@
 ## Table of Contents
 
 - [Overview](#Overview)
-  - [Running Locally](#Frontend-Structure)
+  - [Running Locally](#Running-Locally)
+  - [Running with Docker (Recommended)](#Running-With-Docker)
   - [Using PayPal in Development](#Entity-Overview)
 - [Contributing](#Contributing-Guide)
   - [Coding Standards](#Coding-Standards)
@@ -25,7 +26,7 @@ Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wet
 
 ## Running Locally
 
-Running WRP via Docker is a work in progress, so at the moment WetRockPolice can only be run locally with:
+If you'll be running Wetrockpolice without docker, you'll need:
 - Ruby 2.6.x
 - PostgreSQL 11.x
 
@@ -60,6 +61,42 @@ Steps:
     ```
     ~$: rails server
     ```
+
+## Running with Docker
+
+1. Clone the repository
+    ```
+    ~$: git clone git@github.com:Syntaf/wetrockpolice.git
+    ```
+
+2. Build the containers
+    ```
+    ~$ cd wetrockpolice
+    ~$ docker-compose build
+    ```
+
+3. Create your development & test databases
+    ```
+    ~$ docker-compose run web rails db:create
+    ~$ docker-compose run web rails db:create RAILS_ENV=test
+    ```
+
+4. Run pending migrations
+    ```
+    ~$ docker-compose run web rails db:migrate
+    ~$ docker-compose run web rails db:migrate RAILS_ENV=test
+    ```
+
+5. Seed development data
+    ```
+    ~$ docker-compose run web rails db:seed
+    ```
+
+6. Bring the containers up, then visit https://localhost:3001
+    ```
+    ~$ docker-compose up
+    ```
+
 
 ## Using PayPal in Development
 
