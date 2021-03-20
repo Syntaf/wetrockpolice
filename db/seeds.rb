@@ -32,6 +32,7 @@ WatchedArea.create!([
     photo_credit_link: "https://www.instagram.com/das_gulde/",
     longitude: "-115.4357",
     latitude: "36.1323",
+    station: 'RRKN2',
     local_climbing_org_id: 1
   },
   {
@@ -56,6 +57,7 @@ WatchedArea.create!([
     photo_credit_link: 'https://grantmercer.dev',
     longitude: '-118.6032',
     latitude: '34.2731',
+    station: 'E1734'
     local_climbing_org_id: 2
   }
 ])

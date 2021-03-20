@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_23_173747) do
+ActiveRecord::Schema.define(version: 2021_03_20_183255) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -128,6 +128,7 @@ ActiveRecord::Schema.define(version: 2021_01_23_173747) do
     t.string "longitude", default: "0", null: false
     t.string "latitude", default: "0", null: false
     t.boolean "manual_warn", default: false, null: false
+    t.string "station", default: ""
     t.index ["local_climbing_org_id"], name: "index_watched_areas_on_local_climbing_org_id"
     t.index ["slug"], name: "index_watched_areas_on_slug", unique: true
   end

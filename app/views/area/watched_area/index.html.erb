@@ -124,12 +124,12 @@
             'imageContainerSelector': '.hero-header.<%= @watched_area.slug %>',
             'imageLoadedClass': '.hero-header-loaded'
         })
-        var redRockController = new LandingController({
-            'stid': 'rrkn2'
+        var LandingController = new LandingController({
+            'stid': '<%= @watched_area.station %>'
         });
 
         imageLoader.load();
-        redRockController.initLandingView();
+        LandingController.initLandingView();
         // redRockController.initSnowAnimation();
 
         $('#temp-notification').popover({
