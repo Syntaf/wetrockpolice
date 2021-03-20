@@ -112,12 +112,12 @@
             'imageContainerSelector': '.hero-header.<%= @watched_area.slug %>',
             'imageLoadedClass': '.hero-header-loaded'
         })
-        var LandingController = new LandingController({
+        var landingController = new LandingController({
             'stid': '<%= @watched_area.station %>'
         });
 
         imageLoader.load();
-        LandingController.initLandingView();
+        landingController.initLandingView();
 
         $('#temp-notification').popover({
             trigger: 'focus',
