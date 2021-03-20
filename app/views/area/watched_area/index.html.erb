@@ -98,18 +98,6 @@
           <%= @watched_area.landing_paragraph.html_safe %>
           <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn faq' %>
         </div>
-        <!--
-        <div class="text">
-          Generally, you should avoid climbing <strong>24</strong> to <strong>72</strong> hours after rain, depending on where you intend to climb.
-          Sunny locations like <a href="https://www.mountainproject.com/area/105732132/sunny-and-steep" target="_blank">Sunny and Steep</a> or <a href="https://www.mountainproject.com/area/105813478/stratocaster-area" target="_blank">Stratocaster Wall</a> will need much less
-          time to dry when compared to places like <a href="https://www.mountainproject.com/area/105732030/the-black-corridor" target="_blank">Black Corridor</a>
-          <br><br>
-          Las Vegas has <em>plenty</em> of rainy day options, with climbing that rivals Red Rock itself. If you've found yourself in town during a rainy week, check out <a href="https://www.ladylockoff.com/wet-sandstone">Irene's great writeup</a> for what to do.
-          <br><br>
-          Not sure why you shouldn't climb when it's wet, or want to read more on how to determine when climbing is OK? Check out <a href="http://www.southernnevadaclimberscoalition.org/local-ethics/climbing-after-rain/" target="_blank">SNCC's write up</a>
-          <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn faq' %>
-        </div>
-        -->
         <div class="content-widget" data-aos="fade-up" id="customize-script-container">
           <script type='text/javascript' src='https://darksky.net/widget/default/<%= @watched_area.latitude %>,<%= @watched_area.longitude %>/us12/en.js?width=300&height=350&title=<%= @watched_area.name %>&textColor=333333&bgColor=transparent&transparency=true&skyColor=undefined&fontFamily=Sans-Serif&customFont=&units=us&htColor=333333&ltColor=C7C7C7&displaySum=yes&displayHeader=yes'></script>
         </div>
@@ -130,7 +118,6 @@
 
         imageLoader.load();
         LandingController.initLandingView();
-        // redRockController.initSnowAnimation();
 
         $('#temp-notification').popover({
             trigger: 'focus',
