@@ -172,6 +172,8 @@ Represents an area being monitored for rain. Uses it's `slug` field to define a 
 - FAQ page (`/redrock/faq`)
 - Membership signup page (`/redrock/sncc`)
 
+Fields like `info_bubble_excerpt` and `park_type_word` allow for dynamic content on the landing page depending on the current watched area being rendered.
+
 #### RainyDayArea
 
 Links a climbing area to a watched area. Does not contain any information itself, just serves to define relationships between climbing areas and a watched area.
@@ -192,7 +194,7 @@ A standard devise-based user model. The one unique thing worth mentioning is the
 
 The asset pipeline is kept very simple intentionally. All assets are compressed, loaded and cached on a users first page visit, meaning there are no *page specific* JS/SCSS files.
 
-JS code is encapsulated into "controllers"; each controller is responsible for managing the functionality on a given type of page. Since all of these controllers are loaded globally, you can immeditely use them at the bottom of your view template:
+JS code is encapsulated into vanilla "controllers"; each controller is responsible for managing the functionality on a given type of page. Since all of these controllers are loaded globally, you can immeditely use them at the bottom of your view template:
 
 ```erb
 <!-- area/rainy_day_options/index.html.erb -->
@@ -208,7 +210,7 @@ JS code is encapsulated into "controllers"; each controller is responsible for m
 
 ## Creating or Updating Hero Images
 
-This repository uses it's own custom strategy for loading large background images on the client to ensure the first-load experience isn't poor. Without this strategy, the page would load with the large image missing, then slowly load the image top-down as if the page was being printed out.
+This repository uses a custom strategy for loading large background images on the client to ensure the first-load experience isn't poor. Without this strategy, the page would load with the large image missing, then slowly load the image top-down as if the page was being printed out.
 
 On page load, the browser will first load and display an extremely small version of the image (20x20 pixels for example) and apply a large gussian blur to distort the pixel borders. In the background, javascript is used to fetch the fully sized background image; once finished the full image will be swapped for the blurred image with a fade-in transition. The end result is a page load that looks like the background image is just being animated into view rather than slowly loaded.
 
@@ -218,19 +220,21 @@ Because of this strategy however, updating landing page images can be a little m
 
 2. Move your two copies into `app/assets/images/watched-area-slug`, calling the original image `hero-image.jpg` and the small image `hero-image-small.jpg`.
 
-3. Go to https://www.base64-image.de/ and load your small image to receive a base64 encoded string. Copy that string to your clipboard and open `application.html.erb`. In the custom style block at the head, add (or change) the following SCSS rules:
+3. Go to https://www.base64-image.de/ and load your small image to receive a base64 encoded string. Copy that string to your clipboard and open `application.html.erb`. In the custom style block at the head, add two new SCSS rules:
     ```css
       /* Watched Area */
-      .hero-header.watchedarea {
+      .hero-header.<slug> {
         background: url("data:image/jpeg;base64,/9j/4AAQSkZJ...");
         background-repeat: no-repeat;
         background-position: center center;
         background-size: cover;
       }
-      .hero-header.watchedarea.hero-header-loaded {
+      .hero-header.<slug>.hero-header-loaded {
         background-image: url(<%= asset_path 'watchedarea/hero-image.jpg' %>);
       }
     ```
+
+    Where `<slug>` refers to the slug of the watched area, e.g. `redrock` or `castlerock`.
     Since the initial background is a base64 encoded image, the page will almost always load with it already painted (albeit heavily blurred). The second rule will swap the background image while the image has been successfully loaded in the background (avoiding the top-down loading view).
 
-4. Load the page and ensure your page transitions from the small image to large image. If you're having trouble determing if the small image is loading properly you can comment out `imageLoader.load()` in `views/watcharea/index.html.erb`, this will cause the page to load with only the small image
+4. Load the page and ensure your page transitions from the small image to large image. If you're having trouble determing if the small image is loading properly you can comment out `imageLoader.load()` in `views/area/watched_area/index.html.erb`, this will cause the page to load with only the small image
