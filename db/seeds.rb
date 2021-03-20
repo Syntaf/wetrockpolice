@@ -45,6 +45,18 @@ WatchedArea.create!([
     longitude: "-122.0983",
     latitude: "37.2288",
     local_climbing_org_id: 2
+  },
+  {
+    name: 'Stoney Point',
+    slug: 'castlerock',
+    park_type_word: 'area',
+    landing_paragraph: 'lorem ipsum lorem ipsum loreum ipsum lorem ipsum',
+    info_bubble_excerpt: 'lorem ipsum lorem ipsum loreum ipsum lorem ipsum',
+    photo_credit_name: 'lorem',
+    photo_credit_link: 'https://grantmercer.dev',
+    longitude: '-118.6032',
+    latitude: '34.2731',
+    local_climbing_org_id: 2
   }
 ])
 ClimbingArea.create!([ 
@@ -74,6 +86,7 @@ ClimbingArea.create!([
 RainyDayArea.create!([
   {climbing_area_id: 1, watched_area_id: 1, driving_time: 120},
   {climbing_area_id: 2, watched_area_id: 2, driving_time: 30},
+  {climbing_area_id: 2, watched_area_id: 3, driving_time: 15}
 ])
 Faq.create!([
   {
