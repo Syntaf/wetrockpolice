@@ -60,6 +60,7 @@ LandingController.prototype.renderView = function (synopticResponse) {
 
 LandingController.prototype.renderRainCounter = function (intervals) {
     var lastRainInterval = this._getLastSeenRainInterval(intervals);
+    console.log(lastRainInterval);
 
     if (!lastRainInterval) {
         $('div[data-role="loading"]').remove();
@@ -73,6 +74,7 @@ LandingController.prototype.renderRainCounter = function (intervals) {
     }
 
     var elapsedHours = lastRainInterval.elapsedHours;
+    console.log(elapsedHours);
 
     var days = Math.floor(elapsedHours / 24);
     var hours = elapsedHours % 24;
@@ -252,8 +254,12 @@ LandingController.prototype._getLastSeenRainInterval = function (intervals) {
     intervals = intervals.reverse();
     for(var i = 0; i < intervals.length; i++) {
         if (intervals[i].total > 0 && intervals[i].count !== null) {
+            now = moment();
+            end_period = moment(intervals[i].last_report);
+            duration_between = moment.duration(now.diff(end_period));
+
             return {
-                'elapsedHours': runningIntervalCount,
+                'elapsedHours': parseInt(duration_between.asHours()),
                 'interval': intervals[i]
             };
         }
