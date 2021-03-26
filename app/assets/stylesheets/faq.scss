@@ -29,6 +29,10 @@
     background-image: asset_url("castlerock/faq2.jpg");
 }
 
+.faq-hero.stoneypoint {
+    background-image: asset_url('stoneypoint/hero-image.png');
+}
+
 .faq-content {
     flex: 1;
     padding-top: 50px;
