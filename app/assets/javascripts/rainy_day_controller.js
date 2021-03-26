@@ -1,4 +1,5 @@
-function RainyDayController(options) {
+function RainyDayController(watchedAreaSlug, options) {
+    this.watchedAreaSlug = watchedAreaSlug;
     this.options = $.extend(options, {
         'mp': {
             'widgetSelector': '#mountainProjectWidget',
@@ -65,7 +66,8 @@ RainyDayController.prototype.handleAreaSelection = function (ev) {
 }
 
 RainyDayController.prototype.fetchArea = function (id) {
-    return $.get('/redrock/rainy-day-options/' + id);
+    var url = '/' + this.watchedAreaSlug + '/rainy-day-options/';
+    return $.get(url + id);
 }
 
 RainyDayController.prototype.displayArea = function ($newActiveListItem, response) {
