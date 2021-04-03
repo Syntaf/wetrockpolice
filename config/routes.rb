@@ -9,6 +9,12 @@ Rails.application.routes.draw do
     resources :rainy_day_options, path: 'rainy-day-options', only: %i( index show )
     resources :faqs, path: 'faq', only: %i( index )
     
+    scope '/wagbag', controller: 'raffles', as: :raffle do
+      get '/', action: :new
+      post '/', action: :create, as: :new_entry
+      post '/validate', action: :validate, as: :validate
+    end
+    
     scope '/:coalition_slug', controller: 'memberships', as: :local_climbing_org do
       get '/', action: :new
       post '/', action: :create, as: :new_membership
