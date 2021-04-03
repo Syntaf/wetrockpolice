@@ -1,0 +1,10 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+valid_entry:
+  contact: 'John Doe'
+  email: 'johndoe@gmail.com'
+  phone_number: '000123456'
+  amount_paid: '5'
+  order_id: '1234FFF'
+  entries: 1
+
