@@ -143,3 +143,13 @@ JointMembershipApplication.create!([
     ]
   }
 ])
+RaffleEntry.create!([
+  {
+    contact: 'John Doe',
+    email: 'johndoe@gmail.com',
+    phone_number: 7021234567,
+    amount_paid: 30,
+    entries: 5,
+    order_id: '1234FFF'
+  }
+])
