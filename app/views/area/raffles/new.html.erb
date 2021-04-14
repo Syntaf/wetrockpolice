@@ -1,0 +1,90 @@
+<div class="membership-join header">
+  <div class="shadow-overlay"></div>
+</div>
+<div class="membership-join page-content" data-page="1">
+  <div class="row container" style="margin-top: 20px;">
+    <div class="col-md-6 col-12">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/QA5SKemBJDY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="col-md-6 col-12">
+      <h1 style="text-align: center; margin-top: 10px;">April is Poop Month!</h1>
+      <hr />
+      <p style="font-size: 16px;">
+        To support Red Rock's growing climbing population, SNCC is running a fundraiser where all proceeds
+        go directly towards the purchasing of waste disposal bags.
+      </p>
+    </div>
+  </div>
+
+  <%= form_for @raffle_entry,
+    url: { action: "create" },
+    builder: MaterialFormsHelper::MaterialFormBuilder,
+    html: { class: "membership-form container", id: 'membership-form' } do |f| %>
+    <%= f.hidden_field :organization, value: @watched_area.local_climbing_org.name %>
+    <%= f.hidden_field :order_id, value: nil, data: { role: 'orderId' } %>
+    <%= f.hidden_field :amount_paid, value: '0', data: { role: 'amountPaidField' } %>
+    <%= f.hidden_field :entries, value: nil, data: { role: 'amountEntires' } %>
+
+    <div class="row">
+      <div class="col-md-6 col-12">
+        <div class="form-group">
+            <%= f.label :contact %>
+            <%= f.text_field :contact %>
+        </div>
+        <div class="form-group">
+          <%= f.label :email %>
+          <%= f.text_field :email %>
+        </div>
+        <div class="form-group">
+          <%= f.label :phone_number, 'Phone Number (Optional)' %>
+          <%= f.text_field :phone_number %>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <button>$20<span>Two Tickets</span></button>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="payment-content" data-page="2">
+    <div class="flex-wrapper">
+      <div class="row">
+        <div class="col-12">
+          <button class="btn btn-link" data-role="editAgain">
+            <i class="material-icons">arrow_upward</i>
+            <i>Edit Information Again</i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row col-12" id="paypal"></div>
+
+      <div class="row loading" data-role="loader">
+        <div class="col-12 center">
+          <span>Processing</span>
+          <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var membershipController = new NewMembershipController();
+
+  <% if Rails.env.development? %>
+    membershipController.$form.find('input[name="joint_membership_application[first_name]"]').val('John');
+    membershipController.$form.find('input[name="joint_membership_application[last_name]"]').val('Doe');
+    membershipController.$form.find('input[name="joint_membership_application[email]"]').val('JohnDoe@email.com');
+    membershipController.$form.find('input[name="joint_membership_application[phone_number]"]').val('(123) 456-7891');
+    membershipController.$form.find('input[name="joint_membership_application[street_line_one]"]').val('123 Lane Street');
+    membershipController.$form.find('input[name="joint_membership_application[street_line_two]"]').val('Suite 100');
+    membershipController.$form.find('input[name="joint_membership_application[zipcode]"]').val('12345');
+    membershipController.$form.find('input[name="joint_membership_application[city]"]').val('Cityville');
+    membershipController.$form.find('input[name="joint_membership_application[state]"]').val('California');
+  <% end %>
+</script>
