@@ -78,7 +78,7 @@ module SnccApplication
   end
 end
 
-module RaffleEntry
+module RaffleEntrySubmission
   def submit_raffle_entry(entry)
     post watched_area_raffles_new_entry_url :redrock, params: {
       raffle_entry: {}
