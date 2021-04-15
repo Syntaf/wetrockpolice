@@ -38,7 +38,6 @@ class RaffleEntryTest < ActiveSupport::TestCase
   test 'Allows nil order_id for validation' do
     app = raffle_entries(:valid_entry)
     app.order_id = nil
-    app.paid_cash = false
     app.prevalidate = true
 
     assert app.valid?
