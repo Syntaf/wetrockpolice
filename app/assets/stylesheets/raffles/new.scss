@@ -1,0 +1,15 @@
+.raffles-content {
+  .enter-raffle {
+    margin: 3px;
+    padding: 15px;
+    span {
+      display: block;
+    }
+  }
+
+  .raffle-buttons-container {
+    display: flex;
+    height: 100%;
+    align-items: center;
+  }
+}
