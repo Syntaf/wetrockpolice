@@ -11,7 +11,7 @@ function RafflesController(options) {
         'payProcessingFeeCheckbox': '[data-role="coverFeeCheckbox"]'
     })
 
-    this.price = this.options.membershipFee;
+    this.price = 0;
 
     this.$form = $(this.options.form);
     this.$orderIdField = $(this.options.orderIdField);
@@ -38,10 +38,11 @@ RafflesController.prototype.initValidationListener = function () {
 }
 
 RafflesController.prototype.validateFormFields = function (event) {
-    console.log('here!');
     event.preventDefault();
 
     this.removeExistingValidationErrors();
+
+    this.price = $(event.target).closest('button').attr('data-price');
 
     this.submitValidateForm()
         .done(this.showPaymentView.bind(this))
@@ -210,7 +211,6 @@ RafflesController.prototype.disableForm = function () {
 RafflesController.prototype.enableForm = function () {
     $('form input, form select').not('input[type="hidden"]').prop('disabled', false);
     this.$validationButtons.prop('disabled', false);
-    this.swapDisabledFieldState();
 }
 
 RafflesController.prototype.translateFieldToName = function (field) {
