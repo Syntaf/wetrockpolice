@@ -45,6 +45,15 @@ module Area
 
     private
 
+    def respond_json(content)
+      status = content[:status]
+
+      render(
+        json: content,
+        status: status
+      )
+    end
+
     def entered_partial
       'raffle_entry_confirmation_modal.html.erb'
     end
