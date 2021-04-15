@@ -1,7 +1,7 @@
 <div class="membership-join header">
   <div class="shadow-overlay"></div>
 </div>
-<div class="membership-join page-content" data-page="1">
+<div class="membership-join page-content raffles-content" data-page="1">
   <div class="row container" style="margin-top: 20px;">
     <div class="col-md-6 col-12">
       <iframe width="560" height="315" src="https://www.youtube.com/embed/QA5SKemBJDY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -12,6 +12,10 @@
       <p style="font-size: 16px;">
         To support Red Rock's growing climbing population, SNCC is running a fundraiser where all proceeds
         go directly towards the purchasing of waste disposal bags.
+      </p>
+      <p style="font-size: 16px;">
+        Purchasing any amount of Wag Bags below will automatically enter you into a raffle to win some sweet
+        gear! Make sure to keep an eye out on your email for us, or enter your phone number to get a text.
       </p>
     </div>
   </div>
@@ -40,8 +44,21 @@
           <%= f.text_field :phone_number %>
         </div>
       </div>
-      <div class="col-md-6 col-12">
-        <button>$20<span>Two Tickets</span></button>
+      <div class="col-md-6 col-12 center">
+        <div class="raffle-buttons-container">
+          <button class="enter-raffle">
+            $5<span>10 Wag Bags</span>
+          </button>
+          <button class="enter-raffle">
+            $10<span>20 Wag Bags</span>
+          </button>
+          <button class="enter-raffle">
+            $20<span>40 Wag Bags</span>
+          </button>
+          <button class="enter-raffle">
+            $50<span>100 Wag Bags</span>
+          </button>
+        </div>
       </div>
     </div>
   <% end %>
