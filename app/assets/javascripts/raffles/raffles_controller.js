@@ -91,10 +91,10 @@ RafflesController.prototype.showPaymentView = function (response) {
 }
 
 RafflesController.prototype.hidePaymentView = function () {
-    this.scrollTo(this.$form, 0)
+    this.scrollTo($('.header'), 0)
         .then(this.$paymentView.slideUp.bind(this.$paymentView));
 
-    this.$validationButton.prop('disabled', false);
+    this.$validationButtons.prop('disabled', false);
     this.enableForm();
 }
 
@@ -204,12 +204,12 @@ RafflesController.prototype.getFieldByName = function (field) {
 
 RafflesController.prototype.disableForm = function () {
     $('form input, form select').not('input[type="hidden"]').prop('disabled', true);
-    this.$validationButton.prop('disabled', true);
+    this.$validationButtons.prop('disabled', true);
 }
 
 RafflesController.prototype.enableForm = function () {
     $('form input, form select').not('input[type="hidden"]').prop('disabled', false);
-    this.$validationButton.prop('disabled', false);
+    this.$validationButtons.prop('disabled', false);
     this.swapDisabledFieldState();
 }
 
