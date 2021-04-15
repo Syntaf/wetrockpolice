@@ -80,8 +80,26 @@ end
 
 module RaffleEntrySubmission
   def submit_raffle_entry(entry)
-    post watched_area_raffles_new_entry_url :redrock, params: {
-      raffle_entry: {}
+    post watched_area_raffle_new_entry_url :redrock, params: {
+      raffle_entry: {
+        contact: entry.contact,
+        email: entry.email,
+        phone_number: entry.phone_number,
+        order_id: entry.order_id,
+        amount_paid: entry.amount_paid
+      }
+    }
+  end
+
+  def validate_raffle_entry(entry)
+    post watched_area_raffle_validate_url :redrock, params: {
+      raffle_entry: {
+        contact: entry.contact,
+        email: entry.email,
+        phone_number: entry.phone_number,
+        order_id: entry.order_id,
+        amount_paid: entry.amount_paid
+      }
     }
   end
 end

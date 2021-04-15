@@ -75,8 +75,7 @@ module Area
         :email,
         :phone_number,
         :order_id,
-        :amount_paid,
-        :cover_fee
+        :amount_paid
       )
     end
 
