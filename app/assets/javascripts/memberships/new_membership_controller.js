@@ -78,7 +78,7 @@ NewMembershipController.prototype.submitValidateForm = function () {
 
     var data = this.$form.serialize();
     data += '&joint_membership_application%5Ddelivery_method%5D=Local+Pickup+-+Refuge'
-    
+
     $.ajax({
         'type': 'POST',
         'url': validationEndpoint,
