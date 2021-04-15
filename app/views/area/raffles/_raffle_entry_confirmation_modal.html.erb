@@ -2,17 +2,16 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">You're all signed up!</h5>
+        <h5 class="modal-title">Your raffle entry has been received!</h5>
       </div>
       <div class="modal-body">
         <%= image_tag 'redrock/backdrop.jpg' %>
         <p>
-          You've successfully signed up for a joint membership through the Access Fund
-          and Southern Nevada Climbers Coalition. You should receive an email shortly
-          with further information about your membership.
+          You've successfully entered into the SNCC April Wagbag Raffle! Your contribution
+          is appreciated will go towards helping manage waste within Red Rock Canyon.
         </p>
         <p class="order-info">
-          Order Confirmation: <strong><%= @membership.order_id %></strong>
+          Order Confirmation: <strong><%= @raffle_entry.order_id %></strong>
         </p>
       </div>
     </div>
