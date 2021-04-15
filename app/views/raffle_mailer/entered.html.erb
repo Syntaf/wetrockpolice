@@ -1,1 +1,35 @@
-<p>Hello!</p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+  </head>
+  <body style="max-width: 680px; margin: 0 auto;">
+    <div style="width: 80px; margin-bottom: 40px;">
+      <img src="https://www.wetrockpolice.com/images/sncc_logo.png" style="max-width: 100%;">
+    </div>
+    <div style="text-align: center; margin-bottom: 40px;">
+      <img src="https://www.wetrockpolice.com/images/checkmark.png" style="width: 100px;">
+      <h3 style="font-weight: normal; font-size: 23px; margin-top: 15px; margin-bottom: 10px; font-family: 'Open Sans';">Thank you for your support</h3>
+      <p style="font-size: 14px; font-family: 'Open Sans';">Payment Confirmation <%= @raffle_entry.order_id %></p>
+    </div>
+    <div>
+      <p style="font-size: 16px; font-family: 'Open Sans';"><%= @raffle_entry.contact %>,</p>
+      <p style="font-size: 16px; font-family: 'Open Sans';">
+        Thank you for entering SNCC's April raffle! Your support is critical in managing waste as Red Rock and
+        these raffle contributions will go a long way in supplying Wagbags for local and visiting climbers.
+      </p>
+      <p style="font-size: 16px; font-family: 'Open Sans';">
+        We'll select the raffle winners at the end of this event and reach out to you if your name was drawn for
+        any of the prizes. Be sure to also keep an eye on our socials in case you miss an email from us!
+      </p>
+    </div>
+    <hr>
+    <div>
+      <div>
+        <strong style="font-size: 16px; display: inline-block; margin: 0; margin-right: 5px; margin-top: 5px;">Total: </strong><span>$<%= @raffle_entry.amount_paid %>.00</span>
+      </div>
+    </div>
+  </body>
+</html>
