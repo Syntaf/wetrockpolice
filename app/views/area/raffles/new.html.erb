@@ -23,7 +23,7 @@
   <%= form_for @raffle_entry,
     url: { action: "create" },
     builder: MaterialFormsHelper::MaterialFormBuilder,
-    html: { class: "membership-form container", id: 'membership-form' } do |f| %>
+    html: { class: "membership-form container", id: 'raffles-form' } do |f| %>
     <%= f.hidden_field :organization, value: @watched_area.local_climbing_org.name %>
     <%= f.hidden_field :order_id, value: nil, data: { role: 'orderId' } %>
     <%= f.hidden_field :amount_paid, value: '0', data: { role: 'amountPaidField' } %>
@@ -46,22 +46,28 @@
       </div>
       <div class="col-md-6 col-12 center">
         <div class="raffle-buttons-container">
-          <button class="enter-raffle">
+          <button class="enter-raffle" data-role="validate">
             $5<span>10 Wag Bags</span>
           </button>
-          <button class="enter-raffle">
+          <button class="enter-raffle" data-role="validate">
             $10<span>20 Wag Bags</span>
           </button>
-          <button class="enter-raffle">
+          <button class="enter-raffle" data-role="validate">
             $20<span>40 Wag Bags</span>
           </button>
-          <button class="enter-raffle">
+          <button class="enter-raffle" data-role="validate">
             $50<span>100 Wag Bags</span>
           </button>
         </div>
       </div>
     </div>
   <% end %>
+
+  <div class="row divider d-none" data-role="errorContainer">
+    <div class="col-md-12">
+      <p class="error" data-role="errorText">
+    </div>
+  </div>
 
   <div class="payment-content" data-page="2">
     <div class="flex-wrapper">
@@ -91,17 +97,5 @@
 </div>
 
 <script>
-  var membershipController = new NewMembershipController();
-
-  <% if Rails.env.development? %>
-    membershipController.$form.find('input[name="joint_membership_application[first_name]"]').val('John');
-    membershipController.$form.find('input[name="joint_membership_application[last_name]"]').val('Doe');
-    membershipController.$form.find('input[name="joint_membership_application[email]"]').val('JohnDoe@email.com');
-    membershipController.$form.find('input[name="joint_membership_application[phone_number]"]').val('(123) 456-7891');
-    membershipController.$form.find('input[name="joint_membership_application[street_line_one]"]').val('123 Lane Street');
-    membershipController.$form.find('input[name="joint_membership_application[street_line_two]"]').val('Suite 100');
-    membershipController.$form.find('input[name="joint_membership_application[zipcode]"]').val('12345');
-    membershipController.$form.find('input[name="joint_membership_application[city]"]').val('Cityville');
-    membershipController.$form.find('input[name="joint_membership_application[state]"]').val('California');
-  <% end %>
+  var raffles_controller = new RafflesController();
 </script>
