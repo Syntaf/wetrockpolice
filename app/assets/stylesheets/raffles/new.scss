@@ -12,17 +12,20 @@
     height: 315px;
   }
 
+  .embed-container {
+    margin-bottom: 20px;
+  }
+
+  .copy-container {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
   .enter-raffle {
     margin: 3px;
     padding: 15px;
     span {
       display: block;
     }
-  }
-
-  .raffle-buttons-container {
-    display: flex;
-    height: 100%;
-    align-items: center;
   }
 }
