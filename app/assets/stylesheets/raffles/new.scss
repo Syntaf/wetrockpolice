@@ -1,3 +1,14 @@
+.raffle-title {
+  font-family: 'Montserrat', sans-serif;
+}
+.raffle-sncc-logo {
+  margin-left: 10px;
+  margin-top: -14px;
+
+  @media screen and (max-width: 768px) {
+    margin-top: -10px;
+  }
+}
 .raffles-content {
   margin-bottom: 50px;
   min-height: calc(100% - 190px);
