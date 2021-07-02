@@ -17,14 +17,14 @@
   - [Creating or Updating Landing Page Images](#Creating-or-Updating-Hero-Images)
 # Overview
 
-WetRockPolice is an open source project written in Rails 6 + PostgreSQL and deployed to Heroku. The project has three key goals:
+WetRockPolice is an open source project written in Rails 6 + PostgreSQL and hosted on Kubernetes. The project has three key goals:
 - Spread awareness about the ethics of climbing on wet rock at an at-risk area.
 - Display historical rain information to help climbers make informed decisions
 - Enable organizations to connect with visiting climbers
 
 Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wetrockpolice/issues) tab for ideas on how to contribute.
 
-## Running Locally
+## Running Locally (Not Recommended)
 
 If you'll be running Wetrockpolice without docker, you'll need:
 - Ruby 2.6.x
