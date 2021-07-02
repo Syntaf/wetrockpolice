@@ -19,7 +19,7 @@ module Area
       respond_json(
         status: :created,
         modal: render_to_string(
-          partial: entered_partial()
+          partial: entered_partial
         )
       )
     rescue ActiveRecord::RecordInvalid
