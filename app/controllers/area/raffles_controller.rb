@@ -7,6 +7,8 @@ module Area
     before_action :set_meta, only: %i[new]
 
     def new
+      redirect_to watched_area_path(@watched_area.slug)
+
       @raffle_entry = RaffleEntry.new
     end
 
