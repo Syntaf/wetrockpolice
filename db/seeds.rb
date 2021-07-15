@@ -49,7 +49,7 @@ WatchedArea.create!([
   },
   {
     name: 'Stoney Point',
-    slug: 'castlerock',
+    slug: 'stoneypoint',
     park_type_word: 'area',
     landing_paragraph: 'lorem ipsum lorem ipsum loreum ipsum lorem ipsum',
     info_bubble_excerpt: 'lorem ipsum lorem ipsum loreum ipsum lorem ipsum',
@@ -57,11 +57,11 @@ WatchedArea.create!([
     photo_credit_link: 'https://grantmercer.dev',
     longitude: '-118.6032',
     latitude: '34.2731',
-    station: 'E1734'
+    station: 'E1734',
     local_climbing_org_id: 2
   }
 ])
-ClimbingArea.create!([ 
+ClimbingArea.create!([
   {
     name: "Limekiln",
     rock_type: "Limestone",
