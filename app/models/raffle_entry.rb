@@ -10,7 +10,7 @@ class RaffleEntry < ApplicationRecord
   validates :email, presence: true, email: true
   validates :phone_number,
             numericality: true,
-            allow_nil: true, if: proc { !phone_number.present? }
+            allow_nil: true, if: proc { phone_number.blank? }
 
   validates :order_id,
             presence: true,
