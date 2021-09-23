@@ -1,3 +1,6 @@
+# rubocop:disable Style/FrozenStringLiteralComment
+# We don't freeze strings here due to the PayPal SDK modifying string literals
+
 module PayPalPayments
   class OrderValidator < ApplicationService
     include PayPalCheckoutSdk::Orders
@@ -40,3 +43,5 @@ module PayPalPayments
     end
   end
 end
+
+# rubocop:enable Style/FrozenStringLiteralComment

@@ -1,11 +1,14 @@
+# rubocop:disable Style/FrozenStringLiteralComment
+# We don't freeze strings here due to the PayPal SDK modifying string literals
+
 require 'test_helper'
 require 'json'
 
 class RafflesControllerTest < ActionDispatch::IntegrationTest
   include RaffleEntrySubmission
 
-  VALID_ORDER_ID = '1234FFF'
-  INVALID_ORDER_ID = 'FFF321'
+  VALID_ORDER_ID = '1234FFF'.freeze
+  INVALID_ORDER_ID = 'FFF321'.freeze
 
   setup do
     stub_request(
@@ -64,3 +67,5 @@ class RafflesControllerTest < ActionDispatch::IntegrationTest
     assert_response :payment_required
   end
 end
+
+# rubocop:enable Style/FrozenStringLiteralComment

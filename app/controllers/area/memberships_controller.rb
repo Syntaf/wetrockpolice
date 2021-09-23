@@ -1,3 +1,6 @@
+# rubocop:disable Style/FrozenStringLiteralComment
+# We don't freeze strings here due to the PayPal SDK modifying string literals
+
 module Area
   class MembershipsController < BaseController
     before_action :verify_order_id, only: %i[create]
@@ -117,3 +120,5 @@ module Area
     end
   end
 end
+
+# rubocop:enable Style/FrozenStringLiteralComment
