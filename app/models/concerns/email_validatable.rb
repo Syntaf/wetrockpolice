@@ -9,7 +9,7 @@ module EmailValidatable
     def validate_each(record, attribute, value)
       return if value.match?(Devise.email_regexp) || value.nil?
 
-      record.errors[attribute] << (options[:message] || 'is not an email')
+      record.errors.add attribute, (options[:message] || 'is not an email')
     end
   end
 end

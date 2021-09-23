@@ -22,7 +22,7 @@ module Area
       respond_json(
         status: :created,
         modal: render_to_string(
-          partial: entered_partial
+          partial: 'raffle_entry_confirmation_modal'.freeze
         )
       )
     rescue ActiveRecord::RecordInvalid
@@ -55,10 +55,6 @@ module Area
         json: content,
         status: status
       )
-    end
-
-    def entered_partial
-      'raffle_entry_confirmation_modal.html.erb'
     end
 
     def verify_order_id

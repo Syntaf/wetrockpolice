@@ -54,9 +54,9 @@ module Area
     private
 
     def signup_partial(membership)
-      return 'membership_confirmation_modal.html.erb' unless membership.pending
+      return 'membership_confirmation_modal'.freeze unless membership.pending
 
-      'membership_pending_modal.html.erb'
+      'membership_pending_modal'.freeze
     end
 
     def verify_order_id
@@ -66,7 +66,7 @@ module Area
 
       respond_json(
         status: :payment_required,
-        message: 'Invalid order ID Supplied'
+        message: 'Invalid order ID Supplied'.freeze
       )
     end
 
