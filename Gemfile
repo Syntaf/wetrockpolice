@@ -20,6 +20,7 @@ gem 'paypal-checkout-sdk'
 gem 'pg'
 gem 'rails_12factor', group: :production
 gem 'rails_admin', '~> 2.0'
+gem 'rest-client', '~> 2.1.0'
 gem 'roadie-rails', '~> 2.1'
 gem 'seed_dump'
 
