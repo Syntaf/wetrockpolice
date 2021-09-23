@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Area
   class RafflesController < BaseController
     before_action :verify_order_id, only: %i[create]
