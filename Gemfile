@@ -29,7 +29,7 @@ gem 'rails-healthcheck'
 # Use webpacker js bundler
 gem 'webpacker'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.2'
+gem 'rails', '~> 6.1.4'
 # Use Puma as the app server
 gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
