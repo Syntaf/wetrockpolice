@@ -27,7 +27,6 @@ jobs:
         env:
           POSTGRES_USER: wrp
           POSTGRES_PASSWORD: dev
-          POSTGRES_DB: wetrockpolice_development
         ports:
           - 5432:5432
         options: >-
@@ -83,7 +82,10 @@ jobs:
 
       - name: Create Database
         env:
-          DATABASE_URL: postgres://wrp:@localhost:5432/wetrockpolice_test
+          POSTGRES_TEST_DB: wetrockpolice_test
+          POSTGRES_USER: wrp
+          POSTGRES_PASSWORD: dev
+          POSTGRES_HOST: localhost
           RAILS_ENV: test
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
@@ -92,7 +94,10 @@ jobs:
 
       - name: Run Tests
         env:
-          DATABASE_URL: postgres://postgres:@localhost:5432/wetrockpolice_test
+          POSTGRES_TEST_DB: wetrockpolice_test
+          POSTGRES_USER: wrp
+          POSTGRES_PASSWORD: dev
+          POSTGRES_HOST: localhost
           RAILS_ENV: test
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
