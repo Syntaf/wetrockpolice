@@ -25,8 +25,9 @@ jobs:
       db:
         image: postgres:11
         env:
-          POSTGRES_USER: postgres
+          POSTGRES_USER: wrp
           POSTGRES_PASSWORD: dev
+          POSTGRES_DB: wetrockpolice_development
         ports:
           - 5432:5432
         options: >-
@@ -52,7 +53,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gem-
 
-      - name: Bundle Install 
+      - name: Bundle Install
         run: |
           gem install bundler
           bundle config path vendor/bundle
@@ -82,7 +83,7 @@ jobs:
 
       - name: Create Database
         env:
-          DATABASE_URL: postgres://postgres:@localhost:5432/wetrockpolice_test
+          DATABASE_URL: postgres://wrp:@localhost:5432/wetrockpolice_test
           RAILS_ENV: test
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
