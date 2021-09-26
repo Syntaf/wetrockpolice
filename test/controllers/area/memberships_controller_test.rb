@@ -33,6 +33,15 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
       body: { name: 'RESOURCE_NOT_FOUND' }.to_json,
       headers: { content_type: 'application/json' }
     )
+
+    stub_request(
+      :post,
+      'https://api.ticketsource.io/customers'
+    ).to_return(
+      status: 201,
+      body: { todo: 'Add real body' }.to_json,
+      headers: { content_type: 'application/json' }
+    )
   end
 
   test 'Accepts card payment' do
