@@ -8,9 +8,6 @@ module Area
     before_action :set_meta, only: %i[new]
 
     def new
-      # Disable membership signups
-      redirect_to watched_area_path(@watched_area.slug)
-
       @joint_membership = JointMembershipApplication.new
       @joint_membership.shirt_orders.build
     end
@@ -20,7 +17,10 @@ module Area
       @membership.pending = true if paid_cash?
       @membership.save!(context: :create)
 
-      MembershipMailer.with(membership: @membership).signup.deliver_later unless @membership.pending
+      unless @membership.pending
+        MembershipMailer.with(membership: @membership).signup.deliver_later
+        TicketSource::CustomerCreator.call(@membership)
+      end
 
       respond_json(
         status: :created,
