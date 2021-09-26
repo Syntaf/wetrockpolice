@@ -6,9 +6,7 @@
 ## Table of Contents
 
 - [Overview](#Overview)
-  - [Running Locally](#Running-Locally)
-  - [Running with Docker (Recommended)](#Running-With-Docker)
-  - [Using PayPal in Development](#Entity-Overview)
+  - [Running Locally with Docker](#Running-Locally-with-Docker)
 - [Contributing](#Contributing-Guide)
   - [Coding Standards](#Coding-Standards)
 - [Development Guide](#Development-Guide)
@@ -24,89 +22,44 @@ WetRockPolice is an open source project written in Rails 6 + PostgreSQL and host
 
 Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wetrockpolice/issues) tab for ideas on how to contribute.
 
-## Running Locally (Not Recommended)
-
-If you'll be running Wetrockpolice without docker, you'll need:
-- Ruby 2.6.x
-- PostgreSQL 11.x
-
-Steps:
+## Running Locally with Docker
 
 1. Clone the repository
     ```
     ~$: git clone git@github.com:Syntaf/wetrockpolice.git
     ```
 
-2. With postgreSQL running in the background, set your username and password in `.env.local`.
+2. Copy over the example environment and fill in any optional integrations
+   ```
+   ~$: cd wetrockpolice
+   ~$: cp .env.example .env
+   ~$: vim .env
+   ```
 
-    ```
-    # .env.local
-
-    POSTGRES_USER='...'         # default 'postgres'
-    POSTGRES_PASSWORD='...'     # default 'dev'
-    ```
-
-    * Note this is the username and password you setup when installing PostgreSQL on your machine
-
-3. Create and migrate the database:
-
-    ```
-    ~$: rails db:create
-    ~$: rails db:migrate
-    ~$: rails db:seed
-    ```
-
-4. Run the server and visit http://localhost:3000
-
-    ```
-    ~$: rails server
-    ```
-
-## Running with Docker
-
-1. Clone the repository
-    ```
-    ~$: git clone git@github.com:Syntaf/wetrockpolice.git
-    ```
-
-2. Build the containers
+3. Build the containers, and bring them up once finished
     ```
     ~$ cd wetrockpolice
-    ~$ docker-compose build
+    ~$ docker-compose build && docker-compose up -d
     ```
 
-3. Create your development & test databases
+4. Run the containers (omit -d if you'd like them to run attached to your shell)
+   ```
+   ~$ docker-compose up -d
+   ```
+
+6. Run pending migrations
     ```
-    ~$ docker-compose run web rails db:create
-    ~$ docker-compose run web rails db:create RAILS_ENV=test
+    ~$ docker-compose exec web rails db:migrate
+    ~$ docker-compose exec web rails db:migrate RAILS_ENV=test
     ```
 
-4. Run pending migrations
+7. Seed development data
     ```
-    ~$ docker-compose run web rails db:migrate
-    ~$ docker-compose run web rails db:migrate RAILS_ENV=test
-    ```
-
-5. Seed development data
-    ```
-    ~$ docker-compose run web rails db:seed
+    ~$ docker-compose exec web rails db:seed
     ```
 
-6. Bring the containers up, then visit https://localhost:3001
-    ```
-    ~$ docker-compose up
-    ```
+8. Visit https://localhost:3001
 
-
-## Using PayPal in Development
-
-```
-# .env.local
-
-# Paypal integration on membership checkout page - Ensure these are SANDBOX credentials
-PAYPAL_CLIENT_ID="..."
-PAYPAL_CLIENT_SECRET="..."
-```
 
 # Contributing
 
@@ -123,7 +76,7 @@ This repository uses [Github Actions](https://github.com/features/actions) for c
         "solargraph.diagnostics": true,
         "solargraph.formatting": true
     }
-    
+
   ```
 
   **Note: If your solargraph server ever crashes and VSCode stops linting your work, use the developer window reload command to restart it.

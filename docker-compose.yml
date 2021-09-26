@@ -1,45 +1,51 @@
-version: '3.7'
+version: '3.8'
 
 services:
   db:
     image: postgres
     environment:
-      - POSTGRES_PASSWORD=admin
+      - POSTGRES_PASSWORD=dev
       - POSTGRES_USER=wrp
       - POSTGRES_DB=wetrockpolice_development
     ports:
       - '5432:5432'
     volumes:
-      - wrp_postgres_database:/var/lib/postgresql/data:Z
+      - wetrockpolice-postgres:/var/lib/postgresql/data:Z
+
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - wetrockpolice-redis:/var/lib/redis/data
 
   web:
     build:
       context: .
       dockerfile: Dockerfile.development
     # command: bundle exec rdebug-ide --debug --host 0.0.0.0 --port 1234 -- bin/rails server -p 3001 -b 0.0.0.0
-    environment:
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_USER=wrp
-      - POSTGRES_DB=wetrockpolice_development
-      - POSTGRES_HOST=db
-      - PORT=3001
-    secrets:
-      - psql_password
     volumes:
       - .:/opt/wetrockpolice
       - /opt/wetrockpolice/tmp
+      - /opt/wetrockpolice/node_modules
     ports:
       - "3001:3001"
-      - "1234:1234"
-      - "26162:26162"
     depends_on:
       - db
+    env_file:
+      - .env
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    volumes:
+      - .:/opt/wetrockpolice
+      - /opt/wetrockpolice/tmp
+      - /opt/wetrockpolice/node_modules
+    env_file:
+      - .env
 
 volumes:
-  wrp_postgres_database:
-
-secrets:
-  psql_password:
-    file: ./dev-secrets/psql_password.txt
-  psql_db:
-    file: ./dev-secrets/psql_db.txt
+  wetrockpolice-redis:
+  wetrockpolice-postgres:
