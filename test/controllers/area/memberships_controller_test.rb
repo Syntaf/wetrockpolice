@@ -1,4 +1,5 @@
 # rubocop:disable Style/FrozenStringLiteralComment
+# rubocop:disable Metrics/BlockLength
 # We don't freeze strings here due to the PayPal SDK modifying string literals
 
 require 'test_helper'
@@ -134,3 +135,4 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 end
 
 # rubocop:enable Style/FrozenStringLiteralComment
+# rubocop:enable Metrics/BlockLength
