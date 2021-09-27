@@ -18,6 +18,13 @@ require 'webmock/minitest'
 
 Sidekiq::Testing.fake!
 
+module SidekiqMinitestSupport
+  def after_teardown
+    Sidekiq::Worker.clear_all
+    super
+  end
+end
+
 class ActiveSupport::TestCase
   fixtures :all
 end
