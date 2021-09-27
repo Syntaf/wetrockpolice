@@ -30,7 +30,7 @@ module TicketSource
 
       internal_error = ->(_) { raise CustomerCreator::CreateCustomerException, "oops didn't work" }
       log_mock = Minitest::Mock.new
-      log_mock.expect(:error, nil, ["oops didn't work"])
+      log_mock.expect(:error, nil, ["Failed to create TicketSource customer for #{membership.id} - oops didn't work"])
 
       CustomerCreator.stub :call, internal_error do
         Sidekiq.stub :logger, log_mock do
