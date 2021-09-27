@@ -34,21 +34,13 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
       body: { name: 'RESOURCE_NOT_FOUND' }.to_json,
       headers: { content_type: 'application/json' }
     )
-
-    stub_request(
-      :post,
-      'https://api.ticketsource.io/customers'
-    ).to_return(
-      status: 201,
-      body: { todo: 'Add real body' }.to_json,
-      headers: { content_type: 'application/json' }
-    )
   end
 
   test 'Accepts card payment' do
     submit_sncc_application(joint_membership_applications(:valid_application))
 
     assert_response :created
+    assert_equal 1, TicketSource::SyncMembershipWorker.jobs.size
   end
 
   test 'Validates membership' do
@@ -57,6 +49,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     validate_sncc_application(app)
 
     assert_response :success
+    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
   end
 
   test 'Rejects invalid membership' do
@@ -66,6 +59,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     validate_sncc_application(app)
 
     assert_response :bad_request
+    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
   end
 
   test 'Rejects invalid card payment' do
@@ -75,6 +69,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     submit_sncc_application(app)
 
     assert_response :payment_required
+    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
   end
 
   test 'Accepts cash payment' do
@@ -85,6 +80,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     submit_sncc_application(app)
 
     assert_response :created
+    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
   end
 
   test 'Rejects empty order_id' do
@@ -95,6 +91,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     submit_sncc_application(app)
 
     assert_response :payment_required
+    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
   end
 
   test 'Rejects empty first name' do
@@ -104,6 +101,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     submit_sncc_application(app)
 
     assert_response :bad_request
+    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
   end
 
   test 'Rejects incomplete shirt order - color' do
@@ -113,6 +111,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     submit_sncc_application(app)
 
     assert_response :bad_request
+    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
   end
 
   test 'Rejects incomplete shirt order - size' do
@@ -122,6 +121,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     submit_sncc_application(app)
 
     assert_response :bad_request
+    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
   end
 
   test 'Rejects invalid shirt order - type' do
@@ -131,6 +131,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     submit_sncc_application(app)
 
     assert_response :bad_request
+    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
   end
 end
 

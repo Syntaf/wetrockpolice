@@ -19,7 +19,7 @@ module Area
 
       unless @membership.pending
         MembershipMailer.with(membership: @membership).signup.deliver_later
-        TicketSource::CustomerCreator.call(@membership)
+        TicketSource::SyncMembershipWorker.perform_async(@membership.id)
       end
 
       respond_json(
