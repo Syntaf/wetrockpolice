@@ -31,6 +31,7 @@ spec:
             - "sidekiq"
             - "-q"
             - "default"
+            - "-q"
             - "mailers"
           env:
             - name: SECRET_KEY_BASE
@@ -49,3 +50,23 @@ spec:
                   key: postgresql-password
             - name: WETROCKPOLICE_DATABASE_HOST
               value: {{ .Release.Name }}-postgresql
+            - name: SENDGRID_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-sendgrid
+                  key: password
+            - name: PAYPAL_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-paypal
+                  key: clientId
+            - name: PAYPAL_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-paypal
+                  key: secret
+            - name: TICKETSOURCE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-ticketsource
+                  key: secret

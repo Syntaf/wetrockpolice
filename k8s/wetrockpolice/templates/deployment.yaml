@@ -57,7 +57,7 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-sendgrid
                   key: password
-            - name: PAYPAL_CLIENT_ID 
+            - name: PAYPAL_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-paypal
@@ -66,7 +66,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-paypal
-                  key: secret 
+                  key: secret
+            - name: TICKETSOURCE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-ticketsource
+                  key: secret
           ports:
             - name: http
               containerPort: 3001
