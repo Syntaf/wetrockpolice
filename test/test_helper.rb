@@ -11,8 +11,12 @@
 # end
 
 require File.expand_path('../../config/environment', __FILE__)
+require 'minitest/autorun'
 require 'rails/test_help'
+require 'sidekiq/testing'
 require 'webmock/minitest'
+
+Sidekiq::Testing.fake!
 
 class ActiveSupport::TestCase
   fixtures :all
