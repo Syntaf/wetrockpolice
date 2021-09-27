@@ -32,6 +32,7 @@ services:
       - "3001:3001"
     depends_on:
       - db
+      - redis
     env_file:
       - .env
 
@@ -39,10 +40,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.development
+    command: bundle exec sidekiq -q default -q mailers
     volumes:
       - .:/opt/wetrockpolice
       - /opt/wetrockpolice/tmp
       - /opt/wetrockpolice/node_modules
+    depends_on:
+      - db
+      - redis
     env_file:
       - .env
 
