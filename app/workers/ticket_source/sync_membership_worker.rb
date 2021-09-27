@@ -14,7 +14,7 @@ module TicketSource
 
       CustomerCreator.call(@membership)
     rescue CustomerCreator::CreateCustomerException => e
-      Rails.logger.error e.message
+      logger.error "Failed to create TicketSource customer for #{membership_id} - #{e.message}"
     end
   end
 end

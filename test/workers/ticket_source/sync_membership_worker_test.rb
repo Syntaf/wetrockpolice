@@ -33,7 +33,7 @@ module TicketSource
       log_mock.expect(:error, nil, ["oops didn't work"])
 
       CustomerCreator.stub :call, internal_error do
-        Rails.stub :logger, log_mock do
+        Sidekiq.stub :logger, log_mock do
           SyncMembershipWorker.perform_async(membership.id)
         end
       end
