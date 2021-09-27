@@ -1,6 +1,14 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   devise_for :users
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+
+  mount RailsAdmin::Engine => '/admin/manage', as: 'rails_admin'
+  get '/admin', to: redirect('/admin/manage')
+
+  authenticated :user do
+    mount Sidekiq::Web => '/admin/sidekiq'
+  end
 
   resources :cash, controller: 'cash_validations', only: %i( index update destroy )
   resources :memberships, only: %i( destroy )
