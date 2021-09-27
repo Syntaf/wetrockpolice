@@ -11,6 +11,13 @@ module Wetrockpolice
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
+    config.cache_store = :redis_cache_store, {
+      url: ENV['REDIS_URL'],
+      namespace: 'wetrockpolice::cache'
+    }
+
+    config.active_job.queue_adapter = :sidekiq
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
