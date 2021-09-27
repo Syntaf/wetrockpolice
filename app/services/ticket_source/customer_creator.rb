@@ -14,6 +14,8 @@ module TicketSource
 
     def call
       @client.create_customer(@membership)
+
+      true
     rescue RestClient::ExceptionWithResponse => e
       error_message = JSON.parse(e.response.body)
 
