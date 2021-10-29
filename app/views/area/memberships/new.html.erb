@@ -95,15 +95,15 @@
             <div class="col-12 form-group">
               <%= shirt_order.label :shirt_size %>
               <%= shirt_order.select :shirt_size, [
-                "Mens Small (Stone)",
-                "Mens Medium (Stone)",
-                "Mens Large (Stone)",
-                "Mens Extra Large (Stone)",
-                "Womens Extra Small (Purple)",
-                "Womens Small (Purple)",
-                "Womens Medium (Purple)",
-                "Womens Large (Purple)",
-                "Womens Extra Large (Purple)"
+                "Mens Small",
+                "Mens Medium",
+                "Mens Large",
+                "Mens Extra Large",
+                "Womens Extra Small",
+                "Womens Small",
+                "Womens Medium",
+                "Womens Large",
+                "Womens Extra Large"
                 ], {prompt: ""}, disabled: true, data: { role: 'shirtSizeSelect' } %>
 
               <%= shirt_order.hidden_field :shirt_color, value: 'Stone', data: { role: 'stoneColorField' }, disabled: true %>
@@ -126,6 +126,7 @@
       </div>
       <div class="col-md-6 col-12">
         <p class="order-note d-none d-md-block">
+          <!--
           <i>
             Note: You will receive an email when your shirt is ready for pickup, please allow 1-2 weeks for
             your membership to be processed.
@@ -133,10 +134,9 @@
           <i>
             Shirts are unisex, but listed by gender based on color options. Men's sizing will select the 'stone' colored shirt and Women's sizing will select the 'purple' colored shirt
           </i>
-          <!--
+          -->
           <i>Note:</i>  SNCC Event Signups are processed post-event and do not immeditely take effect. Upon payment you will receive a receipt immeditely,
           and at a date in the near future you will receive your membership confirmation email from the access fund.
-          -->
         </p>
       </div>
     </div>
@@ -156,6 +156,7 @@
     <div class="row d-md-none">
       <div class="col-12 center">
         <p class="order-note mobile">
+          <!--
           <i>
             Note: You will receive an email when your shirt is ready for pickup, please allow 1-2 weeks for
             your membership to be processed.
@@ -163,8 +164,9 @@
           <i>
             Shirts are unisex, but listed by gender based on color options. Men's sizing will select the 'stone' colored shirt and Women's sizing will select the 'purple' colored shirt
           </i>
-          <%# <i>Note:</i>  SNCC Event Signups are processed post-event and do not immeditely take effect. Upon payment you will receive a receipt immeditely,
-          and at a date in the near future you will receive your membership confirmation email from the access fund. %>
+          -->
+          <i>Note:</i>  SNCC Event Signups are processed post-event and do not immeditely take effect. Upon payment you will receive a receipt immeditely,
+          and at a date in the near future you will receive your membership confirmation email from the access fund.
         </p>
       </div>
     </div>
