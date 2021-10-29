@@ -16,7 +16,7 @@ function NewMembershipController(options) {
         'editAgainButton': '[data-role="editAgain"]',
         'loaderIndicator': '[data-role="loader"]',
         'cashButton': 'button[data-role="cashPayment"]',
-        'membershipFee': 35,
+        'membershipFee': 40,
         'shirtPrice': 15,
         'payProcessingFeeCheckbox': '[data-role="coverFeeCheckbox"]'
     });
