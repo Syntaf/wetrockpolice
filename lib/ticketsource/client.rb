@@ -36,7 +36,7 @@ module TicketSource
     private
 
     def headers
-      { Authorization: "Bearer #{@api_key}" }
+      { Authorization: "Bearer #{@api_key}", 'User-Agent': 'ticketsource-63324' }
     end
   end
 end
