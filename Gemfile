@@ -10,8 +10,8 @@ end
 
 # Application specific gems
 gem 'bootstrap', '4.3.1'
-gem 'cancancan', '~> 3.0'
-gem 'devise'
+gem 'cancancan', '~> 3.3.0'
+gem 'devise', '~> 4.8.1'
 gem 'dotenv-rails'
 gem 'jquery-rails'
 gem 'material-sass', '4.1.1'

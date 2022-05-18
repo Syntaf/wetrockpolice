@@ -17,7 +17,7 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.lis
 RUN apt-get update && apt-get install -y --no-install-recommends nodejs yarn
 
 # bundler
-RUN gem install rails bundler
+RUN gem install bundler
 WORKDIR /opt/wetrockpolice
 
 # gems & node_modules
