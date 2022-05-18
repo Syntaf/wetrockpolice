@@ -1,1 +1,0 @@
-helm upgrade -n wetrockpolice -f secrets.yaml wetrockpolice k8s/wetrockpolice
