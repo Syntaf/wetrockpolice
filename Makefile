@@ -10,10 +10,10 @@ build:
 		.
 
 push:
-	docker push syntaf/wetrockpolice$(LATEST_HASH)
+	docker push syntaf/wetrockpolice:$(LATEST_HASH)
 
 deploy:
-	helm update -n wetrockpolice -f secrets.yaml wetrockpolice k8s/wetrockpolice
+	helm upgrade -n wetrockpolice -f secrets.yaml wetrockpolice k8s/wetrockpolice
 
 commit:
 	echo $(LATEST_HASH) > version.txt

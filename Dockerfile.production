@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends nodejs yarn
 
 # bundler
 RUN gem install bundler
+RUN gem update --system
 WORKDIR /opt/wetrockpolice
 
 # gems & node_modules
