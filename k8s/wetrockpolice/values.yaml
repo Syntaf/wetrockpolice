@@ -111,6 +111,7 @@ nginx-ingress:
   controller:
     ingressClass: "wetrockpolice-nginx"
     watchNamespace: "wetrockpolice"
+    enableSnippets: true
 
 external-dns:
   rbac:
