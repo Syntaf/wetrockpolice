@@ -39,7 +39,7 @@ WatchedArea.create!([
     name: "Castle Rock",
     slug: "castlerock",
     park_type_word: 'area',
-    landing_paragraph: redrock_landing_paragraph,
+    landing_paragraph: 'lorem ipsum lorem ipsum loreum ipsum lorem ipsum',
     info_bubble_excerpt: "lorem ipsum lorem ipsum",
     photo_credit_name: "Kevin",
     photo_credit_link: "grantmercer.dev",

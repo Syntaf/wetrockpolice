@@ -1,7 +1,7 @@
 <div class="hero-header-content" id="particles-js">
   <div class="hero-header <%= @watched_area.slug %>"></div>
   <div class="shadow-overlay"></div>
- 
+
   <!--<div class="notification-menu" id="temp-notification" tabindex="0" data-toggle="popover" data-trigger="focus" title="SNCC Membership Shirt Sale">
     <i class="fas fa-bell"></i><span class="badge badge-light">1</span>
   </div>-->
@@ -44,8 +44,8 @@
     </div>
     <span data-role="excerpt" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>>
       <% if @watched_area.manual_warn? %>
-        Be careful, the community has observed rain recently. The rain gauge may be inaccurate at 
-        this time. 
+        Be careful, the community has observed rain recently. The rain gauge may be inaccurate at
+        this time.
       <% else %>
         Since rain last fell in the <%= @watched_area.park_type_word %>
       <% end %>
@@ -114,7 +114,7 @@
         })
         var landingController = new LandingController({
             'stid': '<%= @watched_area.station %>'
-        });
+        }, <%= @watched_area.timeseries_interval_minutes %>);
 
         imageLoader.load();
         landingController.initLandingView();
@@ -122,8 +122,8 @@
         $('#temp-notification').popover({
             trigger: 'focus',
             html: true,
-            content: "<p>We've got a surprise for you! We've missed our climbing community and since we haven't been able to gather in person because of COVID, " + 
-                     "we wanted to share a special Membership Drive with you. We printed up a limited run of brand new SNCC t-shirts with artwork by climber " + 
+            content: "<p>We've got a surprise for you! We've missed our climbing community and since we haven't been able to gather in person because of COVID, " +
+                     "we wanted to share a special Membership Drive with you. We printed up a limited run of brand new SNCC t-shirts with artwork by climber " +
                      "<a class=\"inline-link\" href=\"http://www.marinainoue.com/\" target=\"_blank\">Marina Inoue</a> and we want to offer them to you all today for FREE!<br><br>" +
                      "Well.. sort of :) Until July 31st, we'll include a brand new SNCC t-shirt with every $50 Membership purchased. All of you have to do is " +
                      "join the SNCC or renew your membership here by July 31st.<br><br>We promise to keep advocating for climbers and our climbing areas by partnering " +

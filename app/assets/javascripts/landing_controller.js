@@ -1,12 +1,14 @@
-function LandingController(apiOptions) {
+function LandingController(apiOptions, timeseriesIntervalMinutes) {
     this.apiOptions = $.extend({
         'token': '2153743de639465ebbb30fa392c748de',
         'stid': '',
-        'recent': 43200,
+        'recent': 28800,
         'units': 'english',
-        'pmode': 'intervals',
-        'interval': 'hour'
+        'interval': 'hour',
+        'precip': 1,
     }, apiOptions);
+
+    this.timeseriesIntervalMinutes = timeseriesIntervalMinutes
 }
 
 LandingController.prototype.initLandingView = function () {
@@ -32,7 +34,7 @@ LandingController.prototype.scrollToWeather = function () {
 LandingController.prototype.fetchPrecipitation = function () {
     return $.ajax({
         'method': 'GET',
-        'url': 'https://api.synopticdata.com/v2/stations/precip',
+        'url': 'https://api.synopticdata.com/v2/stations/timeseries',
         'data': this.apiOptions,
         'dataType': 'json'
     });
@@ -47,7 +49,17 @@ LandingController.prototype.renderView = function (synopticResponse) {
         );
     }
 
-    var intervals = synopticResponse.STATION[0].OBSERVATIONS.precipitation;
+    var observations = synopticResponse.STATION[0].OBSERVATIONS;
+
+    var intervals_flat = observations.precip_intervals_set_1d;
+    var interval_dates = observations.date_time;
+
+    var intervals = intervals_flat.reduce((ints, curr, idx) => {
+        return [...ints, {
+            'precip': curr,
+            'last_report': interval_dates[idx]
+        }]
+    }, []);
 
     if (!intervals) {
         console.error('Precipitation response contains no intervals, cannot render view...');
@@ -60,7 +72,6 @@ LandingController.prototype.renderView = function (synopticResponse) {
 
 LandingController.prototype.renderRainCounter = function (intervals) {
     var lastRainInterval = this._getLastSeenRainInterval(intervals);
-    console.log(lastRainInterval);
 
     if (!lastRainInterval) {
         $('div[data-role="loading"]').remove();
@@ -74,7 +85,6 @@ LandingController.prototype.renderRainCounter = function (intervals) {
     }
 
     var elapsedHours = lastRainInterval.elapsedHours;
-    console.log(elapsedHours);
 
     var days = Math.floor(elapsedHours / 24);
     var hours = elapsedHours % 24;
@@ -98,7 +108,7 @@ LandingController.prototype.renderRainCounter = function (intervals) {
     var day = this._getOrdinalSuffix(dateOfRain.getDate());
 
     $('div[data-role="loading-date"]').remove();
-    $('strong[data-role="last-rain-date"]').html('on ' + month + ' ' + day);
+    $('strong[data-role="last-rain-date"]').html(month + ' ' + day);
 }
 
 LandingController.prototype.renderGraph = function (intervals) {
@@ -166,7 +176,7 @@ LandingController.prototype.renderGraph = function (intervals) {
         }
     });
 
-    $('#graphSwitch').change(function() { 
+    $('#graphSwitch').change(function() {
         if ($(this).prop('checked')) {
             timeSeriesChart.config.data.datasets[0].data = timeSeriesHourlyData.data;
             timeSeriesChart.config.data.labels = timeSeriesHourlyData.labels;
@@ -184,29 +194,16 @@ LandingController.prototype.renderGraph = function (intervals) {
 LandingController.prototype._parseDailyIntervalsForGraph = function (intervals) {
     var data = [];
     var labels = [];
+    var recent_first_intervals = intervals.reverse();
 
-    var accumulatedPrecip = 0.0;
-    var date = null;
-
-    if (intervals[0].count !== null)
-    {
-        accumulatedPrecip = intervals[0].total;
-        date = moment(intervals[0].last_report);
-    }
-    else
-    {
-        accumulatedPrecip = intervals[1].total;
-        date = moment(intervals[1].last_report);
-    }
+    var accumulatedPrecip = intervals[0].precip;
+    var date = moment(intervals[0].last_report);
 
     for (var i = 0; i < intervals.length; i++) {
-        if (intervals[i].count === null)
-            continue;
-
         var intDate = moment(intervals[i].last_report);
 
         if (intDate.date() === date.date()) {
-            accumulatedPrecip += intervals[i].total;
+            accumulatedPrecip += intervals[i].precip;
         } else {
             labels.push(date.endOf('day'));
             data.push({
@@ -215,7 +212,7 @@ LandingController.prototype._parseDailyIntervalsForGraph = function (intervals) 
             });
 
             date = moment(intervals[i].last_report);
-            accumulatedPrecip = intervals[i].total;
+            accumulatedPrecip = intervals[i].precip;
         }
     }
 
@@ -230,15 +227,12 @@ LandingController.prototype._parseHourlyIntervalsForGraph = function (intervals)
     var labels = [];
 
     for (var i = 0; i < 30; i++) {
-        if (intervals[i].count === null)
-            continue;
-
         var date = moment(intervals[i].last_report);
 
         labels.push(date);
         data.push({
             t: date.valueOf(),
-            y: intervals[i].total
+            y: intervals[i].precip
         });
     }
 
@@ -253,7 +247,7 @@ LandingController.prototype._getLastSeenRainInterval = function (intervals) {
 
     intervals = intervals.reverse();
     for(var i = 0; i < intervals.length; i++) {
-        if (intervals[i].total > 0 && intervals[i].count !== null) {
+        if (intervals[i].precip > 0) {
             now = moment();
             end_period = moment(intervals[i].last_report);
             duration_between = moment.duration(now.diff(end_period));
