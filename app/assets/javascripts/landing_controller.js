@@ -53,10 +53,12 @@ LandingController.prototype.renderView = function (synopticResponse) {
     var interval_dates = observations.date_time;
 
     var intervals = intervals_flat.reduce(function(ints, curr, idx) {
-        return [...ints, {
+        ints.push({
             'precip': curr,
             'last_report': interval_dates[idx]
-        }]
+        })
+
+        return ints;
     }, []);
 
     if (!intervals) {
