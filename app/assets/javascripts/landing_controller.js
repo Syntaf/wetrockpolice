@@ -52,7 +52,7 @@ LandingController.prototype.renderView = function (synopticResponse) {
     var intervals_flat = observations.precip_intervals_set_1d;
     var interval_dates = observations.date_time;
 
-    var intervals = intervals_flat.reduce((ints, curr, idx) => {
+    var intervals = intervals_flat.reduce(function(ints, curr, idx) {
         return [...ints, {
             'precip': curr,
             'last_report': interval_dates[idx]
