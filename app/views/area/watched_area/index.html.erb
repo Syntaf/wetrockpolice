@@ -114,7 +114,7 @@
         })
         var landingController = new LandingController({
             'stid': '<%= @watched_area.station %>'
-        }, <%= @watched_area.timeseries_interval_minutes %>);
+        });
 
         imageLoader.load();
         landingController.initLandingView();

@@ -1,4 +1,4 @@
-function LandingController(apiOptions, timeseriesIntervalMinutes) {
+function LandingController(apiOptions) {
     this.apiOptions = $.extend({
         'token': '2153743de639465ebbb30fa392c748de',
         'stid': '',
@@ -7,8 +7,6 @@ function LandingController(apiOptions, timeseriesIntervalMinutes) {
         'interval': 'hour',
         'precip': 1,
     }, apiOptions);
-
-    this.timeseriesIntervalMinutes = timeseriesIntervalMinutes
 }
 
 LandingController.prototype.initLandingView = function () {
