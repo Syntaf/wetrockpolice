@@ -112,6 +112,13 @@ LandingController.prototype.renderRainCounter = function (intervals) {
 }
 
 LandingController.prototype.renderGraph = function (intervals) {
+    var dailyIntervalLabel = function(tooltipItems, data) {
+        return ' ' + data.labels[tooltipItems.index].format('ll') + ' - ' + tooltipItems.yLabel.toFixedDown(3) + ' Inches of rain'
+    };
+    var hourlyIntervalLabel = function(tooltipItems, data) {
+        return ' ' + data.labels[tooltipItems.index].format('lll') + ' - ' + tooltipItems.yLabel.toFixedDown(3) + ' Inches of rain'
+    };
+
     var timeSeriesDailyData = this._parseDailyIntervalsForGraph(intervals);
     var timeSeriesHourlyData = this._parseHourlyIntervalsForGraph(intervals);
 
@@ -168,9 +175,7 @@ LandingController.prototype.renderGraph = function (intervals) {
                 intersect: false,
                 titleFontSize: 0,
                 callbacks: {
-                  label: function(tooltipItems, data) {
-                    return ' ' + data.labels[tooltipItems.index].format('ll') + ' - ' + tooltipItems.yLabel.toFixedDown(3) + ' Inches of rain'
-                  },
+                    label: dailyIntervalLabel
                 }
             }
         }
@@ -181,11 +186,13 @@ LandingController.prototype.renderGraph = function (intervals) {
             timeSeriesChart.config.data.datasets[0].data = timeSeriesHourlyData.data;
             timeSeriesChart.config.data.labels = timeSeriesHourlyData.labels;
             timeSeriesChart.config.options.scales.xAxes[0].time.unit = 'hour';
+            timeSeriesChart.config.options.tooltips.callbacks.label = hourlyIntervalLabel;
             timeSeriesChart.update();
         } else {
             timeSeriesChart.config.data.datasets[0].data = timeSeriesDailyData.data;
             timeSeriesChart.config.data.labels = timeSeriesDailyData.labels
             timeSeriesChart.config.options.scales.xAxes[0].time.unit = 'day';
+            timeSeriesChart.config.options.tooltips.callbacks.label = dailyIntervalLabel;
             timeSeriesChart.update();
         }
     });
@@ -226,7 +233,15 @@ LandingController.prototype._parseHourlyIntervalsForGraph = function (intervals)
     var data = [];
     var labels = [];
 
-    for (var i = 0; i < 30; i++) {
+    // Find the time between two intervals in minutes
+    var intervalMiliseconds = moment(intervals[1].last_report) - moment(intervals[0].last_report);
+    var intervalMinutes = (intervalMiliseconds / 1000) / 60;
+    var intervalStep = Math.ceil(60 / intervalMinutes);
+
+    // Start pulling data 30 hours before the current interval
+    var intervalStart = intervals.length - intervalStep * 30;
+
+    for (var i = intervalStart, j = 0; j < 30; i += intervalStep, j += 1) {
         var date = moment(intervals[i].last_report);
 
         labels.push(date);
