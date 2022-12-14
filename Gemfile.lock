@@ -153,7 +153,7 @@ GEM
       rexml
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
-    loofah (2.18.0)
+    loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.1)
@@ -174,10 +174,10 @@ GEM
     nested_form (0.3.2)
     netrc (0.11.0)
     nio4r (2.5.8)
-    nokogiri (1.13.6)
+    nokogiri (1.13.10)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
-    nokogiri (1.13.6-x64-mingw32)
+    nokogiri (1.13.10-x64-mingw32)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     parallel (1.22.1)
@@ -192,7 +192,7 @@ GEM
     public_suffix (4.0.7)
     puma (4.3.12)
       nio4r (~> 2.0)
-    racc (1.6.0)
+    racc (1.6.1)
     rack (2.2.3)
     rack-pjax (1.1.0)
       nokogiri (~> 1.5)
@@ -222,8 +222,8 @@ GEM
     rails-healthcheck (1.4.0)
       actionpack
       railties
-    rails-html-sanitizer (1.4.2)
-      loofah (~> 2.3)
+    rails-html-sanitizer (1.4.4)
+      loofah (~> 2.19, >= 2.19.1)
     rails_12factor (0.0.3)
       rails_serve_static_assets
       rails_stdout_logging
