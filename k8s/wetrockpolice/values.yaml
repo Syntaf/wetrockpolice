@@ -26,7 +26,7 @@ image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "19c0ac79cb08922e7f4697efdbb8534d8d933b6c"
+  tag: "bc59f50ec460985bf4c5a88835d9e8aee2cfce0d"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -117,6 +117,9 @@ external-dns:
   rbac:
     create: true
 
+  crd:
+    create: true
+
   provider: digitalocean
 
   digitalocean:
@@ -129,12 +132,21 @@ external-dns:
   domainFilters: ['wetrockpolice.com']
 
 postgresql:
-  postgresqlUsername: wetrockpolice
-  postgresqlDatabase: wetrockpolice_production
-  postgresqlPassword: my-postgresql-password
+  auth:
+    username: wetrockpolice
+    database: wetrockpolice_production
+    postgresPassword: my-postgresql-password
+    password: cUzsHMqYawsQKskbbYcMBKFzWv
+  primary:
+    resources:
+      requests:
+        cpu: 125m
 
 redis:
-  usePassword: false
+  auth:
+    enabled: false
+  replica:
+    replicaCount: 1
   master:
     persistence:
       enabled: true

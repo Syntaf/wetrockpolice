@@ -4,16 +4,16 @@ description: A Helm chart for Kubernetes
 
 dependencies:
   - name: nginx-ingress
-    version: "0.13.1"
+    version: "0.15.2"
     repository: "https://helm.nginx.com/stable"
   - name: external-dns
-    version: "3.3.0"
+    version: "6.12.2"
     repository: "https://charts.bitnami.com/bitnami"
   - name: postgresql
-    version: "8.10.2"
+    version: "12.1.6"
     repository: "https://charts.bitnami.com/bitnami"
   - name: redis
-    version: "10.7.16"
+    version: "17.4.0"
     repository: "https://charts.bitnami.com/bitnami"
 
 # A chart can be either an 'application' or a 'library' chart.

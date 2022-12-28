@@ -49,7 +49,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-postgresql
-                  key: postgresql-password
+                  key: postgres-password
             - name: WETROCKPOLICE_DATABASE_HOST
               value: {{ .Release.Name }}-postgresql
             - name: SENDGRID_PASSWORD
