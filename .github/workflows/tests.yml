@@ -24,49 +24,38 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
+      BUNDLE_BUILD__SASSC: "--disable-march-tune-native"
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Ruby
+      - name: Setup Ruby & Bundle Install
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6'
+          bundler-cache: true
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 10.13.0
 
-      - name: Configure Cache Locations
+      - name: Configure Yarn Cache Location
         id: cache-locations
         run: |
           echo "yarn_dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-          echo "ruby_dir=vendor/bundle" >> $GITHUB_OUTPUT
 
-      - name: Configure Javascript Cache
+      - name: Check Yarn Cache
         id: cache-yarn
         uses: actions/cache@v3
         with:
           path: ${{ steps.cache-locations.outputs.yarn_dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Configure Ruby Cache
-        id: cache-gems
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.cache-locations.outputs.ruby_dir }}
-          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-
-      - name: Bundle Install
-        if: steps.cache-gems.outputs.cache-hit != 'true'
-        run: |
-          gem install bundler
-          bundle config path ${{ steps.cache-locations.outputs.ruby_dir }}
-          bundle config --local build.sassc --disable-march-tune-native
-          bundle install --jobs 4 --retry 3
-
-      - name: Install packages
+      - name: Install Javascript Packages
         if: steps.cache-yarn.outputs.cache-hit != 'true'
         run: |
           yarn install --pure-lockfile
