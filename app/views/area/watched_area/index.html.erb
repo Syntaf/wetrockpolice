@@ -98,15 +98,17 @@
           <%= @watched_area.landing_paragraph.html_safe %>
           <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn faq' %>
         </div>
-        <div class="content-widget" data-aos="fade-up" id="customize-script-container">
-          <script type='text/javascript' src='https://darksky.net/widget/default/<%= @watched_area.latitude %>,<%= @watched_area.longitude %>/us12/en.js?width=300&height=350&title=<%= @watched_area.name %>&textColor=333333&bgColor=transparent&transparency=true&skyColor=undefined&fontFamily=Sans-Serif&customFont=&units=us&htColor=333333&ltColor=C7C7C7&displaySum=yes&displayHeader=yes'></script>
-        </div>
+        <div class="content-widget" data-aos="fade-up" id="customize-script-container"></div>
+      </div>
+
+      <div data-aos="fade-up">
+        <a name="windy-webcam-timelapse-player" data-id="1169663215" data-play="day" href="https://windy.com/webcams/1169663215" target="_blank"></a>
       </div>
     </div>
   </div>
 </div>
 
-<script type="text/javascript">
+<script async type="text/javascript">
     $(document).ready(function () {
         var imageLoader = new ImageLoader({
             'imageContainerSelector': '.hero-header.<%= @watched_area.slug %>',
@@ -133,3 +135,5 @@
         });
     });
 </script>
+
+<script async type="text/javascript" src="https://webcams.windy.com/webcams/public/embed/script/player.js"></script>
