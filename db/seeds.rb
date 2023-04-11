@@ -45,6 +45,7 @@ WatchedArea.create!([
     photo_credit_link: "/castlerock",
     longitude: "-122.0983",
     latitude: "37.2288",
+    station: 'AV151',
     local_climbing_org_id: 2
   },
   {
