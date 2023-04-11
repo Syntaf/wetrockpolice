@@ -191,3 +191,9 @@ Because of this strategy however, updating landing page images can be a little m
     Since the initial background is a base64 encoded image, the page will almost always load with it already painted (albeit heavily blurred). The second rule will swap the background image while the image has been successfully loaded in the background (avoiding the top-down loading view).
 
 4. Load the page and ensure your page transitions from the small image to large image. If you're having trouble determing if the small image is loading properly you can comment out `imageLoader.load()` in `views/area/watched_area/index.html.erb`, this will cause the page to load with only the small image
+
+## Deploying to Kubernetes
+
+Wetrockpolice is hosted on a digital ocean kubernetes cluster, deploying to this cluster (with credentials) is done through `Makefile` commands and `helm`. (k9s)[https://k9scli.io/] is a highly recommended tool.
+
+The order of commands should be `commit`, `build`, `push`, the finally `deploy`
