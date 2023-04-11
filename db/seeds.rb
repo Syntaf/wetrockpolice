@@ -41,8 +41,8 @@ WatchedArea.create!([
     park_type_word: 'area',
     landing_paragraph: 'lorem ipsum lorem ipsum loreum ipsum lorem ipsum',
     info_bubble_excerpt: "lorem ipsum lorem ipsum",
-    photo_credit_name: "Kevin",
-    photo_credit_link: "grantmercer.dev",
+    photo_credit_name: "Nick Arnott",
+    photo_credit_link: "/castlerock",
     longitude: "-122.0983",
     latitude: "37.2288",
     local_climbing_org_id: 2
