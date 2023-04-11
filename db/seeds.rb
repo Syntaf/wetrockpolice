@@ -33,6 +33,7 @@ WatchedArea.create!([
     longitude: "-115.4357",
     latitude: "36.1323",
     station: 'RRKN2',
+    webcam_stid: '1169663215',
     local_climbing_org_id: 1
   },
   {

@@ -101,9 +101,15 @@
         <div class="content-widget" data-aos="fade-up" id="customize-script-container"></div>
       </div>
 
+      <% if @watched_area.webcam_stid %>
       <div data-aos="fade-up">
-        <a name="windy-webcam-timelapse-player" data-id="1169663215" data-play="day" href="https://windy.com/webcams/1169663215" target="_blank"></a>
+        <a name="windy-webcam-timelapse-player"
+           data-id="<%= @watched_area.webcam_stid %>"
+           data-play="day"
+           href="https://windy.com/webcams/1169663215"
+           target="_blank"></a>
       </div>
+      <% end %>
     </div>
   </div>
 </div>
@@ -136,4 +142,6 @@
     });
 </script>
 
+<% if @watched_area.webcam_stid %>
 <script async type="text/javascript" src="https://webcams.windy.com/webcams/public/embed/script/player.js"></script>
+<% end %>
