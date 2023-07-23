@@ -69,4 +69,8 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-ticketsource
-                  key: secret
+                  key: secret 
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

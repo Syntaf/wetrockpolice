@@ -17,7 +17,7 @@ ticketsource:
   secret: ''
 
 sidekiq:
-  replicaCount: 2
+  replicaCount: 0
 
   autoscaling:
     enabled: false
@@ -101,7 +101,8 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
+nodeSelector:
+  doks.digitalocean.com/node-pool: secondary
 
 tolerations: []
 
@@ -136,17 +137,16 @@ postgresql:
     username: wetrockpolice
     database: wetrockpolice_production
     postgresPassword: my-postgresql-password
-    password: cUzsHMqYawsQKskbbYcMBKFzWv
+    password: ''
   primary:
     resources:
       requests:
         cpu: 125m
 
 redis:
+  architecture: standalone
   auth:
     enabled: false
-  replica:
-    replicaCount: 1
   master:
     persistence:
       enabled: true
