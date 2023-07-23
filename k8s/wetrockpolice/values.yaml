@@ -26,7 +26,7 @@ image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "bc59f50ec460985bf4c5a88835d9e8aee2cfce0d"
+  tag: "abb1dd4d2b8454a49f469de4009d3e63e6046260"
 
 imagePullSecrets: []
 nameOverride: ""
