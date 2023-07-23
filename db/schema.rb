@@ -140,7 +140,6 @@ ActiveRecord::Schema.define(version: 2023_04_11_034737) do
     t.string "latitude", default: "0", null: false
     t.boolean "manual_warn", default: false, null: false
     t.string "station", default: ""
-    t.integer "timeseries_interval_minutes"
     t.string "webcam_stid"
     t.index ["local_climbing_org_id"], name: "index_watched_areas_on_local_climbing_org_id"
     t.index ["slug"], name: "index_watched_areas_on_slug", unique: true

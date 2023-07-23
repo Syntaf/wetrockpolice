@@ -10,12 +10,18 @@ class User < ApplicationRecord
   after_create :send_admin_mail
   serialize :manages, Array
 
+  attr_accessor :skip_password
+
   def active_for_authentication?
     super && approved?
   end
 
   def inactive_message
     approved ? super : :not_approved
+  end
+
+  def skip_password!
+    self.skip_password = true
   end
 
   def send_reset_password_instructions(attributes = {})
@@ -36,5 +42,13 @@ class User < ApplicationRecord
 
   def send_admin_mail
     AdminMailer.new_user_waiting_for_approval(email).deliver
+  end
+
+  protected
+
+  def password_required?
+    return false if skip_password
+
+    super
   end
 end
