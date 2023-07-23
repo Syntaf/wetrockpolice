@@ -1,17 +1,14 @@
 # Development environment
 FROM ruby:2.6
 
-ARG USER_ID
-ARG GROUP_ID
-
+ENV USER_ID=1000
+ENV GROUP_ID=1000
 ENV RAILS_ENV=production
 ENV INSTALL_PATH /opt/wetrockpolice
 
 RUN addgroup --gid $GROUP_ID user
 RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID user
 RUN mkdir -p $INSTALL_PATH
-
-USER root
 
 # nodejs
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg -o /root/yarn-pubkey.gpg && apt-key add /root/yarn-pubkey.gpg
