@@ -26,7 +26,7 @@ image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "abb1dd4d2b8454a49f469de4009d3e63e6046260"
+  tag: "922a6d8daae51d65a306fd25559da88bc733d2dc"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -113,6 +113,8 @@ nginx-ingress:
     ingressClass: "wetrockpolice-nginx"
     watchNamespace: "wetrockpolice"
     enableSnippets: true
+    nodeSelector:
+      doks.digitalocean.com/node-pool: secondary
 
 external-dns:
   rbac:
