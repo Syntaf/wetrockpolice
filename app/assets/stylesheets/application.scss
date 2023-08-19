@@ -82,11 +82,11 @@ html, body {
 }
 
 .footer {
-    height: 80px;
     background-color: #444444;
 
     .footer-container {
         max-width: 700px;
+        padding: 24px 0;
         height: 100%;
         color: white;
         margin: auto;
@@ -133,14 +133,20 @@ html, body {
             }
         }
 
+        .embolt-link {
+            color: #FF5C5C;
+            font-weight: bold;
+            background-color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+
         @media (max-width: $mobileBreakpoint) {
             padding: 10px 0;
             flex-direction: column;
         }
-    }
-
-    @media (max-width: $mobileBreakpoint) {
-        height: 120px;
     }
 }
 
