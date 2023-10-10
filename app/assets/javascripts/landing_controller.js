@@ -196,6 +196,8 @@ LandingController.prototype.renderGraph = function (intervals) {
             timeSeriesChart.update();
         }
     });
+
+    $(".graph .overflow-wrapper").scrollLeft(1000);
 }
 
 LandingController.prototype._parseDailyIntervalsForGraph = function (intervals) {
