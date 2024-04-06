@@ -11,6 +11,10 @@
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
 
+    // Vim configuration
+    "vim.hlsearch": true,
+    "vim.smartRelativeLine": true,
+
     // Ruby configuration
     "ruby.format": false,
     "ruby.codeCompletion": false,
