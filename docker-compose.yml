@@ -23,6 +23,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.development
+      args:
+        RAILS_ENV: development
+    # uncomment the following line to start a web server with a debugger
     # command: bundle exec rdebug-ide --debug --host 0.0.0.0 --port 1234 -- bin/rails server -p 3001 -b 0.0.0.0
     volumes:
       - .:/opt/wetrockpolice
@@ -33,6 +36,22 @@ services:
     depends_on:
       - db
       - redis
+    env_file:
+      - .env
+    
+  webpacker:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+      args:
+        RAILS_ENV: development
+    command: bash -c "rm -rf /opt/wetrockpolice/public/packs && NODE_OPTIONS=--openssl-legacy-provider ./bin/webpack-dev-server"
+    volumes:
+      - .:/opt/wetrockpolice
+      - /opt/wetrockpolice/tmp
+      - /opt/wetrockpolice/node_modules
+    ports:
+      - '3035:3035'
     env_file:
       - .env
 
