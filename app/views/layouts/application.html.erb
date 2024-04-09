@@ -6,6 +6,19 @@
 
     <%= csrf_meta_tags %>
 
+    <%= Rails.env.production? ?
+      javascript_pack_tag('application') :
+      javascript_packs_with_chunks_tag('application') %>
+    <%= Rails.env.production? ?
+      stylesheet_pack_tag('application') :
+      stylesheet_packs_with_chunks_tag('application') %>
+
+    <%= render partial: 'shared/analytics' %>
+
+    <!-- Star wetrockpolice on github! -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <!-- b64 landing image -->
     <style>
       /* Red Rock */
       .hero-header.redrock {
@@ -48,25 +61,10 @@
         opacity: .3;
       }
     </style>
-
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-
-    <%= stylesheet_link_tag    'application', media: 'all' %>
-    <%= javascript_include_tag 'application' %>
-
-    <script type="text/javascript">
-      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-      <% if Rails.env.development? %>
-        heap.load("372095985");
-      <% else %>
-        heap.load("3317823896");
-      <% end %>
-    </script>
-
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
   </head>
 
-  <body <% if @watched_area %> data-area="<%= @watched_area.name %><% end %>">
+  <body data-controller="<%= controller_name %>"
+    <% if @watched_area %>data-area="<%= @watched_area.name %>"<% end %>>
     <% if notice %>
       <div class="notice opaque alert alert-warning alert-dismissible fade show">
         <%= notice %>

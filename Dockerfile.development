@@ -1,26 +1,30 @@
 # Development environment
-FROM ruby:2.6
+FROM ruby:3.1
 
 ENV RAILS_ENV=development
 
 ENV INSTALL_PATH /opt/wetrockpolice
 RUN mkdir -p $INSTALL_PATH
 
-# nodejs
+# nodejs, yarn & bun
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg -o /root/yarn-pubkey.gpg && apt-key add /root/yarn-pubkey.gpg
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs yarn python
+RUN curl -fsSL https://bun.sh/install | bash && ln -s $HOME/.bun/bin/bun /usr/bin/bun
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs yarn python3 python-is-python3
 
-# bundler
-RUN gem install bundler
+# set working directory
 WORKDIR /opt/wetrockpolice
 
-# gems & node_modules
+# instally ruby gems
 COPY Gemfile Gemfile
 COPY Gemfile.lock Gemfile.lock
+RUN gem install bundler
+RUN bundle install --jobs 1
+
+# install node modules
 COPY package.json package.json
 COPY yarn.lock yarn.lock
-RUN bundle install
 RUN yarn install
 
 # start server using entrypoint
