@@ -16,9 +16,9 @@ import "@hotwired/turbo-rails";
 
 require.context('../images', true);
 
-const context = require.context("../controllers", true, /\.js$/)
+const context = require.context("../controllers", true, /\.js$/);
 
-window.Stimulus = Application.start()
-Stimulus.load(definitionsFromContext(context))
+window.Stimulus = Application.start();
+Stimulus.load(definitionsFromContext(context));
 
-Rails.start()
+Rails.start();
