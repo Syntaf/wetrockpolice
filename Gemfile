@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-ruby '~> 3.1'
+
+ruby '3.1.4'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -10,32 +11,28 @@ end
 
 # Authorization & Authentication
 gem 'cancancan', '~> 3.3.0'
-gem 'devise', '~> 4.8.1'
+gem 'devise', '~> 4.9.3'
 # Environment management
 gem 'dotenv-rails'
 # SEO
 gem 'meta-tags', '~> 2.20'
-# Payment processing (deprecated)
-gem 'paypal-checkout-sdk'
+# Postgres client
 gem 'pg'
-gem 'rails_12factor', group: :production
+# Administrative backend
 gem 'rails_admin', '~> 3.1'
+# Third-party integrations client
 gem 'rest-client', '~> 2.1.0'
 # Dump data into seed file
 gem 'seed_dump'
-
 # K8s health checking
 gem 'rails-healthcheck'
-
 # Use webpacker js bundler
 gem 'webpacker'
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+# Rails framework
 gem 'rails', '~> 7.1'
 # Use Puma as the app server
 gem 'puma', '~> 6.4'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.11.5'
-# Use Redis adapter to run Action Cable in production
+# Use Redis adapter for caching & cable
 gem 'redis', '~> 4.0'
 # Use faster connection library for Redis
 gem 'hiredis'

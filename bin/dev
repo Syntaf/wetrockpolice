@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+# install foreman if needed — https://github.com/ddollar/foreman
+if ! gem list foreman -i --silent; then
+  echo "Installing foreman..."
+  gem install foreman
+fi
+
+# run foreman and point it to our Procfile.dev, and pass through any arguments we've added
+# learn more from the foreman docs — https://ddollar.github.io/foreman/
+exec foreman start -f Procfile.dev "$@"

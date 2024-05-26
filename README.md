@@ -6,7 +6,8 @@
 ## Table of Contents
 
 - [Overview](#Overview)
-  - [Running Locally with Docker](#Running-Locally-with-Docker)
+  - [Dependencies](##Dependencies)
+  - [Running Locally](##Running-Locally-with-RVM-&-Docker)
 - [Contributing](#Contributing-Guide)
   - [Coding Standards](#Coding-Standards)
 - [Development Guide](#Development-Guide)
@@ -22,44 +23,66 @@ WetRockPolice is an open source project written in Rails 6 + PostgreSQL and host
 
 Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wetrockpolice/issues) tab for ideas on how to contribute.
 
-## Running Locally with Docker
+## Dependencies
 
-1. Clone the repository
+To work with wetrockpolice locally you'll need the following dependencies installed on your system:
+
+- [Docker Compose](https://docs.docker.com/compose/install/) for running postgres & redis containers locally
+- [RVM](https://rvm.io/rvm/install) for managing your local ruby version (http server)
+- [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for managing your local node version (webpack server)
+- [VSCode](https://code.visualstudio.com/download) or your own preferred IDE
+
+## Running Locally with RVM & Docker
+
+The easiest way to work with wetrockpolice locally is to leverage Docker for your persistence layer
+dependencies (postgres & redis) and run your own http & webpack services via a native ruby
+installation (like via RVM)
+
+1. Install the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
+   ```
+   ~$: rvm install 3.1.4
+   ~$: rvm use 3.1.4
+   ```
+  
+2. Install the required node version (`20.13.1`) via [NVM's installation docs](https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage)
+   ```
+   ~$: nvm install 20.13.1
+   ~$: nvm use 20.13.1
+   ```
+
+3. Clone the repository
     ```
     ~$: git clone git@github.com:Syntaf/wetrockpolice.git
     ```
 
-2. Copy over the example environment and fill in any optional integrations
+4. Copy over the example environment. **Note:** You shouldn't need to change any configuration from
+   `.env.example` initially
    ```
    ~$: cd wetrockpolice
    ~$: cp .env.example .env
-   ~$: vim .env
    ```
 
-3. Build the containers, and bring them up once finished
+5. Start up your `postgres` and `redis` containers to run in the background
     ```
-    ~$ cd wetrockpolice
-    ~$ docker-compose build && docker-compose up -d
+    ~$: make up
     ```
 
-4. Run the containers (omit -d if you'd like them to run attached to your shell)
+6. Install required gems & packages for running your webpack & http servers
    ```
-   ~$ docker-compose up -d
+   ~$: make install
    ```
 
-6. Run pending migrations
-    ```
-    ~$ docker-compose exec web rails db:migrate
-    ~$ docker-compose exec web rails db:migrate RAILS_ENV=test
-    ```
+7. Setup your database, run migrations & seed data
+   ```
+   ~$: make reset-db
+   ```
 
-7. Seed development data
-    ```
-    ~$ docker-compose exec web rails db:seed
-    ```
+8. Start your http & webpack servers
+   ```
+   ~$: ./bin/dev
+   ```
 
-8. Visit https://localhost:3001
-
+9. Visit https://localhost:3001/redrock
 
 # Contributing
 
