@@ -1,19 +1,41 @@
+SHELL=/opt/homebrew/bin/bash
 
-LATEST_HASH := $(shell cat .git/refs/heads/master)
+# Local Development
+# --------------------------------------------------
+.PHONY: http
+http:
+	bundle exec rails server -p 3002 -b 0.0.0.0
 
-build:
-	docker build -t syntaf/wetrockpolice:$(LATEST_HASH) \
-		--build-arg RAILS_ENV=production \
-		--build-arg USER_ID=1000 \
-		--build-arg GROUP_ID=1000 \
-		-f ./Dockerfile.production \
-		.
+.PHONY: worker
+worker:
+	bundle exec sidekiq -q default -q mailers
 
-push:
-	docker push syntaf/wetrockpolice:$(LATEST_HASH)
+.PHONY: up
+up:
+	docker-compose up -d postgres redis
 
-deploy:
-	helm upgrade -n wetrockpolice -f secrets.yaml wetrockpolice k8s/wetrockpolice
+.PHONY: install
+install:
+	bundle install && yarn install
 
-commit:
-	echo $(LATEST_HASH) > version.txt
+.PHONY: db-drop
+db-drop:
+	rails db:drop
+
+.PHONY: db-create
+db-create:
+	rails db:create
+
+.PHONY: db-migrate
+db-migrate:
+	rails db:migrate
+
+.PHONY: db-seed
+db-seed:
+	rails db:seed
+
+.PHONY: init
+init: db-create db-migrate db-seed
+
+.PHONY: reset_db
+reset-db: db-drop init
