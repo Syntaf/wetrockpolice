@@ -64,28 +64,15 @@
   </head>
 
   <body 
-    data-controller="<%= controller_name %>"
-    <% if @watched_area %>data-area="<%= @watched_area.name %>"<% end %>>
-    <% if notice %>
-      <div class="notice opaque alert alert-warning alert-dismissible fade show">
-        <%= notice %>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
+    data-page-controller="<%= controller_name %>"
+    <% if @watched_area %>
+    data-controller="watched-area"
+    data-watched-area-station-value="<%= @watched_area.station %>"
     <% end %>
-
-    <% if alert %>
-      <div class="notice opaque alert alert-warning alert-dismissible fade show">
-        <%= alert %>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    <% end %>
-
+  >
+    <!-- Content -->
     <%= yield %>
-
+    <!-- Footer -->
     <div class="footer">
       <div class="footer-container">
         <div class="contact">

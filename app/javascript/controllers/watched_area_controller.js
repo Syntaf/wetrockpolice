@@ -1,4 +1,4 @@
-import { Controller } from "stimulus";
+import { Controller } from "@hotwired/stimulus";
 import { toFixedDown } from "../utils";
 
 export default class extends Controller {
@@ -13,12 +13,6 @@ export default class extends Controller {
     'precip': 1,
   }
 
-  connect() {
-  }
-
-  scrollDown(event) {
-    this.precipSectionTarget.scrollIntoView({ behavior: "smooth" });
-  }
 }
 
 // function LandingController(apiOptions) {

@@ -51,7 +51,7 @@
       <% end %>
     </span>
     <div class="row call-to-action">
-      <button class="btn weather" data-action="click->watchedArea#scrollDown:prevent">Can I Climb?</button>
+      <button class="btn weather" data-controller="scroll-to" data-scroll-to-dest-value="#weatherBreakdown">Can I Climb?</button>
       <%= link_to 'Rainy Day Options', watched_area_rainy_day_options_path, class: 'btn rainy-day-options' %>
     </div>
   </div>
@@ -64,7 +64,7 @@
   <p class="scroll-down"><i class="material-icons">expand_more</i> Scroll Down</p>
   <div class="vertical-line"></div>
 </div>
-<div class="weather-breakdown" data-watched-area-target="precipSection">
+<div class="weather-breakdown" id="weatherBreakdown" data-watched-area-target="precipSection">
   <div class="container">
     <div class="header" data-aos="fade-up">
       <h2 data-role="weather-breakdown-header">The last recorded precipitation was on</h2>
@@ -114,6 +114,7 @@
   </div>
 </div>
 
+<!--
 <script async type="text/javascript">
     $(document).ready(function () {
         var imageLoader = new ImageLoader({
@@ -141,6 +142,7 @@
         });
     });
 </script>
+-->
 
 <% if @watched_area.webcam_stid %>
 <script async type="text/javascript" src="https://webcams.windy.com/webcams/public/embed/script/player.js"></script>
