@@ -1,6 +1,6 @@
 @import "vars";
 
-body[data-controller="watched_area"] {
+body[data-page-controller="watched_area"] {
     .tooltip-inner {
         max-width: 250px;
         font-size: 12px;
