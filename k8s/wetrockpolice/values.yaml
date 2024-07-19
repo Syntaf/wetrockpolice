@@ -3,35 +3,26 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 2
-
 masterKey: rails-master-key
-
 sendgrid:
   password: ''
-
 paypal:
   clientId: ''
   secret: ''
-
 ticketsource:
   secret: ''
-
 sidekiq:
   replicaCount: 0
-
   autoscaling:
     enabled: false
-
 image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "5246ba5bad001425d3748213dc72c3ab9d9d878b"
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -40,25 +31,22 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-
 podAnnotations:
   external-dns.alpha.kubernetes.io/hostname: wetrockpolice.com
-
 podSecurityContext: {}
-  # fsGroup: 2000
+# fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
 
 service:
   type: ClusterIP
   port: 3001
-
 ingress:
   enabled: true
   annotations:
@@ -81,18 +69,17 @@ ingress:
       hosts:
         - 'wetrockpolice.com'
         - '*.wetrockpolice.com'
-
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
 
 autoscaling:
   enabled: false
@@ -100,14 +87,10 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
-
 nodeSelector:
   doks.digitalocean.com/node-pool: secondary
-
 tolerations: []
-
 affinity: {}
-
 nginx-ingress:
   controller:
     ingressClass: "wetrockpolice-nginx"
@@ -115,7 +98,6 @@ nginx-ingress:
     enableSnippets: true
     nodeSelector:
       doks.digitalocean.com/node-pool: secondary
-
 external-dns:
   rbac:
     create: true
@@ -129,7 +111,6 @@ external-dns:
   domainFilters: ['wetrockpolice.com']
   nodeSelector:
     doks.digitalocean.com/node-pool: secondary
-
 postgresql:
   auth:
     username: wetrockpolice
@@ -142,8 +123,6 @@ postgresql:
         cpu: 125m
     nodeSelector:
       doks.digitalocean.com/node-pool: secondary
-
-
 redis:
   architecture: standalone
   auth:
