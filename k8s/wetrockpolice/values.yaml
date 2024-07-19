@@ -93,7 +93,8 @@ tolerations: []
 affinity: {}
 nginx-ingress:
   controller:
-    ingressClass: "wetrockpolice-nginx"
+    ingressClass:
+      name: "wetrockpolice-nginx"
     watchNamespace: "wetrockpolice"
     enableSnippets: true
     nodeSelector:

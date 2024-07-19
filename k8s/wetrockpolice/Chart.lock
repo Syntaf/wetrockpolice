@@ -1,15 +1,15 @@
 dependencies:
 - name: nginx-ingress
   repository: https://helm.nginx.com/stable
-  version: 0.15.2
+  version: 1.0.0
 - name: external-dns
   repository: https://charts.bitnami.com/bitnami
-  version: 6.12.2
+  version: 7.2.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.1.6
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 17.4.0
-digest: sha256:09ae3f1cefda26e5dfe77e5896aa7edb4bbf5f3d4f8c5b3c862a3b13994f2a54
-generated: "2022-12-28T09:47:28.3796757-08:00"
+digest: sha256:e4d409e5fc4a5aeaa608f2e56f05baf0028f0c2572949d84c4d361d74d77724b
+generated: "2024-07-18T18:14:22.459406-07:00"
