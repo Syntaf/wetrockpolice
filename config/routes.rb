@@ -32,5 +32,7 @@ Rails.application.routes.draw do
     get '/', action: :index
   end
 
+  get '/health_check', to: proc { [200, {}, ['success']] }
+
   root :to => redirect('redrock')
 end
