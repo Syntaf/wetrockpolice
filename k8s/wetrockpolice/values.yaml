@@ -113,6 +113,8 @@ external-dns:
   nodeSelector:
     doks.digitalocean.com/node-pool: secondary
 postgresql:
+  image:
+    tag: 15.1.0-debian-11-r12
   auth:
     username: wetrockpolice
     database: wetrockpolice_production
