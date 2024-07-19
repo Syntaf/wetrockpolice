@@ -12,7 +12,8 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg -o /root/yarn-pubkey.gpg &
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
 RUN apt-get update && apt-get install -y --no-install-recommends nodejs yarn python3 python-is-python3
 
-# set working directory
+# bundler
+RUN gem install bundler -v 2.4.22
 WORKDIR /opt/wetrockpolice
 
 # instally ruby gems

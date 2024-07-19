@@ -1,7 +1,7 @@
 # WetRockPolice ![](/docs/police-logo.png)
 
-![Tests](https://github.com/Syntaf/wetrockpolice/workflows/Test/badge.svg)
-[![codecov](https://codecov.io/gh/Syntaf/wetrockpolice/branch/master/graph/badge.svg)](https://codecov.io/gh/Syntaf/wetrockpolice)
+[![test](https://github.com/Syntaf/wetrockpolice/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Syntaf/wetrockpolice/actions/workflows/tests.yml)
+[![build](https://github.com/Syntaf/wetrockpolice/actions/workflows/build.yml/badge.svg)](https://github.com/Syntaf/wetrockpolice/actions/workflows/build.yml)
 
 ## Table of Contents
 
@@ -16,10 +16,11 @@
   - [Creating or Updating Landing Page Images](#Creating-or-Updating-Hero-Images)
 # Overview
 
-WetRockPolice is an open source project written in Rails 6 + PostgreSQL and hosted on Kubernetes. The project has three key goals:
-- Spread awareness about the ethics of climbing on wet rock at an at-risk area.
-- Display historical rain information to help climbers make informed decisions
-- Enable organizations to connect with visiting climbers
+Wetrockpolice is an open source project built with the Ruby on Rails framework. The site backed by a Postgresql database and hosted on a DOKS kubernetes cluster (digital ocean's managed cluster offering). The project has three key goals:
+
+- Highlight the safety and ethics of climbing on wet rock within at-risk areas.
+- Display historical and real-time rain information to help climbers make informed decisions.
+- Help climbers find alternative climbing destinations in the event of poor weather.
 
 Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wetrockpolice/issues) tab for ideas on how to contribute.
 
@@ -128,7 +129,7 @@ While WRP only supports Red Rock currently, the backend is designed to support m
 
 The database is designed to support a site that one day may have many watched areas (Red Rock, Moe's Valley, Etc). Below is an Entity Relationship Diagram that can be used to gain an understanding of the models defined in this project.
 
-![ERB via LucidChards](/docs/WetRockPolice_ERD.png)
+![ERB via LucidChards](/docs/erd.png)
 
 #### LocalClimbingOrg
 
