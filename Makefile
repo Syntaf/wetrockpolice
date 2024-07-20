@@ -54,6 +54,23 @@ LATEST_HASH := $(shell cat .git/refs/heads/master)
 LATEST_GIT_TAG := $(shell git describe --abbrev=0 --tags)
 LATEST_CHART_VERSION := $(shell yq e '.version' k8s/wetrockpolice/Chart.yaml)
 
+# Local Development
+# --------------------------------------------------
+.PHONY: install
+install:
+	bundle install && yarn install
+
+.PHONY: init
+init: db-create db-migrate db-seed
+
+.PHONY: db-seed
+db-seed:
+	rails db:seed
+
+.PHONY: dev
+dev:
+	./bin/dev	
+
 .PHONY: build
 build:
 	docker build -t syntaf/wetrockpolice:$(LATEST_HASH) \

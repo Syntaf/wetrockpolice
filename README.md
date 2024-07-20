@@ -83,7 +83,81 @@ installation (like via RVM)
    ./bin/dev
    ```
 
-9. Visit https://localhost:3001/redrock
+9. Visit http://localhost:3001
+
+## Running Locally on OSX -- Recommended
+
+1. Install RVM and the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
+   ```
+   rvm install 2.6
+   rvm use 2.6
+   ```
+
+2. Install the required node version (`20.13.1`) via [NVM's installation docs](https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage)
+   ```
+   nvm install 20.13.1
+   nvm use 20.13.1
+   ```
+
+3. Install & start local postgres & redis instances via `brew`
+   ```
+   brew install postgresql@15
+   brew install redis
+   brew services start postgresql@15
+   brew services start redis
+   ```
+
+1. Clone the repository
+    ```
+    git clone git@github.com:Syntaf/wetrockpolice.git
+    ```
+
+2. Copy over the example environment, no initial modifications should be required
+   ```
+   cd wetrockpolice
+   cp .env.example .env
+   ```
+
+3. Update your `.env` to point towards your locally running services
+   ```
+   # .env.example
+
+   # Job configuration
+   # ------------------------------------
+   REDIS_URL=redis://0.0.0.0:6379/0
+   JOB_WORKER_URL=redis://0.0.0.0:6379/0
+
+   # Database configuration
+   # ------------------------------------
+   POSTGRES_PASSWORD=dev
+   POSTGRES_USER=wrp
+   POSTGRES_DB=wetrockpolice_development
+   POSTGRES_TEST_DB=wetrockpolice_test
+   POSTGRES_HOST=0.0.0.0
+   ```
+
+4. Install dependencies
+   ```
+   make install
+   ```
+
+5. Setup your database
+   ```
+   make init
+   ```
+
+6. Seed data
+   ```
+   make db-seed
+   ```
+   
+7. Start your servers
+   ```
+   make dev
+   ```
+
+6. Visit http://localhost:3001
+
 
 # Contributing
 
