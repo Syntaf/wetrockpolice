@@ -89,8 +89,8 @@ installation (like via RVM)
 
 1. Install RVM and the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
    ```
-   rvm install 2.6
-   rvm use 2.6
+   rvm install 3.1.4
+   rvm use 3.1.4
    ```
 
 2. Install the required node version (`20.13.1`) via [NVM's installation docs](https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage)
@@ -129,8 +129,8 @@ installation (like via RVM)
 
    # Database configuration
    # ------------------------------------
-   POSTGRES_PASSWORD=dev
-   POSTGRES_USER=wrp
+   POSTGRES_PASSWORD=
+   POSTGRES_USER=<your-profile-username>
    POSTGRES_DB=wetrockpolice_development
    POSTGRES_TEST_DB=wetrockpolice_test
    POSTGRES_HOST=0.0.0.0
@@ -145,18 +145,13 @@ installation (like via RVM)
    ```
    make init
    ```
-
-6. Seed data
-   ```
-   make db-seed
-   ```
-   
-7. Start your servers
+ 
+6. Start your servers
    ```
    make dev
    ```
 
-6. Visit http://localhost:3001
+7. Visit http://localhost:3001
 
 
 # Contributing

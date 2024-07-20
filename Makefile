@@ -63,6 +63,18 @@ install:
 .PHONY: init
 init: db-create db-migrate db-seed
 
+.PHONY: db-drop
+db-drop:
+	rails db:drop
+
+.PHONY: db-create
+db-create:
+	rails db:create
+
+.PHONY: db-migrate
+db-migrate:
+	rails db:migrate
+
 .PHONY: db-seed
 db-seed:
 	rails db:seed
