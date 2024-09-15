@@ -14,6 +14,7 @@ import { definitionsFromContext } from "@hotwired/stimulus-webpack-helpers"
 import Rails from "@rails/ujs"
 import "@hotwired/turbo-rails";
 
+
 require.context('../images', true);
 
 const context = require.context("../controllers", true, /\.js$/);

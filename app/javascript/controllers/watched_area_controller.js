@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { toFixedDown } from "../utils";
+import AOS from "aos";
 
 export default class extends Controller {
   static targets = ["weatherSection", "precipSection"];
@@ -13,6 +14,11 @@ export default class extends Controller {
     'precip': 1,
   }
 
+  connect() {
+    AOS.init({
+      duration: 1000
+    });
+  }
 }
 
 // function LandingController(apiOptions) {

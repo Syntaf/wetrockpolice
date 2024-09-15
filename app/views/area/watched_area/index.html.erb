@@ -2,10 +2,6 @@
   <div class="hero-header <%= @watched_area.slug %>"></div>
   <div class="shadow-overlay"></div>
 
-  <!--<div class="notification-menu" id="temp-notification" tabindex="0" data-toggle="popover" data-trigger="focus" title="SNCC Membership Shirt Sale">
-    <i class="fas fa-bell"></i><span class="badge badge-light">1</span>
-  </div>-->
-
   <div class="hero-container">
     <h1 class="animated bounceInLeft">Did it rain in <%= @watched_area.name %>?</h1>
     <span>It's been...</span>
@@ -66,7 +62,7 @@
 </div>
 <div class="weather-breakdown" id="weatherBreakdown" data-watched-area-target="precipSection">
   <div class="container">
-    <div class="header" data-aos="fade-up">
+    <div class="header">
       <h2 data-role="weather-breakdown-header">The last recorded precipitation was on</h2>
       <div class="spinner loading-date" data-role="loading-date">
         <div class="bounce1"></div>
@@ -78,7 +74,7 @@
     </div>
 
     <div class="content">
-      <div class="graph" data-aos="fade-up">
+      <div class="graph">
         <div class="graph-switcher">
           <label class="custom-control-label daily-switch" for="graphSwitch">Daily</label>
           <div class="custom-control custom-switch">
@@ -93,16 +89,16 @@
           </div>
         </div>
       </div>
-      <div class="text-content" data-aos="fade-up">
+      <div class="text-content">
         <div class="text">
           <%= @watched_area.landing_paragraph.html_safe %>
           <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn faq' %>
         </div>
-        <div class="content-widget" data-aos="fade-up" id="customize-script-container"></div>
+        <div class="content-widget" id="customize-script-container"></div>
       </div>
 
       <% if @watched_area.webcam_stid %>
-      <div data-aos="fade-up">
+      <div>
         <a name="windy-webcam-timelapse-player"
            data-id="<%= @watched_area.webcam_stid %>"
            data-play="day"
@@ -113,7 +109,6 @@
     </div>
   </div>
 </div>
-
 <!--
 <script async type="text/javascript">
     $(document).ready(function () {
@@ -145,5 +140,6 @@
 -->
 
 <% if @watched_area.webcam_stid %>
+
 <script async type="text/javascript" src="https://webcams.windy.com/webcams/public/embed/script/player.js"></script>
 <% end %>
