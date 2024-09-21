@@ -1,5 +1,9 @@
 <div class="hero-header-content" id="particles-js">
-  <div class="hero-header <%= @watched_area.slug %>"></div>
+  <div class="hero-header <%= @watched_area.slug %>"
+    data-controller="async-image"
+    data-async-image-target="imageContainer"
+    data-async-image-image-url-value="<%= asset_pack_path('media/images/redrock-winter-2020-hero.jpg') %>"
+    ></div>
   <div class="shadow-overlay"></div>
 
   <div class="hero-container">
