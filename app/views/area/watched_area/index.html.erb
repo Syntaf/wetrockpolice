@@ -1,4 +1,5 @@
-<div class="hero-header-content" id="particles-js">
+<div class="hero-header-content">
+  <!-- Background image container -->
   <div class="hero-header <%= @watched_area.slug %>"
     data-controller="async-image"
     data-async-image-target="imageContainer"
@@ -6,31 +7,31 @@
     ></div>
   <div class="shadow-overlay"></div>
 
-  <div class="hero-container">
+  <div class="hero-container" data-watched-area-target="rainTileSection">
     <h1 class="animated bounceInLeft">Did it rain in <%= @watched_area.name %>?</h1>
     <span>It's been...</span>
     <div class="row time-since-rain">
       <div class="days card">
-        <div class="placeholder" data-role="loading">
+        <div class="placeholder" data-watched-area-target="loading">
           <div class="spinner">
             <div class="bounce1"></div>
             <div class="bounce2"></div>
             <div class="bounce3"></div>
           </div>
         </div>
-        <p data-role="days" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
-        <span data-role="days-label">Days</span>
+        <p data-watched-area-target="daysTile" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
+        <span data-watched-area-target="daysTileLabel">Days</span>
       </div>
       <div class="hours card">
-        <div class="placeholder" data-role="loading">
+        <div class="placeholder" data-watched-area-target="loading">
           <div class="spinner">
             <div class="bounce1"></div>
             <div class="bounce2"></div>
             <div class="bounce3"></div>
           </div>
         </div>
-        <p data-role="hours" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
-        <span data-role="hours-label">Hours</span>
+        <p data-watched-area-target="hoursTile" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
+        <span data-watched-area-target="hoursLabel">Hours</span>
       </div>
       <div class="warning-tooltip animated tada delay-2s">
         <i
@@ -64,16 +65,18 @@
   <p class="scroll-down"><i class="material-icons">expand_more</i> Scroll Down</p>
   <div class="vertical-line"></div>
 </div>
-<div class="weather-breakdown" id="weatherBreakdown" data-watched-area-target="precipSection">
+<div class="weather-breakdown"
+  id="weatherBreakdown"
+  data-watched-area-target="rainGraphSection">
   <div class="container">
     <div class="header">
       <h2 data-role="weather-breakdown-header">The last recorded precipitation was on</h2>
-      <div class="spinner loading-date" data-role="loading-date">
+      <div class="spinner loading-date" data-watched-area-target="loading">
         <div class="bounce1"></div>
         <div class="bounce2"></div>
         <div class="bounce3"></div>
       </div>
-      <strong data-role="last-rain-date"></strong>
+      <strong data-watched-area-target="lastRainDate"></strong>
       <%= link_to 'Where does this data come from?', watched_area_faqs_path %>
     </div>
 

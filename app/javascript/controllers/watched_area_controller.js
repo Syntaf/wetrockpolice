@@ -1,8 +1,20 @@
 import { Controller } from "@hotwired/stimulus";
-import { toFixedDown } from "../utils";
+import precipResponse from '../fixtures/precipitation_response';
+import { moment } from 'moment';
+import { SYNOPTIC_OK_CODE } from "../constants";
+
 
 export default class extends Controller {
-  static targets = ["weatherSection", "precipSection"];
+  static targets = [
+    "rainTileSection",
+    "rainGraphSection",
+    "loading",
+    "daysTile",
+    "daysLabel",
+    "hoursTile",
+    "hoursLabel",
+    "lastRainDate"
+  ];
 
   static apiOptions = {
     'token': '2153743de639465ebbb30fa392c748de',
@@ -13,7 +25,134 @@ export default class extends Controller {
     'precip': 1,
   }
 
-  connect() {}
+  async connect() {
+    const intervals = await this.fetchPrecipitationIntervals();
+
+    this.renderRainInformation(intervals);
+  }
+
+  // TODO -- make the actual API request
+  async fetchPrecipitationIntervals() {
+      const data = await this.fetchObservations();
+
+      if (!data['SUMMARY']) {
+        console.error('Received malformed response', data);
+        return null;
+      }
+
+      if (data['SUMMARY']['RESPONSE_CODE'] !== SYNOPTIC_OK_CODE) {
+        const code = data['SUMMARY']['RESPONSE_CODE'];
+        const msg = data['SUMMARY']['RESPONSE_MESSAGE'];
+
+        console.error('Bad response fetching precipitation data', code, msg);
+        return null;
+      }
+
+      const observations = data['STATION'][0]['OBSERVATIONS'];
+
+      const intervalData = observations['precip_intervals_set_1d'];
+      const intervalDates = observations['date_time'];
+
+      return intervalData.reduce((intervals, interval, idx) => [
+          ...intervals,
+          {
+            'precip': interval,
+            'last_report': intervalDates[idx]
+          }
+        ], []);
+  }
+
+  async fetchObservations() {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(precipResponse);
+      }, 1500);
+    });
+  }
+
+  renderRainInformation(intervals) {
+    const lastRainInterval = this.findLastRainInterval(intervals);
+
+    if (!lastRainInterval) {
+        this.loadingTargets.forEach(el => el.remove());
+        this.daysTileTarget.innerHTML = '&#8734;';
+        this.hoursTileTarget.innerHTML = '&#8734;' ;
+        
+        this.lastRaindateTarget.innerHTML =
+          'Nothing to look at down here, come back when weather is looking bleak.';
+
+        return;
+    }
+
+    const elapsedHours = lastRainInterval.elapsedHours;
+    const days = Math.floor(elapsedHours / 24);
+    const hours = Math.floor(elapsedHours % 24);
+
+    this.loadingTargets.forEach(el => el.remove());
+    this.daysTileTarget.innerHTML = days;
+    this.hoursTileTarget.innerHTML = hours;
+
+    if (days === 1) {
+      this.daysLabelTarget.innerHTML = 'Day';
+    }
+
+    if (hours === 1) {
+      this.hoursLabelTarget.innerHTML = 'Hour';
+    }
+
+    // Label just below hero image, saying the date it last rained
+    const dateOfRain = new Date(lastRainInterval.interval.last_report);
+
+    const month = this.getMonth(dateOfRain.getMonth());
+    const day = this.getOrdinalSuffix(dateOfRain.getDate());
+
+    this.lastRainDateTarget.innerHTML = `${month} ${day}`;
+  }
+
+  findLastRainInterval(intervals) {
+    const latestRainInterval = 
+      intervals.reverse().find(interval => interval.precip > 0);
+    
+    if (!latestRainInterval) return null;
+
+    const now = new Date();
+    const periodEnd = new Date(latestRainInterval['last_report']);
+    const diffInMilliseconds = now - periodEnd;
+    const elapsedHours = diffInMilliseconds / (1000 * 60 * 60);
+
+    return {
+      elapsedHours,
+      interval: latestRainInterval
+    };
+  }
+
+  getMonth(monthIndex) {
+      const months = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+      ];
+
+      return months[monthIndex];
+  }
+
+  getOrdinalSuffix(i) {
+    const j = i % 10,
+          k = i % 100;
+
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+
+    return i + "th";
+  }
 }
 
 // function LandingController(apiOptions) {
