@@ -97,9 +97,11 @@
         </div>
       </div>
       <div class="text-content">
-        <div class="text">
+        <div class="text mb-3">
           <%= @watched_area.landing_paragraph.html_safe %>
-          <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn faq' %>
+        </div>
+        <div class="text-center">
+          <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn btn-outline-dark faq' %>
         </div>
         <div class="content-widget" id="customize-script-container"></div>
       </div>

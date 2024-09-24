@@ -1,4 +1,5 @@
 @import "vars";
+@import "utils/buttons";
 
 body[data-page-controller="watched_area"] {
     .tooltip-inner {
@@ -156,11 +157,12 @@ body[data-page-controller="watched_area"] {
                     font-size: 14px;
                     letter-spacing: 2px;
                     text-transform: none;
+                    width: 200px;
                 }
 
                 .weather {
                     color: #272727;
-                    width: 175px;
+                    // width: 175px;
                     padding: 10px 0;
                     font-weight: 600;
                     margin-right: 15px;
@@ -176,6 +178,7 @@ body[data-page-controller="watched_area"] {
                     width: 200px;
                     border: 2px solid #fff;
                     background-color: transparent;
+                    padding: 10px 0;
                 }
             }
 
@@ -303,9 +306,7 @@ body[data-page-controller="watched_area"] {
                 flex-direction: row;
 
                 .faq {
-                    display: block;
-                    width: 200px;
-                    margin: 43px auto 0 auto;
+                    padding: 12px 100px;
                 }
 
                 .content-widget {
@@ -351,15 +352,8 @@ body[data-page-controller="watched_area"] {
                     align-items: center;
 
                     .weather {
-                        margin-right: 10px;
-                        padding: 14px 20px;
-                    }
-
-                    .weather,
-                    .faq {
                         display: block;
-                        margin: 12px 10px;
-                        width: 205px;
+                        margin: 0 0 16px 0;
                         padding: 14px 20px;
                     }
                 }
