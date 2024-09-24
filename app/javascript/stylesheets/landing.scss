@@ -191,9 +191,10 @@ body[data-page-controller="watched_area"] {
             left: 15px;
             bottom: 15px;
             position: absolute;
+            text-decoration: none;
             z-index: 2;
 
-            .fa-instagram {
+            .bi-instagram {
                 color: #edc650;
                 border: 2px solid #edc650;
                 padding: 5px;
