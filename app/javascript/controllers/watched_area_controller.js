@@ -1,7 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 import precipResponse from '../fixtures/precipitation_response';
-import { moment } from 'moment';
 import { SYNOPTIC_OK_CODE } from "../constants";
+import { parseDailyIntervals, parseHourlyIntervals } from "../utils";
+import Chart from 'chart.js/auto';
+import * as Adapter from 'chartjs-adapter-date-fns';
 
 
 export default class extends Controller {
@@ -29,6 +31,7 @@ export default class extends Controller {
     const intervals = await this.fetchPrecipitationIntervals();
 
     this.renderRainInformation(intervals);
+    this.renderRainGraph(intervals);
   }
 
   // TODO -- make the actual API request
@@ -111,7 +114,7 @@ export default class extends Controller {
 
   findLastRainInterval(intervals) {
     const latestRainInterval = 
-      intervals.reverse().find(interval => interval.precip > 0);
+      intervals.toReversed().find(interval => interval.precip > 0);
     
     if (!latestRainInterval) return null;
 
@@ -152,6 +155,96 @@ export default class extends Controller {
     }
 
     return i + "th";
+  }
+
+  renderRainGraph(intervals) {
+    const dailyIntervalLabel = (tooltipItems, data) => 
+        ` ${data.labels[tooltipItems.index].format('ll')} - ${tooltipItems.yLabel.toFixedDown(3)} inches of rain`;
+    const hourlyIntervalLabel = (tooltipItems, data) =>
+        ` ${data.labels[tooltipItems.index].format('lll')} - ${tooltipItems.yLabel.toFixedDown(3)} inches of rain`;
+
+    const timeSeriesDailyData = parseDailyIntervals(intervals);
+    const timeSeriesHourlyData = parseHourlyIntervals(intervals);
+
+    console.log(timeSeriesDailyData);
+
+    const timeSeriesCanvas = document.getElementById("timeSeries").getContext('2d');
+    const timeSeriesChart = new Chart(timeSeriesCanvas, {
+        type: 'bar',
+        data: {
+            labels: timeSeriesDailyData.map(intv => intv.label),
+            datasets: [{
+                label: 'Accumulated Precipitation (rolling 24 hours)',
+                data: timeSeriesDailyData.map(intv => intv.value),
+                // backgroundColor: Chart.helpers.color('rgb(255, 99, 132)').alpha(0.5).rgbString(),
+                type: 'bar',
+                pointRadius: 0,
+                fill: false,
+                lineTension: 0,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            showTooltips: true,
+            scales: {
+                xAxis: {
+                  type: 'time'
+                }
+                // xAxes: [{
+                //     type: 'time',
+                //     distribution: 'series',
+                //     time: {
+                //         unit: 'day',
+                //         displayFormats: {
+                //             'day': 'MMM DD',
+                //             'hour': 'MMM D hA'
+                //          }
+                //     },
+                //     ticks: {
+                //         source: 'labels'
+                //     }
+                // }],
+                // yAxes: [{
+                //     scaleLabel: {
+                //         display: true,
+                //         labelString: 'Precipitation (in)'
+                //     }
+                // }]
+            },
+            hover: {
+                animationDuration: 400,
+                axis: "x",
+                intersect: true,
+                mode: "label"
+            },
+            tooltips: {
+                enabled: true,
+                intersect: false,
+                titleFontSize: 0,
+                callbacks: {
+                    label: dailyIntervalLabel
+                }
+            }
+        }
+    });
+
+    $('#graphSwitch').change(function() {
+        if ($(this).prop('checked')) {
+            timeSeriesChart.config.data.datasets[0].data = timeSeriesHourlyData.data;
+            timeSeriesChart.config.data.labels = timeSeriesHourlyData.labels;
+            timeSeriesChart.config.options.scales.xAxes[0].time.unit = 'hour';
+            timeSeriesChart.config.options.tooltips.callbacks.label = hourlyIntervalLabel;
+            timeSeriesChart.update();
+        } else {
+            timeSeriesChart.config.data.datasets[0].data = timeSeriesDailyData.data;
+            timeSeriesChart.config.data.labels = timeSeriesDailyData.labels
+            timeSeriesChart.config.options.scales.xAxes[0].time.unit = 'day';
+            timeSeriesChart.config.options.tooltips.callbacks.label = dailyIntervalLabel;
+            timeSeriesChart.update();
+        }
+    });
   }
 }
 

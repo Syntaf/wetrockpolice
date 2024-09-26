@@ -11,9 +11,14 @@
     "@rails/webpacker": "5.4.4",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "chart.js": "^4.4.4",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "date-fns": "^4.1.0",
     "rails_admin": "3.1.2"
   },
   "devDependencies": {
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
+    "@babel/plugin-transform-optional-chaining": "^7.24.8",
     "webpack-dev-server": "^3"
   },
   "resolutions": {
