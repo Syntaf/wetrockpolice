@@ -4,6 +4,8 @@ import { SYNOPTIC_OK_CODE } from "../constants";
 import { parseDailyIntervals, parseHourlyIntervals } from "../utils";
 import Chart from 'chart.js/auto';
 import * as Adapter from 'chartjs-adapter-date-fns';
+import {de} from 'date-fns/locale';
+import { format } from 'date-fns';
 
 
 export default class extends Controller {
@@ -166,66 +168,31 @@ export default class extends Controller {
     const timeSeriesDailyData = parseDailyIntervals(intervals);
     const timeSeriesHourlyData = parseHourlyIntervals(intervals);
 
-    console.log(timeSeriesDailyData);
-
     const timeSeriesCanvas = document.getElementById("timeSeries").getContext('2d');
     const timeSeriesChart = new Chart(timeSeriesCanvas, {
         type: 'bar',
         data: {
-            labels: timeSeriesDailyData.map(intv => intv.label),
+            labels: timeSeriesDailyData.map(intv => format(intv.label, "LLL do")),
             datasets: [{
                 label: 'Accumulated Precipitation (rolling 24 hours)',
                 data: timeSeriesDailyData.map(intv => intv.value),
-                // backgroundColor: Chart.helpers.color('rgb(255, 99, 132)').alpha(0.5).rgbString(),
-                type: 'bar',
-                pointRadius: 0,
-                fill: false,
-                lineTension: 0,
-                borderWidth: 2
+                barThickness: 30,
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgb(255, 99, 132, 0.7)',
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            aspectRatio: false,
             showTooltips: true,
             scales: {
-                xAxis: {
-                  type: 'time'
-                }
-                // xAxes: [{
-                //     type: 'time',
-                //     distribution: 'series',
-                //     time: {
-                //         unit: 'day',
-                //         displayFormats: {
-                //             'day': 'MMM DD',
-                //             'hour': 'MMM D hA'
-                //          }
-                //     },
-                //     ticks: {
-                //         source: 'labels'
-                //     }
-                // }],
-                // yAxes: [{
-                //     scaleLabel: {
-                //         display: true,
-                //         labelString: 'Precipitation (in)'
-                //     }
-                // }]
-            },
-            hover: {
-                animationDuration: 400,
-                axis: "x",
-                intersect: true,
-                mode: "label"
-            },
-            tooltips: {
-                enabled: true,
-                intersect: false,
-                titleFontSize: 0,
-                callbacks: {
-                    label: dailyIntervalLabel
-                }
+              y: {
+                ticks: {
+                  beginAtZero: true,
+                  callback: (v) => `${v.toFixed(2)} in`
+                },
+              }
             }
         }
     });

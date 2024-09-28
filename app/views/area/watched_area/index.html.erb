@@ -83,15 +83,16 @@
     <div class="content">
       <div class="graph">
         <div class="graph-switcher">
-          <label class="custom-control-label daily-switch" for="graphSwitch">Daily</label>
-          <div class="custom-control custom-switch">
-            <input class="custom-control-input" id="graphSwitch" type="checkbox">
-            <span class="custom-control-track"></span>
-            <label class="custom-control-label" for="graphSwitch">Hourly</label>
+          <div class="form-check d-flex justify-content-center">
+            <div class="form-text mt-0 me-3">Daily</div>
+            <div class="form-check form-switch form-check-inline me-0">
+              <input id="revenue" class="form-check-input form-check-inline" type="checkbox">
+            </div>
+            <div class="form-text mt-0">Hourly</div>
           </div>
         </div>
-        <div class="overflow-wrapper">
-          <div class="graph-render" style="position: relative;">
+        <div class="overflow-wrapper d-relative">
+          <div class="graph-render d-flex justify-content-center align-items-center" style="position: relative;">
             <canvas id="timeSeries"></canvas>
           </div>
         </div>
