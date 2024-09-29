@@ -12,7 +12,6 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.4",
-    "chartjs-adapter-date-fns": "^3.0.0",
     "date-fns": "^4.1.0",
     "rails_admin": "3.1.2"
   },

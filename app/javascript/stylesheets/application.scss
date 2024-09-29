@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Inter|Montserrat|Raleway:500,600,800');
-@import "https://fonts.googleapis.com/icon?family=Material+Icons";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap');
 @import '~/node_modules/bootstrap/scss/bootstrap';
 @import "vars";
 
@@ -7,13 +7,34 @@ html, body {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Noto Sans', system-ui;
 
     @import "landing";
 
     * {
-        font-family: 'Raleway', sans-serif;
+        font-family: 'Noto Sans', system-ui;
     }
+
+    a {
+        text-decoration: none;
+        color: $salmon;
+    }
+}
+
+.font-inter {
+    font-family: 'Inter', system-ui !important;
+}
+
+.font-montserrat {
+    font-family: 'Montserrat', system-ui !important;
+}
+
+.font-raleway {
+    font-family: 'Raleway', system-ui !important;
+}
+
+.font-noto-sans {
+    font-family: 'Noto Sans', system-ui !important;
 }
 
 .tooltip-inner {

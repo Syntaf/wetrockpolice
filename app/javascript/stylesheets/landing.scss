@@ -27,6 +27,10 @@ body[data-page-controller="watched_area"] {
         }
     }
 
+    .faq {
+        padding: 12px 100px;
+    }
+
     .notification-menu {
         position: absolute;
         top: 25px;
@@ -93,6 +97,7 @@ body[data-page-controller="watched_area"] {
                 text-align: center;
                 font-weight: 600;
                 letter-spacing: 5px;
+                font-family: 'Raleway', system-ui;
             }
 
             span {
@@ -195,29 +200,32 @@ body[data-page-controller="watched_area"] {
             z-index: 2;
 
             .bi-instagram {
-                color: #edc650;
-                border: 2px solid #edc650;
+                color: $yellow;
+                border: 2px solid $yellow;
                 padding: 5px;
                 border-radius: 50%;
             }
 
             p {
-                color: #edc650;
+                color: $yellow;
                 display: inline;
-                font-size: 12px;
+                font-size: 14px;
                 text-decoration: none;
             }
         }
 
         .scroll-down {
             right: 110px;
-            color: #edc650;
+            color: $yellow;
             bottom: 77px;
             position: absolute;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 14px;
             letter-spacing: 3px;
             font-family: 'Montserrat', sans-serif;
+
+            i {
+                font-size: 14px;
+            }
         }
 
         .vertical-line {
@@ -226,7 +234,7 @@ body[data-page-controller="watched_area"] {
             height: 100px;
             bottom: 0;
             position: absolute;
-            background-color: #edc650;
+            background-color: $yellow;
         }
     }
 
@@ -251,6 +259,7 @@ body[data-page-controller="watched_area"] {
                 font-size: 32px;
                 margin-left: 4px;
                 color: #272727;
+                text-decoration: underline;
             }
 
             .loading-date {
@@ -276,6 +285,10 @@ body[data-page-controller="watched_area"] {
 
             .graph {
                 position: relative;
+
+                canvas {
+                    z-index: 10;
+                }
 
                 .graph-switcher {
                     text-align: right;
@@ -305,16 +318,6 @@ body[data-page-controller="watched_area"] {
                 padding: 40px 15px 0 15px;
                 display: flex;
                 flex-direction: row;
-
-                .faq {
-                    padding: 12px 100px;
-                }
-
-                .content-widget {
-                    @media (max-width: $mobileBreakpoint) {
-                        margin-top: 20px;
-                    }
-                }
             }
 
             iframe {
@@ -392,12 +395,7 @@ body[data-page-controller="watched_area"] {
 
                 .graph-render {
                     height: 300px;
-                    // width: 600px;
                 }
-            }
-
-            .content-widget {
-                padding-bottom: 20px;
             }
         }
     }

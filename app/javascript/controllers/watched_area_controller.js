@@ -3,8 +3,6 @@ import precipResponse from '../fixtures/precipitation_response';
 import { SYNOPTIC_OK_CODE } from "../constants";
 import { parseDailyIntervals, parseHourlyIntervals } from "../utils";
 import Chart from 'chart.js/auto';
-import * as Adapter from 'chartjs-adapter-date-fns';
-import {de} from 'date-fns/locale';
 import { format } from 'date-fns';
 
 

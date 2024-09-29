@@ -53,7 +53,9 @@
     </span>
     <div class="row call-to-action">
       <button class="btn weather" data-controller="scroll-to" data-scroll-to-dest-value="#weatherBreakdown">Can I Climb?</button>
-      <%= link_to 'Rainy Day Options', watched_area_rainy_day_options_path, class: 'btn rainy-day-options' %>
+      <%= link_to 'Rainy Day Options',
+        watched_area_rainy_day_options_path,
+        class: 'btn rainy-day-options' %>
     </div>
   </div>
 
@@ -62,7 +64,10 @@
     <p>Photography by @<%= @watched_area.photo_credit_name %></p>
   </a>
 
-  <p class="scroll-down"><i class="material-icons">expand_more</i> Scroll Down</p>
+  <div class="scroll-down">
+    <i class="bi bi-arrow-90deg-down"></i>
+    <span>Scroll Down</span>
+  </div>
   <div class="vertical-line"></div>
 </div>
 <div class="weather-breakdown"
@@ -77,18 +82,20 @@
         <div class="bounce3"></div>
       </div>
       <strong data-watched-area-target="lastRainDate"></strong>
-      <%= link_to 'Where does this data come from?', watched_area_faqs_path %>
+      <div class="text-center">
+        <%= link_to 'Where does this data come from?',
+          watched_area_faqs_path,
+          class: 'd-inline-block' %>
+      </div>
     </div>
 
     <div class="content">
       <div class="graph">
         <div class="graph-switcher">
-          <div class="form-check d-flex justify-content-center">
-            <div class="form-text mt-0 me-3">Daily</div>
-            <div class="form-check form-switch form-check-inline me-0">
-              <input id="revenue" class="form-check-input form-check-inline" type="checkbox">
-            </div>
-            <div class="form-text mt-0">Hourly</div>
+          <div class="d-inline-block me-1">Daily</div>
+          <div class="form-check form-switch d-inline-block">
+              <input type="checkbox" class="form-check-input" id="graphMode" style="cursor: pointer;">
+              <label for="site_state" class="form-check-label">Hourly</label>
           </div>
         </div>
         <div class="overflow-wrapper d-relative">
@@ -101,10 +108,9 @@
         <div class="text mb-3">
           <%= @watched_area.landing_paragraph.html_safe %>
         </div>
-        <div class="text-center">
-          <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn btn-outline-dark faq' %>
-        </div>
-        <div class="content-widget" id="customize-script-container"></div>
+      </div>
+      <div class="d-flex align-items-center justify-content-center">
+        <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn btn-outline-dark faq' %>
       </div>
 
       <% if @watched_area.webcam_stid %>
