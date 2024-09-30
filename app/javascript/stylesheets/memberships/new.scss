@@ -23,10 +23,6 @@
 .membership-join {
     position: relative;
 
-    form * {
-        font-family: 'Montserrat', sans-serif;
-    }
-
     i.material-icons {
         font-family: 'Material Icons';
     }
@@ -60,7 +56,6 @@
             top: 100px;
             right: 25%;
             display: inline-block;
-            font-family: 'Montserrat', sans-serif;
 
             @media (max-width: $mobileBreakpoint) {
                 top: 50px;

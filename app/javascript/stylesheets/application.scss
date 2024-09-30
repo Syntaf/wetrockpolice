@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Inter|Montserrat|Raleway:500,600,800');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Inter:400,600|Noto+Sans:400,600|Raleway:500,600,800');
 @import '~/node_modules/bootstrap/scss/bootstrap';
 @import "vars";
 
@@ -25,20 +24,12 @@ html, body {
     font-family: 'Inter', system-ui !important;
 }
 
-.font-montserrat {
-    font-family: 'Montserrat', system-ui !important;
-}
-
 .font-raleway {
     font-family: 'Raleway', system-ui !important;
 }
 
 .font-noto-sans {
     font-family: 'Noto Sans', system-ui !important;
-}
-
-.tooltip-inner {
-    font-family: 'Montserrat', sans-serif !important;
 }
 
 .particles-js-canvas-el {
@@ -91,7 +82,7 @@ html, body {
     background-color: #444444;
 
     .footer-container {
-        max-width: 700px;
+        max-width: 800px;
         padding: 24px 0;
         height: 100%;
         color: white;
@@ -101,25 +92,13 @@ html, body {
         justify-content: space-between;
         align-items: center;
 
+        .bi-heart-fill {
+            color: #e00d0d;
+        }
+
         p {
             margin: 0;
         }
-
-        .contact {
-            .freepik-callout {
-                margin-top: 5px;
-                font-size: 8px;
-
-                @media (max-width: $mobileBreakpoint) {
-                    margin-bottom: 10px;
-                }
-            }
-
-            i {
-                color: #e00d0d;
-            }
-        }
-
 
         .contribute {
             display: flex;
@@ -139,6 +118,14 @@ html, body {
             }
         }
 
+        .embolt-icon {
+            background-color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            width: 60px;
+            height: auto; 
+        }
+
         .embolt-link {
             color: #FF5C5C;
             font-weight: bold;
@@ -147,11 +134,6 @@ html, body {
             border-radius: 8px;
             padding: 5px 10px;
             margin-top: 10px;
-        }
-
-        @media (max-width: $mobileBreakpoint) {
-            padding: 10px 0;
-            flex-direction: column;
         }
     }
 }

@@ -201,9 +201,7 @@ body[data-page-controller="watched_area"] {
 
             .bi-instagram {
                 color: $yellow;
-                border: 2px solid $yellow;
                 padding: 5px;
-                border-radius: 50%;
             }
 
             p {
@@ -221,7 +219,6 @@ body[data-page-controller="watched_area"] {
             position: absolute;
             font-size: 14px;
             letter-spacing: 3px;
-            font-family: 'Montserrat', sans-serif;
 
             i {
                 font-size: 14px;
@@ -259,7 +256,6 @@ body[data-page-controller="watched_area"] {
                 font-size: 32px;
                 margin-left: 4px;
                 color: #272727;
-                text-decoration: underline;
             }
 
             .loading-date {

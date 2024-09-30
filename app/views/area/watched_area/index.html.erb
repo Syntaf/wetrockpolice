@@ -105,7 +105,7 @@
         </div>
       </div>
       <div class="text-content">
-        <div class="text mb-3">
+        <div class="text mb-3 text-dark">
           <%= @watched_area.landing_paragraph.html_safe %>
         </div>
       </div>
@@ -114,7 +114,7 @@
       </div>
 
       <% if @watched_area.webcam_stid %>
-      <div>
+      <div class="mt-3">
         <a name="windy-webcam-timelapse-player"
            data-id="<%= @watched_area.webcam_stid %>"
            data-play="day"
