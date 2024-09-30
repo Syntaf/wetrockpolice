@@ -44,6 +44,10 @@ up:
 install:
 	bundle install && yarn install
 
+.PHONY: restart-pg
+restart-pg:
+	docker compose restart postgres
+
 .PHONY: db-drop
 db-drop:
 	rails db:drop
@@ -64,4 +68,4 @@ db-seed:
 init: db-create db-migrate db-seed
 
 .PHONY: reset_db
-reset-db: db-drop init
+reset-db: restart-pg db-drop init

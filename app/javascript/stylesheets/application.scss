@@ -12,6 +12,7 @@ html, body {
     font-family: 'Noto Sans', system-ui;
 
     @import "landing";
+    @import "devise/sessions";
 
     * {
         font-family: 'Noto Sans', system-ui;

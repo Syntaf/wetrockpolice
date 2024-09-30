@@ -3,6 +3,7 @@ require 'rails_admin/mark_delivered_action'
 RailsAdmin.config do |config|  
   ### Popular gems integration
   config.main_app_name = Proc.new{|controller| [ 'Wetrockpolice', "Admin - #{controller.params[:action].try(:titleize)}"]}
+  config.asset_source = :webpacker
 
   ## == Devise ==
   config.authenticate_with do
