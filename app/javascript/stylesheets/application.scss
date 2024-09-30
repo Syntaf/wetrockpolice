@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Inter:400,600|Noto+Sans:400,600|Raleway:500,600,800');
-@import '~/node_modules/bootstrap/scss/bootstrap';
 @import "vars";
+
+$primary: $salmon;
+
+@import '~/node_modules/bootstrap/scss/bootstrap';
 
 html, body {
     width: 100%;

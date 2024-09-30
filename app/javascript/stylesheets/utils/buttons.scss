@@ -7,6 +7,22 @@
   position: relative;
 }
 
+.btn-white {
+  @include button-variant($background: #fff,
+    $border: #fff,
+    $color: #213447,
+    $hover-background: #EEF1F3,
+    $hover-border: #EEF1F3,
+    $hover-color: #213447,
+    $active-background: #CBD4DA,
+    $active-border: #CBD4DA,
+    $active-color: #213447,
+    $disabled-background: #F9F9FA,
+    $disabled-border: #DDE2E6,
+    $disabled-color: #64717E,
+  )
+}
+
 .btn-outline-dark {
   @include button-variant($background: #fff,
     $border: #566271,

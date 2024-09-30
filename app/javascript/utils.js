@@ -42,7 +42,6 @@ export const parseDailyIntervals = (intervals) => {
 
 export const parseHourlyIntervals = (intervals) => {
     const data = [];
-    const labels = [];
 
     // Find the time between two intervals in minutes
     const intervalMiliseconds =
@@ -56,16 +55,11 @@ export const parseHourlyIntervals = (intervals) => {
     for (let i = intervalStart, j = 0; j < 30; i += intervalStep, j += 1) {
         const date = new Date(intervals[i].last_report);
 
-        labels.push(date);
-
         data.push({
-            t: date.valueOf(),
-            y: intervals[i].precip
+            label: date,
+            value: intervals[i].precip
         });
     }
 
-    return {
-        data: data,
-        labels: labels
-    };
+    return data;
 };

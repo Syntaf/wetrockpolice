@@ -52,7 +52,11 @@
       <% end %>
     </span>
     <div class="row call-to-action">
-      <button class="btn weather" data-controller="scroll-to" data-scroll-to-dest-value="#weatherBreakdown">Can I Climb?</button>
+      <button class="btn btn-white weather"
+        data-controller="scroll-to"
+        data-scroll-to-dest-value="#weatherBreakdown">
+        Can I Climb?
+      </button>
       <%= link_to 'Rainy Day Options',
         watched_area_rainy_day_options_path,
         class: 'btn rainy-day-options' %>
@@ -94,7 +98,10 @@
         <div class="graph-switcher">
           <div class="d-inline-block me-1">Daily</div>
           <div class="form-check form-switch d-inline-block">
-              <input type="checkbox" class="form-check-input" id="graphMode" style="cursor: pointer;">
+              <input type="checkbox"
+                class="form-check-input"
+                data-action="change->watched-area#toggleGraphDisplay"
+                style="cursor: pointer;">
               <label for="site_state" class="form-check-label">Hourly</label>
           </div>
         </div>
