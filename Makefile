@@ -48,6 +48,10 @@ install:
 restart-pg:
 	docker compose restart postgres
 
+.PHONY: pcat 
+pcat:
+	rm -rf public/packs-test && RAILS_ENV=test NODE_OPTIONS=--openssl-legacy-provider rails assets:precompile
+
 .PHONY: db-drop
 db-drop:
 	rails db:drop

@@ -38,7 +38,7 @@ RUN chown -R user:user /opt/wetrockpolice
 USER $USER_ID
 
 # Workaround to allow assets to be precompiled during build
-RUN SECRET_KEY_BASE=dummy rails assets:precompile RAILS_ENV=production
+RUN SECRET_KEY_BASE=dummy NODE_OPTIONS=--openssl-legacy-provider rails assets:precompile RAILS_ENV=production
 
 EXPOSE 3001
 CMD ["bundle", "exec", "rails", "server", "-p", "3001", "-b", "0.0.0.0"]

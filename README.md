@@ -86,21 +86,15 @@ installation (like via RVM)
 
 # Contributing
 
-This repository uses [Github Actions](https://github.com/features/actions) for continuous integration. Before a pull request can be merged into master it must pass all existing / new tests *as well* as linting (Rubocop). It is **highly** recommended that you use Rubcop during development as to not have to go back and forth between CI results and your code.
+This repository uses [Github Actions](https://github.com/features/actions) for continuous integration. Before a pull request can be merged into master it must pass all existing / new tests *as well* as linting (Rubocop). Using a rubocop extension is **highly** recommended.
 
 #### Using Rubocop on Visual Studio Code:
 
-- Download the [Solargraph Extension](https://github.com/castwide/vscode-solargraph) and use these settings:
+Download the following extensions which should come pre-configured in the included `.vscode/settings.json`
 
-  ```
-    // settings.json
-
-    {
-        "solargraph.diagnostics": true,
-        "solargraph.formatting": true
-    }
-
-  ```
+- [Shopify LSP](https://marketplace.visualstudio.com/items?itemName=Shopify.ruby-lsp)
+- [Ruby Debugger](https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg)
+- [ERB Formatter](https://marketplace.visualstudio.com/items?itemName=aliariff.vscode-erb-beautify)
 
   **Note: If your solargraph server ever crashes and VSCode stops linting your work, use the developer window reload command to restart it.
 
