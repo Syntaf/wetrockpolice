@@ -40,46 +40,46 @@ installation (like via RVM)
 
 1. Install the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
    ```
-   ~$: rvm install 3.1.4
-   ~$: rvm use 3.1.4
+   rvm install 3.1.4
+   rvm use 3.1.4
    ```
   
 2. Install the required node version (`20.13.1`) via [NVM's installation docs](https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage)
    ```
-   ~$: nvm install 20.13.1
-   ~$: nvm use 20.13.1
+   nvm install 20.13.1
+   nvm use 20.13.1
    ```
 
 3. Clone the repository
     ```
-    ~$: git clone git@github.com:Syntaf/wetrockpolice.git
+    git clone git@github.com:Syntaf/wetrockpolice.git
     ```
 
 4. Copy over the example environment. **Note:** You shouldn't need to change any configuration from
    `.env.example` initially
    ```
-   ~$: cd wetrockpolice
-   ~$: cp .env.example .env
+   cd wetrockpolice
+   cp .env.example .env
    ```
 
 5. Start up your `postgres` and `redis` containers to run in the background
     ```
-    ~$: make up
+    make up
     ```
 
 6. Install required gems & packages for running your webpack & http servers
    ```
-   ~$: make install
+   make install
    ```
 
 7. Setup your database, run migrations & seed data
    ```
-   ~$: make reset-db
+   make reset-db
    ```
 
 8. Start your http & webpack servers
    ```
-   ~$: ./bin/dev
+   ./bin/dev
    ```
 
 9. Visit https://localhost:3001/redrock
