@@ -1,37 +1,34 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Rails server",
-            "type": "Ruby",
+            "name": "Minitest - current line",
+            "type": "rdbg",
+            "useBundler": true,
             "request": "launch",
-            "program": "${workspaceRoot}/bin/rails",
+            "command": "${workspaceRoot}/bin/rails",
+            "script": "test",
             "args": [
-                "server"
-            ]
+                "test",
+                "${file}:${lineNumber}"
+            ],
+            "env": {
+                "RAILS_ENV": "test"
+            },
+            "askParameters": false
         },
         {
-            "name": "Attach to Docker Rails",
-            "type": "Ruby",
-            "request": "attach",
-            "remotePort": "1234",
-            "remoteHost": "0.0.0.0",
-            "remoteWorkspaceRoot": "/opt/wetrockpolice",
-            "cwd": "${workspaceRoot}",
-        },
-        {
-            "cwd": "${workspaceRoot}",
-            "name": "Minitest - Run at cursor position",
-            "type": "Ruby",
+            "name": "Rails Server",
+            "type": "rdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/bin/rails",
+            "command": "${workspaceRoot}/bin/rails",
+            "script": "server",
             "args": [
-              "test",
-              "${file}:${lineNumber}"
+                "-p",
+                "3002",
+                "-b",
+                "0.0.0.0"
             ]
-          },
+        },
     ]
 }

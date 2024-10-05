@@ -8,7 +8,7 @@ class User < ApplicationRecord
          :confirmable
 
   after_create :send_admin_mail
-  serialize :manages, Array
+  serialize :manages, type: Array
 
   attr_accessor :skip_password
 

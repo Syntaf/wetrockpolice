@@ -1,12 +1,15 @@
+SHELL=/opt/homebrew/bin/bash
 
-LATEST_HASH := $(shell cat .git/refs/heads/master)
+# Local Development
+# --------------------------------------------------
+.PHONY: http
+http:
+	bundle exec rails server -p 3002 -b 0.0.0.0
 
 .PHONY: build
 build:
 	docker build -t syntaf/wetrockpolice:$(LATEST_HASH) \
 		--build-arg RAILS_ENV=production \
-		--build-arg USER_ID=1000 \
-		--build-arg GROUP_ID=1000 \
 		-f ./Dockerfile.production \
 		.
 
@@ -26,3 +29,45 @@ deploy:
 .PHONY: commit
 commit:
 	echo $(LATEST_HASH) > version.txt
+
+.PHONY: worker
+worker:
+	bundle exec sidekiq -q default -q mailers
+
+.PHONY: up
+up:
+	docker-compose up -d postgres redis
+
+.PHONY: install
+install:
+	bundle install && yarn install
+
+.PHONY: restart-pg
+restart-pg:
+	docker compose restart postgres
+
+.PHONY: pcat 
+pcat:
+	rm -rf public/packs-test && RAILS_ENV=test NODE_OPTIONS=--openssl-legacy-provider rails assets:precompile
+
+.PHONY: db-drop
+db-drop:
+	rails db:drop
+
+.PHONY: db-create
+db-create:
+	rails db:create
+
+.PHONY: db-migrate
+db-migrate:
+	rails db:migrate
+
+.PHONY: db-seed
+db-seed:
+	rails db:seed
+
+.PHONY: init
+init: db-create db-migrate db-seed
+
+.PHONY: reset_db
+reset-db: restart-pg db-drop init

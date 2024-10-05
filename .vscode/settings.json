@@ -15,29 +15,11 @@
     "vim.hlsearch": true,
     "vim.smartRelativeLine": true,
 
-    // Ruby configuration
-    "ruby.format": false,
-    "ruby.codeCompletion": false,
-    "ruby.intellisense": false,
-    "ruby.useLanguageServer": false,
+    // Language server configuration
+    "rubyLsp.formatter": "rubocop",
 
-    // Solargraph configuration (When installed into the container)
-    "solargraph.useBundler": true,
-    "solargraph.completion": true,
-    "solargraph.diagnostics": true,
-    "solargraph.definitions": true,
-    "solargraph.formatting": true,
-    "solargraph.hover": true,
-    "solargraph.symbols": true,
-    "solargraph.rename": true,
-    "solargraph.folding": true,
-    "solargraph.references": true,
-    "solargraph.checkGemVersion": true,
-    "solargraph.bundlerPath": "bundle",
-    "solargraph.logLevel": "debug",
-
-    // Ruby Test Explorer
-    "rubyTestExplorer.testFramework": "minitest",
-    "rubyTestExplorer.logpanel": true,
-    "rubyTestExplorer.minitestCommand": "bundle exec rails"
+    // Rewrap
+    "rewrap.reformat": true,
+    "rewrap.wrappingColumn": 90,
+    "rewrap.autoWrap.enabled": true
 }

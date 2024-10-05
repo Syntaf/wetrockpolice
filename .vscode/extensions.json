@@ -1,7 +1,9 @@
 {
   "recommendations": [
+    "aliariff.vscode-erb-beautify",
     "kaiwood.endwise",
-    "ninoseki.vscode-gem-lens",
-    "castwide.solargraph"
+    "formulahendry.auto-close-tag",
+    "Shopify.ruby-lsp",
+    "KoichiSasada.vscode-rdbg",
   ]
 }

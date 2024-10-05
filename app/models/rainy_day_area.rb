@@ -4,7 +4,7 @@ class RainyDayArea < ApplicationRecord
   belongs_to :climbing_area
   belongs_to :watched_area
 
-  def as_json(_options)
+  def as_json(*_args)
     super(
       only: %i[id driving_time climbing_area],
       include: {

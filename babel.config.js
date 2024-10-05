@@ -41,6 +41,8 @@ module.exports = function(api) {
       '@babel/plugin-syntax-dynamic-import',
       isTestEnv && 'babel-plugin-dynamic-import-node',
       '@babel/plugin-transform-destructuring',
+      '@babel/plugin-transform-optional-chaining',
+      '@babel/plugin-transform-nullish-coalescing-operator',
       [
         '@babel/plugin-proposal-class-properties',
         {
@@ -54,11 +56,21 @@ module.exports = function(api) {
         }
       ],
       [
+        '@babel/plugin-proposal-private-methods',
+        {
+          loose: true
+        }
+      ],
+      [
+        '@babel/plugin-proposal-private-property-in-object',
+        {
+          loose: true
+        }
+      ],
+      [
         '@babel/plugin-transform-runtime',
         {
-          helpers: false,
-          regenerator: true,
-          corejs: false
+          helpers: false
         }
       ],
       [
@@ -66,7 +78,7 @@ module.exports = function(api) {
         {
           async: false
         }
-      ]
+      ],
     ].filter(Boolean)
   }
 }
