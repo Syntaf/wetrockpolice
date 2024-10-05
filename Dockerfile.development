@@ -7,24 +7,21 @@ ENV INSTALL_PATH /opt/wetrockpolice
 RUN mkdir -p $INSTALL_PATH
 
 # nodejs, yarn & bun
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - 
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg -o /root/yarn-pubkey.gpg && apt-key add /root/yarn-pubkey.gpg
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
-RUN curl -fsSL https://bun.sh/install | bash && ln -s $HOME/.bun/bin/bun /usr/bin/bun
 RUN apt-get update && apt-get install -y --no-install-recommends nodejs yarn python3 python-is-python3
 
 # set working directory
 WORKDIR /opt/wetrockpolice
 
 # instally ruby gems
-COPY Gemfile Gemfile
-COPY Gemfile.lock Gemfile.lock
+COPY Gemfile Gemfile.lock ./
 RUN gem install bundler
-RUN bundle install --jobs 1
+RUN bundle install --jobs 4 --retry 3
 
 # install node modules
-COPY package.json package.json
-COPY yarn.lock yarn.lock
+COPY package.json yarn.lock ./
 RUN yarn install
 
 # start server using entrypoint
@@ -33,4 +30,5 @@ RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT [ "entrypoint.sh" ]
 
 EXPOSE 3001
+
 CMD ["bundle", "exec", "rails", "server", "-p", "3001", "-b", "0.0.0.0"]
