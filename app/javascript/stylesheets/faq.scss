@@ -21,15 +21,15 @@
 }
 
 .faq-hero.redrock { 
-    background-image: asset_url("redrock/faq.jpg");
+    background-image: url("../images/redrock/faq.jpg");
 }
 
 .faq-hero.castlerock {
-    background-image: asset_url("castlerock/faq2.jpg");
+    background-image: url("../images/castlerock/faq2.jpg");
 }
 
 .faq-hero.stoneypoint {
-    background-image: asset_url('stoneypoint/hero-image.png');
+    background-image: url('../images/stoneypoint/hero-image.png');
 }
 
 .faq-content {

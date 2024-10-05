@@ -61,11 +61,7 @@
 
   <body 
     data-page-controller="<%= controller_name %>"
-    <% if @watched_area %>
-    data-controller="watched-area"
-    data-watched-area-station-value="<%= @watched_area.station %>"
-    <% end %>
-  >
+    <%= yield :body_attributes %>>
     <!-- Content -->
     <%= yield %>
     <!-- Footer -->

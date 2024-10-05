@@ -12,6 +12,8 @@ html, body {
     font-family: 'Noto Sans', system-ui;
 
     @import 'landing';
+    @import 'faq';
+    @import 'rainy_day_options';
     @import 'devise/sessions';
 
     * {

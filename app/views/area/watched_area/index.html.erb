@@ -1,3 +1,8 @@
+<% content_for :body_attributes do %>
+  data-controller="watched-area"
+  data-watched-area-station-value="<%= @watched_area.station %>"
+<% end %>
+
 <div class="hero-header-content">
   <!-- Background image container -->
   <div class="hero-header <%= @watched_area.slug %>"
