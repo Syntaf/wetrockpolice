@@ -4,34 +4,44 @@ body[data-page-controller="faqs"] {
     .faq-wrapper {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        min-height: 100%; // added min to height
+        flex: 1; // added flex:1
     }
 
     .faq-hero {
-        height: 400px;
-        display: flex;
-        align-items: center;
-        background-size: cover;
-        background-position: bottom;
+        // height: 400px;
+        // display: flex;
+        // align-items: center;
+        // background-size: cover;
+        // background-position: bottom;
+        margin: 0 auto;
+        padding-left: 30px;
 
+        @media (max-width: $mobileBreakpoint) {
+            text-align: center;
+            margin: 0px;
+            flex-basis: 100px;
+        }
         h1 {
-            color: white;
+            // color: white;
+            // margin-left: 15%;
             letter-spacing: 3px;
-            margin-left: 15%;
         }
     }
 
-    .faq-hero.redrock { 
-        background-image: url("../images/redrock/faq.jpg");
-    }
+    // .faq-hero.redrock { 
+    //     // background-image: url("../images/redrock/faq.jpg");
+    // }
+    // .btn-outline-dark {
+    //     background-color: black;
+    // }
+    // .faq-hero.castlerock {
+    //     background-image: url("../images/castlerock/faq2.jpg");
+    // }
 
-    .faq-hero.castlerock {
-        background-image: url("../images/castlerock/faq2.jpg");
-    }
-
-    .faq-hero.stoneypoint {
-        background-image: url('../images/stoneypoint/hero-image.png');
-    }
+    // .faq-hero.stoneypoint {
+    //     background-image: url('../images/stoneypoint/hero-image.png');
+    // }
 
     .faq-content {
         flex: 1;
