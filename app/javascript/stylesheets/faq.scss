@@ -17,15 +17,40 @@ body[data-page-controller="faqs"] {
         margin: 0 auto;
         padding-left: 30px;
 
+        .header-card{
+            padding: 25px 25px 25px 0;
+            margin-bottom: 30px;
+            display: inline-flex;
+            justify-content: center;
+
+            h1, h2 {
+                display: inline-block;
+                font-size: 26px;
+                margin: 0;
+            }
+            h1 {
+                // color: white;
+                // margin-left: 15%;
+                // letter-spacing: 3px;
+                font-weight: $extraBold;
+                padding-right: 10px;
+                border-right: 1px solid #eeeeee;
+            }
+            h2 {
+                padding-left: 10px;
+    
+                @media (max-width: $mobileBreakpoint) {
+                //     font-size: 18px;\
+                display: flex;
+                align-items: center; // For centering vertically on mobile
+                }
+            }
+        }
+
         @media (max-width: $mobileBreakpoint) {
             text-align: center;
             margin: 0px;
             flex-basis: 100px;
-        }
-        h1 {
-            // color: white;
-            // margin-left: 15%;
-            letter-spacing: 3px;
         }
     }
 
