@@ -4,8 +4,8 @@ body[data-page-controller="faqs"] {
     .faq-wrapper {
         display: flex;
         flex-direction: column;
-        min-height: 100%; // added min to height
-        flex: 1; // added flex:1
+        min-height: 100%;
+        flex: 1;
     }
 
     .faq-hero {
@@ -16,6 +16,7 @@ body[data-page-controller="faqs"] {
         // background-position: bottom;
         margin: 0 auto;
         padding-left: 30px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 
         .header-card{
             padding: 25px 25px 25px 0;
@@ -40,7 +41,6 @@ body[data-page-controller="faqs"] {
                 padding-left: 10px;
     
                 @media (max-width: $mobileBreakpoint) {
-                //     font-size: 18px;\
                 display: flex;
                 align-items: center; // For centering vertically on mobile
                 }
