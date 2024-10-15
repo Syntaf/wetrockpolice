@@ -1,12 +1,36 @@
 import { Controller } from "@hotwired/stimulus";
+//  the Mountain Project map should change to reflect the new area 
+// and the information below should change to reflect the area I clicked.
 
 
 export default class extends Controller {
+  // When a list-group-item is clicked, then change the Mtn Prj map, description, features
+  static targets = ["source"];
+  
   connect() {
+    /* 
+      construct the URL using the data- attributes (<li> tag)
+      select the iFrame id
+      replace the src value with a new url
+    */ 
+   
+      const baseUrl = "https://www.mountainproject.com/widget?loc=fixed";
+      // const x = $activeElement.data('lat');
+      const x = document.querySelectorAll('[data-lat]')
+      // const y = $activeElement.data('lon');
+      const y = document.querySelectorAll('[data-lon]')
+      // const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
+      const z = document.querySelectorAll('[data-mtz]') ? document.querySelectorAll('[data-mtz') : 11
+      // const h = this.options.mp.height
+      const h = 500
+      
+
+
     console.log('Hello, rainy day controller!');
   }
 
   // Rebuild the old JQuery based functionality here
+
 };
 
 // function RainyDayController(watchedAreaSlug, options) {
@@ -104,3 +128,5 @@ export default class extends Controller {
 //   this.$driveTime.html(newAreaInformation['driving_time'] + ' minutes');
 //   this.$activeLabel.html(newAreaInformation['climbing_area']['name']);
 // }
+
+// window.onload = select

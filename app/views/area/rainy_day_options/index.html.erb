@@ -32,17 +32,17 @@
                     <% end %>
                 </div>
             </div>
-            <ul class="desktop list-group-flush">
+            <ul data-rainyDay-target="source" class="desktop list-group-flush"> 
                 <% @watched_area.climbing_areas.each_with_index do |area, index| %>
-                    <li class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
-                        data-role="rainy-day-list-option"
-                        data-id="<%= area.id %>"
-                        data-name="<%= area.name %>"
-                        data-lat="<%= area.location.latitude.to_f %>"
-                        data-lon="<%= area.location.longitude.to_f %>"
-                        data-mtz="<%= area.location.mt_z %>">
-                        <%= area.name %>
-                    </li>
+                        <li data-action='click->areas#connect' class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
+                            data-role="rainy-day-list-option"
+                            data-id="<%= area.id %>"
+                            data-name="<%= area.name %>"
+                            data-lat="<%= area.location.latitude.to_f %>"
+                            data-lon="<%= area.location.longitude.to_f %>"
+                            data-mtz="<%= area.location.mt_z %>">
+                            <%= area.name %>
+                        </li>
                 <% end %>
             </ul>
         </div>
