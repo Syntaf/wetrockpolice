@@ -18,59 +18,7 @@ export default class extends Controller {
 
       Use the dat-target attribute to have the below method interact with the tag
       */
-
-/**********The below commented-out function is what I used to make the UrlBuilder */
-// RainyDayController.prototype.buildMountainProjectUrl = function (longitude, latitude, zoom) {
-//   return this.options.mp.urlBase + '?loc=fixed&' +
-//       'x=' + longitude + '&' +
-//       'y=' + latitude + '&' +
-//       'z=' + zoom + '&' +
-//       'h=' + this.options.mp.height
-// }
-
-mountainProjectUrlBuilder() {
-  const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&"; //Replace const x = $activeElement.data('lat');
-  const item = document.querySelector('li[data-role="rainy-day-list-option"]') //Replace const y = $activeElement.data('lon');
-  const x = item.dataset.lat;
-  const y = item.dataset.lon;
-  const z = item.dataset.mtz ? item.data.mtz : 11 //Replace const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
-  const h = 500 //Replace const h = this.options.mp.height
-return `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
-}
-/********Used this functions to make the mountainProjectUrlBuilder function***********/
-    
-    // RainyDayController.prototype.updateMountainProjectWidget = function ($activeElement) {
-    //   var longitude = $activeElement.data('lon');
-    //   var latitude = $activeElement.data('lat');
-    //   var zoom = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
-    
-    //   var newUrl = this.buildMountainProjectUrl(longitude, latitude, zoom);
-    //   $(this.options.mp.widgetSelector).attr('src', newUrl);
-    // }
-
-mountainProjectUrlUpdater() {
-  console.log("POOOOOOO")
-//  const iFrame = document.querySelector("iframe#mountainProjectwiWidget")
-  const iFrame = this.areaTargets
-  return iFrame.forEach(element => {
-    element.setAttribute("src", this.mountainProjectUrlBuilder())
-  })
-}
-
-
-
-
-
-
-
-
-
-
-  // Rebuild the old JQuery based functionality here
-
-};
-
-/********Do we need to remake the RainyDayController function?************/
+/*****Function for setting an options object and  */
 // function RainyDayController(watchedAreaSlug, options) {
 //   this.watchedAreaSlug = watchedAreaSlug;
 //   this.options = $.extend(options, {
@@ -88,11 +36,63 @@ mountainProjectUrlUpdater() {
 //   this.initView();
 // }
 
+RainyDayController(watchedAreaSlug, options) {
+  this.watchedAreaSlug = watchedAreaSlug
+  this.options = Object.assign({}, options, {
+          'mp': {
+              'widgetSelector': '#mountainProjectWidget',
+              'defaultZoom': 11,
+              'height': 500,
+              'urlBase': 'https://www.mountainproject.com/widget'
+          },
+          'areaListElementSelector': '[data-role="rainy-day-list-option"]',
+                'activeSelectorClass': 'active',
+                'activeLabelSelector': '[data-role="active-title"]'
+    })
+    this.initView();
+}
 
+/**********The below commented-out function is what I used to make the UrlBuilder */
+// RainyDayController.prototype.buildMountainProjectUrl = function (longitude, latitude, zoom) {
+//   return this.options.mp.urlBase + '?loc=fixed&' +
+//       'x=' + longitude + '&' +
+//       'y=' + latitude + '&' +
+//       'z=' + zoom + '&' +
+//       'h=' + this.options.mp.height
+// }
 
+mountainProjectUrlBuilder = function() {
+  const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&";
+  const item = document.querySelector('li[data-role="rainy-day-list-option"]') 
+  const x = item.dataset.lat; //Replace const x = $activeElement.data('lat');
+  const y = item.dataset.lon; //Replace const y = $activeElement.data('lon');
+  const z = item.dataset.mtz ? item.data.mtz : this.options.mp.height //Replace const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
+  const h = this.options.mp.height //Replace const h = this.options.mp.height
+return `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
+}
+/********Used this functions to make the mountainProjectUrlBuilder function***********/
+    
+    // RainyDayController.prototype.updateMountainProjectWidget = function ($activeElement) {
+    //   var longitude = $activeElement.data('lon');
+    //   var latitude = $activeElement.data('lat');
+    //   var zoom = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
+    
+    //   var newUrl = this.buildMountainProjectUrl(longitude, latitude, zoom);
+    //   $(this.options.mp.widgetSelector).attr('src', newUrl);
+    // }
 
+updateMountProjectWidget() {
+  console.log("Helloooooo!")
+//  const iFrame = document.querySelector("iframe#mountainProjectwiWidget")
+  const iFrame = this.areaTargets
+  return iFrame.forEach(element => {
+    element.setAttribute("src", this.mountainProjectUrlBuilder())
+  })
+}
+
+/*************Use this function to set the initView *********/
 // RainyDayController.prototype.initView = function () {
-//   $(this.options.areaListElementSelector).click(this.handleAreaSelection.bind(this));
+//   $(this.options.areaListElementSelector).click(this.handleAreaSelection.bind(this)); // areaListElementSelector = [data-role="rainy-day-list-option"]'
 
 //   this.$activeLocation = $('.' + this.options.activeSelectorClass); //activeSelectorClass = 'active'
 //   this.$activeLabel = $(this.options.activeLabelSelector); // activeLabelSelector = '[data-role="active-title"]'
@@ -108,6 +108,35 @@ mountainProjectUrlUpdater() {
 
 //   this.updateMountainProjectWidget(this.$activeLocation);
 // }
+
+
+setInitView() {
+const rainyDayListOption = document.querySelector(this.options.areaListElementSelector);
+const activeLocation = document.querySelector(this.options.activeLabelSelector);
+const description = document.querySelector('[data-role="area-description"]');
+const rockType = document.querySelector('[data-role="area-rock-type"]');
+const driveTime = document.querySelector('[data-role="area-drive-time"]')
+
+if (activeLocation.length < 1) {
+  // console.error('No active list element found')
+  throw new Error("No active list element found")
+}
+
+this.updateMountProjectWidget()
+}
+
+
+
+
+
+
+  // Rebuild the old JQuery based functionality here
+
+};
+
+
+
+
 
 
 // RainyDayController.prototype.handleAreaSelection = function (ev) {
