@@ -153,7 +153,7 @@ handleAreaSelection(event) {
     }))
   }
 
-/*********Used this function to make an async function for getting url (NOT CURRENTLY USED*/
+/*********Used this function to make an async function for getting url***********/
     // RainyDayController.prototype.fetchArea = function (id) {
     //   var url = '/' + this.watchedAreaSlug + '/rainy-day-options/';
     //   return $.get(url + id);
@@ -161,12 +161,15 @@ handleAreaSelection(event) {
     fetchArea = async function(event) {
       const href = this.linkTarget.getAttribute("href")
       let url = href + '/rainy-day-options/';
-console.log(url)
+
     const response = await fetch(url + event.currentTarget.dataset.id)
         if (!response.ok) {
           throw new Error('Network response error')
         }
-        return await response.json()
+        const data = await response.json()
+        
+        // We need to select the attributes that need to be replaced with the fetch
+        console.log(data.driving_time)
       }
 
     
