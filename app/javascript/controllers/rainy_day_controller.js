@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus";
 
 
 export default class extends Controller {
-  static targets = ["area", "description"]; // we now have a this.sourceTarget or a this.sourceTargets array
+  static targets = ["area1", "area2", "description"]; // we now have a this.sourceTarget or a this.sourceTargets array
   
   initialize(watchedAreaSlug, options) {
 /*****Function for setting options object*/
@@ -24,9 +24,8 @@ export default class extends Controller {
 
 //   this.initView();
 // }
-
-// RainyDayController(watchedAreaSlug, options) {
-  this.watchedAreaSlug = watchedAreaSlug
+/*******initialize method */
+  this.watchedAreaSlug = watchedAreaSlug // Using this context allows for the below properties to be globally accessible
   this.options = Object.assign({}, options, {
           'mp': {
               'widgetSelector': '#mountainProjectWidget',
@@ -38,18 +37,8 @@ export default class extends Controller {
                 'activeSelectorClass': 'active',
                 'activeLabelSelector': '[data-role="active-title"]'
     })
-    this.initView();
-// }
+    // this.initView();
   }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -57,16 +46,13 @@ export default class extends Controller {
 
   connect() {
     console.log('Hello, rainy day controller!');
-    }
-    // const element = this.sourceTargets //Is an array of all 'source' targets in the controller's scope
-    
+    }    
     /* 
       construct the URL using the data- attributes (<li> tag)
       select the iFrame id
       replace the src value with a new url
-
-      Use the dat-target attribute to have the below method interact with the tag
-      */
+      Use the dat-target attribute to create effects
+    */
 
 /**********The below commented-out function is what I used to make the UrlBuilder */
 // RainyDayController.prototype.buildMountainProjectUrl = function (longitude, latitude, zoom) {
@@ -77,16 +63,20 @@ export default class extends Controller {
 //       'h=' + this.options.mp.height
 // }
 
-mountainProjectUrlBuilder = function() {
-  const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&";
-  const item = document.querySelector('li[data-role="rainy-day-list-option"]') 
-  const x = item.dataset.lat; //Replace const x = $activeElement.data('lat');
-  const y = item.dataset.lon; //Replace const y = $activeElement.data('lon');
-  const z = item.dataset.mtz ? item.data.mtz : this.options.mp.height //Replace const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
-  const h = this.options.mp.height //Replace const h = this.options.mp.height
-return `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
-}
-/********Used this functions to make the mountainProjectUrlBuilder function***********/
+// mountainProjectUrlBuilder() {
+//   const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&";
+//   // const item = document.querySelectorAll('li[data-role="rainy-day-list-option"]');
+//   const item = this.areaTargets
+//   item.forEach(element => {
+//     const x = element.dataset.lat; //Replace const x = $activeElement.data('lat');
+//     const y = element.dataset.lon; //Replace const y = $activeElement.data('lon');
+//     const z = element.dataset.mtz ? element.dataset.mtz : this.options.mp.defaultZoom //Replace const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
+//     const h = this.options.mp.height //Replace const h = this.options.mp.height
+//   })
+
+// return `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
+// }
+/********Used this functions to make the updateMountainProjectWidgetfunction***********/
     
     // RainyDayController.prototype.updateMountainProjectWidget = function ($activeElement) {
     //   var longitude = $activeElement.data('lon');
@@ -97,15 +87,37 @@ return `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
     //   $(this.options.mp.widgetSelector).attr('src', newUrl);
     // }
 
-updateMountainProjectWidget() {
-  console.log("Helloooooo!")
-//  const iFrame = document.querySelector("iframe#mountainProjectwiWidget")
-  const iFrame = this.areaTargets
-  return iFrame.forEach(element => {
-    element.setAttribute("src", this.mountainProjectUrlBuilder())
-  })
-}
+updateMountainProjectWidgetDropDown(event) {
+  const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&";
+  const target = event.currentTarget
+  const x = target.dataset.lon; //Replace const y = $activeElement.data('lon');
+  const y = target.dataset.lat; //Replace const x = $activeElement.data('lat');
+  const z = target.dataset.mtz ? target.dataset.mtz : this.options.mp.defaultZoom //Replace const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
+  const h = this.options.mp.height //Replace const h = this.options.mp.height
+  const url =  `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
 
+  const iFrame = document.querySelector("iframe")
+  if (url === iFrame.src) return
+
+  return iFrame.setAttribute("src", url)
+ }
+          
+updateMountainProjectWidgetListItem(event) {
+  const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&";
+  const target = event.currentTarget
+
+  const x = target.dataset.lon; //Replace const y = $activeElement.data('lon');
+  const y = target.dataset.lat; //Replace const x = $activeElement.data('lat');
+  const z = target.dataset.mtz ? target.dataset.mtz : this.options.mp.defaultZoom //Replace const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
+  const h = this.options.mp.height //Replace const h = this.options.mp.height
+  const url =  `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
+
+  const iFrame = document.querySelector("iframe")
+  if (url === iFrame.src) return
+
+  return iFrame.setAttribute("src", url)
+  }
+          
 /*************Use this function to set the initView *********/
 // RainyDayController.prototype.initView = function () {
 //   $(this.options.areaListElementSelector).click(this.handleAreaSelection.bind(this)); // areaListElementSelector = [data-role="rainy-day-list-option"]'
@@ -137,21 +149,18 @@ if (activeLocation.length < 1) {
   // console.error('No active list element found')
   throw new Error("No active list element found")
 }
-this.updateMountainProjectWidget()
+this.updateMountainProjectWidget(activeLocation)
 }
 
-/*********For rebuilding the area selection function ********/
+/*********For rebuilding the area selection ********/
 // RainyDayController.prototype.handleAreaSelection = function (ev) {
 //   var $target = $(ev.target);
 //   var areaId = $target.data('id');
 //   var $selectedItems = $('[data-id="' + $target.data('id') + '"]');
 
 //   // Do nothing if the clicked element is already active
-//   if ($target.hasClass(this.options.activeSelectorClass))
-//   {
-//       return;
-//   }
-
+//   if ($target.hasClass(this.options.activeSelectorClass)) //activeSelectorClass = active{   
+//   return;}
 //   this.fetchArea(areaId)
 //       .then(this.displayArea.bind(this, $selectedItems));
 // }
@@ -175,18 +184,17 @@ handleAreaSelection(event) {
     //   var url = '/' + this.watchedAreaSlug + '/rainy-day-options/';
     //   return $.get(url + id);
     // }
-    };
-    
-    fetchArea(id){
+    fetchArea = async function(id) {
     let url = '/' + this.watchedAreaSlug + '/rainy-day-options/';
-    return fetch(url + id)
-      .then(response => {
+    const response = await fetch(url + id)
         if (!response.ok) {
           throw new Error('Network response error')
         }
-        return response.json()
-      })
+        return await response.json()
+      }
     }
+    
+    
 
     // RainyDayController.prototype.displayArea = function ($newActiveListItem, response) {
     //   if (!response || response.length == 0) {
@@ -218,7 +226,6 @@ displayArea(newActiveListItem, response) {
 swapActiveClass(newActiveListItem) {
   this.activeLocation.removeClass(this.options.activeSelectorClass);
   newActiveListItem.addClass(this.options.activeSelectorClass);
-
   // Why don't we just use setAttibute() to set a new class?
 }
 

@@ -10,15 +10,15 @@
 <div class="container page-content">
     <div class="crags">
         <div class="crag-list">
-            <div class="area-header ">
+            <div class="area-header">
                 <span class="header">Areas</span>
                 <span class="header header-mobile">Area:</span>
             </div>
-            <div data-rainy-day-target="area" class="mobile dropdown">
+            <div data-rainy-day-target="area1" class="mobile dropdown">
                 <button class="dropdown-toggle" data-role="active-title" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <%= @active_rainy_day_option.climbing_area.name %>
                 </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                <div data-action="click->rainy-day#updateMountainProjectWidgetDropDown" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                     <% @watched_area.climbing_areas.each_with_index do |area, index| %>
                         <a class="dropdown-item <% if index == 0 %>active<% end %>"
                             data-role="rainy-day-list-option"
@@ -32,9 +32,9 @@
                     <% end %>
                 </div>
             </div>
-            <ul data-rainy-day-target="area" class="desktop list-group-flush"> 
+            <ul data-rainy-day-target="area2" class="desktop list-group-flush"> 
                 <% @watched_area.climbing_areas.each_with_index do |area, index| %>
-                        <li data-action='click->rainy-day#mountainProjectUrlUpdater' class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
+                        <li data-action='click->rainy-day#updateMountainProjectWidgetListItem' class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
                             data-role="rainy-day-list-option"
                             data-id="<%= area.id %>"
                             data-name="<%= area.name %>"
@@ -50,7 +50,7 @@
             <iframe id="mountainProjectWidget" style="width:100%; max-width:1200px; height:500px;" frameborder="0" scrolling="no" src="https://www.mountainproject.com/widget?loc=fixed&x=-12871302&y=4337800&z=11.7&h=500"></iframe>
         </div>
     </div>
-    <div data-rainy-day-target="description" class="crag-info bottom-border">
+
         <h4>Description (via <a href="">Mountain Project</a>):</h4>
         <p data-role="area-description"><%= raw @active_rainy_day_option.climbing_area.description %></p>
     </div>
