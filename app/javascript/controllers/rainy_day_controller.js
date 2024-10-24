@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus";
 
 
 export default class extends Controller {
-  static targets = ["area1", "area2", "description"]; // we now have a this.sourceTarget or a this.sourceTargets array
+  static targets = ["area1", "area2", "link"]; // we now have a this.sourceTarget or a this.sourceTargets array
   
   initialize(watchedAreaSlug, options) {
 /*****Function for setting options object*/
@@ -24,7 +24,7 @@ export default class extends Controller {
 
 //   this.initView();
 // }
-/*******initialize method */
+/*******initialize method code*/
   this.watchedAreaSlug = watchedAreaSlug // Using this context allows for the below properties to be globally accessible
   this.options = Object.assign({}, options, {
           'mp': {
@@ -151,21 +151,24 @@ handleAreaSelection(event) {
     .then(this.displayArea(() => {
       element
     }))
+  }
 
 /*********Used this function to make an async function for getting url (NOT CURRENTLY USED*/
     // RainyDayController.prototype.fetchArea = function (id) {
     //   var url = '/' + this.watchedAreaSlug + '/rainy-day-options/';
     //   return $.get(url + id);
     // }
-    fetchArea = async function(id) {
-    let url = '/' + this.watchedAreaSlug + '/rainy-day-options/';
-    const response = await fetch(url + id)
+    fetchArea = async function(event) {
+      const href = this.linkTarget.getAttribute("href")
+      let url = href + '/rainy-day-options/';
+console.log(url)
+    const response = await fetch(url + event.currentTarget.dataset.id)
         if (!response.ok) {
           throw new Error('Network response error')
         }
         return await response.json()
       }
-    }
+
     
     
 /*************This Function is for setting the display area (NOT CURRENTLY USED) *************/

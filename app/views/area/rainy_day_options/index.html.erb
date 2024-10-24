@@ -3,7 +3,7 @@
 <% end %>
 <div class="page-header card">
     <div class="container">
-        <h1><a href="/<%= @watched_area.slug %>">WET ROCK POLICE</a></h1>
+        <h1><a data-rainy-day-target="link" href="/<%= @watched_area.slug %>">WET ROCK POLICE</a></h1>
         <h2>Rainy Day Options for <%= @watched_area.name %></h2>
     </div>
 </div> 
@@ -18,7 +18,7 @@
                 <button class="dropdown-toggle" data-role="active-title" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <%= @active_rainy_day_option.climbing_area.name %>
                 </button>
-                <div data-action="click->rainy-day#updateMountainProjectWidgetDropDown" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                <div data-action="click->rainy-day#updateMountainProjectWidgetDropDown click->rainy-day#fetchArea" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                     <% @watched_area.climbing_areas.each_with_index do |area, index| %>
                         <a class="dropdown-item <% if index == 0 %>active<% end %>"
                             data-role="rainy-day-list-option"
@@ -34,7 +34,7 @@
             </div>
             <ul data-rainy-day-target="area2" class="desktop list-group-flush"> 
                 <% @watched_area.climbing_areas.each_with_index do |area, index| %>
-                        <li data-action='click->rainy-day#updateMountainProjectWidgetListItem' class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
+                        <li data-action='click->rainy-day#updateMountainProjectWidgetListItem click->rainy-day#fetchArea' class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
                             data-role="rainy-day-list-option"
                             data-id="<%= area.id %>"
                             data-name="<%= area.name %>"
@@ -54,7 +54,7 @@
         <h4>Description (via <a href="">Mountain Project</a>):</h4>
         <p data-role="area-description"><%= raw @active_rainy_day_option.climbing_area.description %></p>
     </div>
-    <div data-rainy-day-target="features" class="crag-info bottom-padding">
+    <div class="crag-info bottom-padding">
         <h4>Features:</h4>
         <table>
             <tr>
