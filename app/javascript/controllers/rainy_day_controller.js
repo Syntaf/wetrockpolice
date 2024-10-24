@@ -41,20 +41,7 @@ export default class extends Controller {
   }
 
 
-
-
-
-  connect() {
-    console.log('Hello, rainy day controller!');
-    }    
-    /* 
-      construct the URL using the data- attributes (<li> tag)
-      select the iFrame id
-      replace the src value with a new url
-      Use the dat-target attribute to create effects
-    */
-
-/**********The below commented-out function is what I used to make the UrlBuilder */
+/**********The below commented-out function is what I used to make the updateMountainProjectWidgetDropDown */
 // RainyDayController.prototype.buildMountainProjectUrl = function (longitude, latitude, zoom) {
 //   return this.options.mp.urlBase + '?loc=fixed&' +
 //       'x=' + longitude + '&' +
@@ -62,22 +49,8 @@ export default class extends Controller {
 //       'z=' + zoom + '&' +
 //       'h=' + this.options.mp.height
 // }
-
-// mountainProjectUrlBuilder() {
-//   const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&";
-//   // const item = document.querySelectorAll('li[data-role="rainy-day-list-option"]');
-//   const item = this.areaTargets
-//   item.forEach(element => {
-//     const x = element.dataset.lat; //Replace const x = $activeElement.data('lat');
-//     const y = element.dataset.lon; //Replace const y = $activeElement.data('lon');
-//     const z = element.dataset.mtz ? element.dataset.mtz : this.options.mp.defaultZoom //Replace const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
-//     const h = this.options.mp.height //Replace const h = this.options.mp.height
-//   })
-
 // return `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
 // }
-/********Used this functions to make the updateMountainProjectWidgetfunction***********/
-    
     // RainyDayController.prototype.updateMountainProjectWidget = function ($activeElement) {
     //   var longitude = $activeElement.data('lon');
     //   var latitude = $activeElement.data('lat');
@@ -137,7 +110,7 @@ updateMountainProjectWidgetListItem(event) {
 //   this.updateMountainProjectWidget(this.$activeLocation);
 // }
 
-
+/*********New method for setInitView (NOT CURRENTLY USED) */
 setInitView() {
 const rainyDayListOption = document.querySelector(this.options.areaListElementSelector);
 const activeLocation = document.querySelector(this.options.activeLabelSelector);
@@ -165,7 +138,7 @@ this.updateMountainProjectWidget(activeLocation)
 //       .then(this.displayArea.bind(this, $selectedItems));
 // }
 
-
+/****************** New method for handling area selection (NOT CURRENTlY USED) ************/
 handleAreaSelection(event) {
   // let target = document.querySelector(event)
   let areaId = event
@@ -179,7 +152,7 @@ handleAreaSelection(event) {
       element
     }))
 
-/*********Used this function to make an async function for getting url */
+/*********Used this function to make an async function for getting url (NOT CURRENTLY USED*/
     // RainyDayController.prototype.fetchArea = function (id) {
     //   var url = '/' + this.watchedAreaSlug + '/rainy-day-options/';
     //   return $.get(url + id);
@@ -195,7 +168,7 @@ handleAreaSelection(event) {
     }
     
     
-
+/*************This Function is for setting the display area (NOT CURRENTLY USED) *************/
     // RainyDayController.prototype.displayArea = function ($newActiveListItem, response) {
     //   if (!response || response.length == 0) {
     //       console.error('Issue connecting to server :(');
@@ -218,7 +191,7 @@ displayArea(newActiveListItem, response) {
   this.activeLocation = newActiveListItem
 }
 
-
+/*****************DON'T NEED THE SWAP FUNC */
 // RainyDayController.prototype.swapActiveClass = function($newActiveListItem) {
 //   this.$activeLocation.removeClass(this.options.activeSelectorClass);
 //   $newActiveListItem.addClass(this.options.activeSelectorClass);
@@ -229,6 +202,8 @@ swapActiveClass(newActiveListItem) {
   // Why don't we just use setAttibute() to set a new class?
 }
 
+
+/***************FUNCTINO FOR UPDATING PAGE INFO (NOT CURRENTLY USED) */
 // RainyDayController.prototype.updatePageInformation = function(newAreaInformation) {
 //   this.$description.html(newAreaInformation['climbing_area']['description']);
 //   this.$rockType.html(newAreaInformation['climbing_area']['rock_type']);
