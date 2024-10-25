@@ -168,12 +168,30 @@ handleAreaSelection(event) {
         }
         const data = await response.json()
         
-        // We need to select the attributes that need to be replaced with the fetch
-        console.log(data.driving_time)
-      }
+        // We need to select the attributes from fetch
+        const description = data.climbing_area.description
+        const rockType = data.climbing_area.rock_type
+        // const drivingTime = data.driving_time
 
-    
-    
+
+        // We need to select the elements/attributes to be replaced from html
+        const areaDescription = document.querySelector('p[data-role="area-description"]')
+        const rockTypeElement = document.querySelector('strong[data-role="area-rock-type"]')
+        // const drivingTimeElement = document.querySelector('strong[data-role="area-drive-time"]')
+
+        // Use the removeHTMLTags function on the texts
+        const descriptionTagsRemoved = removeHTMLTags(description)
+        const rockTypeTagsRemoved = removeHTMLTags(rockType)
+        const areaDescriptionTagsRemoved = removeHTMLTags(areaDescription.innerText)
+        const rockTypeElementTagsRemoved = removeHTMLTags(rockTypeElement.innerText)
+
+        // We need to check if the value already exists. If not, replace it.
+        if (areaDescriptionTagsRemoved === descriptionTagsRemoved) return 
+        areaDescription.innerText = descriptionTagsRemoved
+
+        if (rockTypeElementTagsRemoved === rockTypeTagsRemoved) return
+        rockTypeElement.innerText = rockTypeTagsRemoved
+      }
 /*************This Function is for setting the display area (NOT CURRENTLY USED) *************/
     // RainyDayController.prototype.displayArea = function ($newActiveListItem, response) {
     //   if (!response || response.length == 0) {
@@ -224,4 +242,8 @@ this.driveTime.html(newAreaInfo['driving_time'] + 'minutes');
 this.activeLabel.html(newAreaInfo[climbing_area]['name']);
 }
 
+}
+
+function removeHTMLTags(text) {
+  return text.replace(/<[^>]*>/g, '');
 }
