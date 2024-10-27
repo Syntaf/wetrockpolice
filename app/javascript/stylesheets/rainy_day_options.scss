@@ -83,10 +83,10 @@ body[data-page-controller="rainy_day_options"] {
                 margin-bottom: 10px;
 
                 .header {
-                    color: #666;
+                    color: black;
                     flex: 1;
                     font-weight: $bold;
-                    font-size: 16px;
+                    font-size: 26px;
 
                     @media (max-width: $mobileBreakpoint) {
                         display: none;
@@ -133,6 +133,7 @@ body[data-page-controller="rainy_day_options"] {
                     font-size: 16px;
                     padding: 5px 0;
                     cursor: pointer;
+                    background-color: #eee; //Added background-color
 
                     &.list-group-item {
                         min-height: 0;
@@ -164,6 +165,8 @@ body[data-page-controller="rainy_day_options"] {
 
         .mountain-project {
             width: 70%;
+            padding: 15px;
+            border-radius: 8px;
 
             @media (max-width: $mobileBreakpoint) {
                 width: 100%;
@@ -181,11 +184,14 @@ body[data-page-controller="rainy_day_options"] {
     }
 
     .crag-info {
-        padding: 0 10px 35px 10px;
-        margin-bottom: 35px;
+        // padding: 0 10px 35px 10px;
+        padding: 25px;
+        // margin-bottom: 35px;
+        background-color: #fff;
 
         &.bottom-border {
             border-bottom: 1px solid #eee;
+            margin-bottom: 35px;
         }
 
         &.bottom-padding {
