@@ -142,10 +142,10 @@ body[data-page-controller="rainy_day_options"] {
                         font-weight: $extraBold;
                     }
 
-                    &.active {
-                        background-color: transparent;
-                        color: $primaryColor;
-                    }
+                    // &.active {
+                    //     background-color: transparent;
+                    //     color: $primaryColor;
+                    // }
 
                     &:hover {
                         background-color: transparent;

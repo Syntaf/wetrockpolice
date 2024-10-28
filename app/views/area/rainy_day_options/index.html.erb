@@ -14,7 +14,7 @@
                 <span class="header">Areas</span>
                 <span class="header header-mobile">Area:</span>
             </div>
-            <div data-rainy-day-target="area1" class="mobile dropdown">
+            <div class="mobile dropdown">
                 <button class="dropdown-toggle" data-role="active-title" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <%= @active_rainy_day_option.climbing_area.name %>
                 </button>
@@ -32,7 +32,7 @@
                     <% end %>
                 </div>
             </div>
-            <ul data-rainy-day-target="area2" class="desktop list-group-flush"> 
+            <ul class="desktop list-group-flush"> 
                 <% @watched_area.climbing_areas.each_with_index do |area, index| %>
                         <li data-action='click->rainy-day#updateMountainProjectWidgetListItem click->rainy-day#fetchArea' class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
                             data-role="rainy-day-list-option"
@@ -80,7 +80,6 @@
         </table>
     </div>
 </div>
-
-<script>
-    var rainyDayController = new RainyDayController('<%= @watched_area.slug %>', {});
-</script>
+# <script>
+#     var rainyDayController = new RainyDayController('<%= @watched_area.slug %>', {});
+# </script>
