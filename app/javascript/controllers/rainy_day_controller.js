@@ -16,7 +16,7 @@ export default class extends Controller {
                'activeLabelSelector': '[data-role="active-title"]'
    }
   connect() {
-    // this.watchedAreaSlug = watchedAreaSlug // Using this context allows for the below properties to be globally accessible
+
     }
 
 
@@ -53,29 +53,39 @@ updateMountainProjectWidgetListItem(event) {
 
 
 /*********This function fetches the area attributes and replaces the old ones with these***********/
-    async fetchArea (event) {
-      const href = this.linkTarget.getAttribute("href")
-      let url = href + '/rainy-day-options/'; 
 
-    const response = await fetch(url + event.currentTarget.dataset.id)
-        if (!response.ok) {
-          throw new Error('Network response error')
-        }
-        const data = await response.json()
-     
-        // We need to select the attributes from fetch
-        const description = data.climbing_area.description
-        const rockType = data.climbing_area.rock_type
-        // const drivingTime = data.driving_time
 
-        // We need to select the elements/attributes to replace
-        const areaDescription = document.querySelector('p[data-role="area-description"]')
-        areaDescription.innerHTML = description
 
-        const rockTypeElement = document.querySelector('strong[data-role="area-rock-type"]')
-        rockTypeElement.innerHTML = rockType
-        // const drivingTimeElement = document.querySelector('strong[data-role="area-drive-time"]')
-      }
+async fetchAreaDropDown (event) {
+  // const href = this.linkTarget.getAttribute("href")
+  // let url = href + '/rainy-day-options/';
+  
+console.log("HEY", event.currentTarget.dataset)
+}
+
+async fetchAreaListItem (event) {
+  const href = this.linkTarget.getAttribute("href")
+  let url = href + '/rainy-day-options/'; 
+
+const response = await fetch(url + event.currentTarget.dataset.id)
+    if (!response.ok) {
+      throw new Error('Network response error')
+    }
+    const data = await response.json()
+ 
+    // We need to select the attributes from fetch
+    const description = data.climbing_area.description
+    const rockType = data.climbing_area.rock_type
+    // const drivingTime = data.driving_time
+
+    // We need to select the elements/attributes to replace
+    const areaDescription = document.querySelector('p[data-role="area-description"]')
+    areaDescription.innerHTML = description
+
+    const rockTypeElement = document.querySelector('strong[data-role="area-rock-type"]')
+    rockTypeElement.innerHTML = rockType
+    // const drivingTimeElement = document.querySelector('strong[data-role="area-drive-time"]')
+  }
 
 // We need to figure out why the drop down menu is not working.
 
