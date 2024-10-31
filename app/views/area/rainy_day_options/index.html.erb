@@ -20,8 +20,8 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                     <% @watched_area.climbing_areas.each_with_index do |area, index| %>
-                        <a data-action="click->rainy-day#updateMountainProjectWidgetDropDown" 
-                        data-action="click->rainy-day#fetchAreaDropDown"
+                        <a 
+                        data-action="click->rainy-day#showArea"
                         class="dropdown-item <% if index == 0 %>active<% end %>"
                             data-role="rainy-day-list-option"
                             data-id="<%= area.id %>"
@@ -36,7 +36,9 @@
             </div>
             <ul class="desktop list-group-flush"> 
                 <% @watched_area.climbing_areas.each_with_index do |area, index| %>
-                        <li data-action='click->rainy-day#updateMountainProjectWidgetListItem click->rainy-day#fetchAreaListItem' class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
+                        <li 
+                        data-action="click->rainy-day#showArea"
+                        class="list-group-item list-group-item-action <% if index == 0 %>active<% end %>"
                             data-role="rainy-day-list-option"
                             data-id="<%= area.id %>"
                             data-name="<%= area.name %>"

@@ -18,24 +18,8 @@ export default class extends Controller {
   connect() {
 
     }
-
-
-updateMountainProjectWidgetDropDown(event) {
-  const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&";
-  const target = event.currentTarget
-  const x = target.dataset.lon; //Replace const y = $activeElement.data('lon');
-  const y = target.dataset.lat; //Replace const x = $activeElement.data('lat');
-  const z = target.dataset.mtz ? target.dataset.mtz : this.constructor.options.mp.defaultZoom //Replace const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
-  const h = this.constructor.options.mp.height //Replace const h = this.options.mp.height
-  const url =  `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
-
-  const iFrame = document.querySelector("iframe")
-  if (url === iFrame.src) return
-
-  return iFrame.setAttribute("src", url)
- }
           
-updateMountainProjectWidgetListItem(event) {
+updateMountainProjectWidget(event) {
   const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&";
   const target = event.currentTarget
 
@@ -54,16 +38,7 @@ updateMountainProjectWidgetListItem(event) {
 
 /*********This function fetches the area attributes and replaces the old ones with these***********/
 
-
-
-async fetchAreaDropDown (event) {
-  // const href = this.linkTarget.getAttribute("href")
-  // let url = href + '/rainy-day-options/';
-  
-console.log("HEY", event.currentTarget.dataset)
-}
-
-async fetchAreaListItem (event) {
+async fetchArea (event) {
   const href = this.linkTarget.getAttribute("href")
   let url = href + '/rainy-day-options/'; 
 
@@ -90,52 +65,9 @@ const response = await fetch(url + event.currentTarget.dataset.id)
 // We need to figure out why the drop down menu is not working.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Might use these funcs for inspiration...
-/*************This Function is for setting the display area (NOT CURRENTLY USED) *************/
-// displayArea(newActiveListItem, response) {
-//   if (!response || response.length == 0) {
-//     console.error('Issue connecting to the server')
-//   }
-//   this.swapActiveClass(newActiveListItem);
-//   this.updatePageInformation(response);
-//   this.updateMountainProjectWidget(newActiveListItem);
-
-//   this.activeLocation = newActiveListItem
-// }
-
-/*****************DON'T NEED THE SWAP FUNC */
-// swapActiveClass(newActiveListItem) {
-//   this.activeLocation.removeClass(this.options.activeSelectorClass);
-//   newActiveListItem.addClass(this.options.activeSelectorClass);
-//   // Why don't we just use setAttibute() to set a new class?
-// }
-
-
-/***************FUNCTINO FOR UPDATING PAGE INFO (NOT CURRENTLY USED) */
-// updatePageInformation(newAreaInfo) {
-// this.areaDescription.innerHtml(newAreaInfo['climbing_area']['description']);
-// this.rockType.html(newAreaInfo['climbing_area']['rock_type']);
-// this.driveTime.html(newAreaInfo['driving_time'] + 'minutes');
-// this.activeLabel.html(newAreaInfo[climbing_area]['name']);
-// }
-
-// }
+showArea(event) {
+this.updateMountainProjectWidget(event);
+this.fetchArea(event)
+}
 
 }
