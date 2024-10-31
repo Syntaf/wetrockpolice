@@ -68,25 +68,13 @@ this.fetchArea(event)
 this.handleAreaSelection(event)
 }
 
-// Add a method for keeping the 
-
+// Method for changing the button text when an area from the dropdown menu is selected
 handleAreaSelection(event){
-
-  // const dropdownItems = document.querySelectorAll('.dropdown-toggle');
-  
-  // dropdownItems.forEach(item => {
-  //   item.addEventListener('click', (event) => {
-  //     event.preventDefault(); // Prevent the default link behavior
-  //     const selectedText = item.getAttribute('data-value');
-  //     dropdownButton.textContent = selectedText; // Update button text
-  //   });
-  // });
+  // We need to replace the text inside of the button with the active element
   const menuInfo = document.getElementById("dropdownMenuButton")
-  let menuInfoText = menuInfo.innerHTML
-  
+  if (!menuInfo) return 
   const target = event.currentTarget;
-  menuInfoText = target.dataset.
-  
+  menuInfo.innerText = target.innerText;
 }
 
 }
