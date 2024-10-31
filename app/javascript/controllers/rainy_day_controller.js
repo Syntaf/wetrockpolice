@@ -62,12 +62,31 @@ const response = await fetch(url + event.currentTarget.dataset.id)
     // const drivingTimeElement = document.querySelector('strong[data-role="area-drive-time"]')
   }
 
-// We need to figure out why the drop down menu is not working.
-
-
 showArea(event) {
 this.updateMountainProjectWidget(event);
 this.fetchArea(event)
+this.handleAreaSelection(event)
+}
+
+// Add a method for keeping the 
+
+handleAreaSelection(event){
+
+  // const dropdownItems = document.querySelectorAll('.dropdown-toggle');
+  
+  // dropdownItems.forEach(item => {
+  //   item.addEventListener('click', (event) => {
+  //     event.preventDefault(); // Prevent the default link behavior
+  //     const selectedText = item.getAttribute('data-value');
+  //     dropdownButton.textContent = selectedText; // Update button text
+  //   });
+  // });
+  const menuInfo = document.getElementById("dropdownMenuButton")
+  let menuInfoText = menuInfo.innerHTML
+  
+  const target = event.currentTarget;
+  menuInfoText = target.dataset.
+  
 }
 
 }
