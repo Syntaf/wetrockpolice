@@ -98,7 +98,7 @@ export default class extends Controller {
         this.daysTileTarget.innerHTML = '&#8734;';
         this.hoursTileTarget.innerHTML = '&#8734;' ;
         
-        this.lastRaindateTarget.innerHTML =
+        this.lastRainDateTarget.innerHTML =
           'Nothing to look at down here, come back when weather is looking bleak.';
 
         return;
