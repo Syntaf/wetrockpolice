@@ -56,9 +56,14 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install Javascript Packages
-        if: steps.cache-yarn.outputs.cache-hit != 'true'
         run: |
-          yarn install --pure-lockfile
+          NODE_OPTIONS=--openssl-legacy-provider yarn install --pure-lockfile
+      
+      - name: Compile Assets
+        env:
+          RAILS_ENV: test
+        run: |
+          NODE_OPTIONS=--openssl-legacy-provider bundle exec rails webpacker:compile
 
       - name: Create Database
         env:
@@ -82,4 +87,4 @@ jobs:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
-          make pcat && bundle exec rails test
+          bundle exec rails test
