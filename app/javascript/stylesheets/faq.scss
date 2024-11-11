@@ -1,0 +1,116 @@
+@import "vars";
+
+body[data-page-controller="faqs"] {
+    .faq-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        flex: 1;
+    }
+
+    .faq-hero {
+        // height: 400px;
+        // display: flex;
+        // align-items: center;
+        // background-size: cover;
+        // background-position: bottom;
+        margin: 0 auto;
+        padding-left: 30px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+
+        .header-card{
+            padding: 25px 25px 25px 0;
+            margin-bottom: 30px;
+            display: inline-flex;
+            justify-content: center;
+
+            h1, h2 {
+                display: inline-block;
+                font-size: 26px;
+                margin: 0;
+            }
+            h1 {
+                // color: white;
+                // margin-left: 15%;
+                // letter-spacing: 3px;
+                font-weight: $extraBold;
+                padding-right: 10px;
+                border-right: 1px solid #eeeeee;
+            }
+            h2 {
+                padding-left: 10px;
+    
+                @media (max-width: $mobileBreakpoint) {
+                display: flex;
+                align-items: center; // For centering vertically on mobile
+                }
+            }
+        }
+
+        @media (max-width: $mobileBreakpoint) {
+            text-align: center;
+            margin: 0px;
+            flex-basis: 100px;
+        }
+    }
+
+    // .faq-hero.redrock { 
+    //     // background-image: url("../images/redrock/faq.jpg");
+    // }
+    // .btn-outline-dark {
+    //     background-color: black;
+    // }
+    // .faq-hero.castlerock {
+    //     background-image: url("../images/castlerock/faq2.jpg");
+    // }
+
+    // .faq-hero.stoneypoint {
+    //     background-image: url('../images/stoneypoint/hero-image.png');
+    // }
+
+    .faq-content {
+        flex: 1;
+        padding-top: 50px;
+        padding-bottom: 100px;
+
+        .about {
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 25px;
+            margin-top: 20px;
+        }
+
+        ul {
+            padding: 0;
+
+            li {
+                list-style: none;
+                margin-bottom: 25px;
+                
+                strong {
+                    font-size: 20px;
+                }
+
+                p {
+                    font-size: 16px;
+                    margin-top: 15px;
+                    padding-left: 20px;
+                }
+            }
+        }
+    }
+
+    @media (max-width: $mobileBreakpoint) {
+        .faq-hero {
+            height: 200px;
+
+            h1 {
+                margin: 0 auto;
+            }
+        }
+
+        .faq-content {
+            padding-top: 25px;
+        }
+    }
+}

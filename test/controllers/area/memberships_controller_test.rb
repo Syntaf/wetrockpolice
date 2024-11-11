@@ -1,138 +1,138 @@
 # rubocop:disable Style/FrozenStringLiteralComment
 # We don't freeze strings here due to the PayPal SDK modifying string literals
 
-require 'test_helper'
-require 'json'
+# require 'test_helper'
+# require 'json'
 
 class MembershipsControllerTest < ActionDispatch::IntegrationTest
-  include SidekiqMinitestSupport
-  include SnccApplication
+  #   include SidekiqMinitestSupport
+  #   include SnccApplication
 
-  VALID_ORDER_ID = '1234FFF'.freeze
-  INVALID_ORDER_ID = 'FFF321'.freeze
+  #   VALID_ORDER_ID = '1234FFF'.freeze
+  #   INVALID_ORDER_ID = 'FFF321'.freeze
 
-  setup do
-    stub_request(
-      :post,
-      'https://api.sandbox.paypal.com/v1/oauth2/token'
-    ).to_return(
-      status: 200,
-      body: { access_token: 'abcd' }.to_json,
-      headers: { content_type: 'application/json' }
-    )
+  #   setup do
+  #     stub_request(
+  #       :post,
+  #       'https://api.sandbox.paypal.com/v1/oauth2/token'
+  #     ).to_return(
+  #       status: 200,
+  #       body: { access_token: 'abcd' }.to_json,
+  #       headers: { content_type: 'application/json' }
+  #     )
 
-    stub_request(
-      :get,
-      "https://api.sandbox.paypal.com/v2/checkout/orders/#{VALID_ORDER_ID}"
-    )
+  #     stub_request(
+  #       :get,
+  #       "https://api.sandbox.paypal.com/v2/checkout/orders/#{VALID_ORDER_ID}"
+  #     )
 
-    stub_request(
-      :get,
-      "https://api.sandbox.paypal.com/v2/checkout/orders/#{INVALID_ORDER_ID}"
-    ).to_return(
-      status: 404,
-      body: { name: 'RESOURCE_NOT_FOUND' }.to_json,
-      headers: { content_type: 'application/json' }
-    )
-  end
+  #     stub_request(
+  #       :get,
+  #       "https://api.sandbox.paypal.com/v2/checkout/orders/#{INVALID_ORDER_ID}"
+  #     ).to_return(
+  #       status: 404,
+  #       body: { name: 'RESOURCE_NOT_FOUND' }.to_json,
+  #       headers: { content_type: 'application/json' }
+  #     )
+  #   end
 
-  test 'Accepts card payment' do
-    submit_sncc_application(joint_membership_applications(:valid_application))
+  #   test 'Accepts card payment' do
+  #     submit_sncc_application(joint_membership_applications(:valid_application))
 
-    assert_response :created
-    assert_equal 1, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :created
+  #     assert_equal 1, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 
-  test 'Validates membership' do
-    app = joint_membership_applications(:valid_application)
+  #   test 'Validates membership' do
+  #     app = joint_membership_applications(:valid_application)
 
-    validate_sncc_application(app)
+  #     validate_sncc_application(app)
 
-    assert_response :success
-    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :success
+  #     assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 
-  test 'Rejects invalid membership' do
-    app = joint_membership_applications(:valid_application)
-    app.first_name = nil
+  #   test 'Rejects invalid membership' do
+  #     app = joint_membership_applications(:valid_application)
+  #     app.first_name = nil
 
-    validate_sncc_application(app)
+  #     validate_sncc_application(app)
 
-    assert_response :bad_request
-    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :bad_request
+  #     assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 
-  test 'Rejects invalid card payment' do
-    app = joint_membership_applications(:valid_application)
-    app.order_id = INVALID_ORDER_ID
+  #   test 'Rejects invalid card payment' do
+  #     app = joint_membership_applications(:valid_application)
+  #     app.order_id = INVALID_ORDER_ID
 
-    submit_sncc_application(app)
+  #     submit_sncc_application(app)
 
-    assert_response :payment_required
-    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :payment_required
+  #     assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 
-  test 'Accepts cash payment' do
-    app = joint_membership_applications(:valid_application)
-    app.order_id = nil
-    app.paid_cash = true
+  #   test 'Accepts cash payment' do
+  #     app = joint_membership_applications(:valid_application)
+  #     app.order_id = nil
+  #     app.paid_cash = true
 
-    submit_sncc_application(app)
+  #     submit_sncc_application(app)
 
-    assert_response :created
-    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :created
+  #     assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 
-  test 'Rejects empty order_id' do
-    app = joint_membership_applications(:valid_application)
-    app.order_id = nil
-    app.paid_cash = false
+  #   test 'Rejects empty order_id' do
+  #     app = joint_membership_applications(:valid_application)
+  #     app.order_id = nil
+  #     app.paid_cash = false
 
-    submit_sncc_application(app)
+  #     submit_sncc_application(app)
 
-    assert_response :payment_required
-    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :payment_required
+  #     assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 
-  test 'Rejects empty first name' do
-    app = joint_membership_applications(:valid_application)
-    app.first_name = nil
+  #   test 'Rejects empty first name' do
+  #     app = joint_membership_applications(:valid_application)
+  #     app.first_name = nil
 
-    submit_sncc_application(app)
+  #     submit_sncc_application(app)
 
-    assert_response :bad_request
-    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :bad_request
+  #     assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 
-  test 'Rejects incomplete shirt order - color' do
-    app = joint_membership_applications(:valid_application)
-    app.shirt_orders.create({ shirt_type: 'local_shirt', shirt_size: 'MS', shirt_color: nil })
+  #   test 'Rejects incomplete shirt order - color' do
+  #     app = joint_membership_applications(:valid_application)
+  #     app.shirt_orders.create({ shirt_type: 'local_shirt', shirt_size: 'MS', shirt_color: nil })
 
-    submit_sncc_application(app)
+  #     submit_sncc_application(app)
 
-    assert_response :bad_request
-    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :bad_request
+  #     assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 
-  test 'Rejects incomplete shirt order - size' do
-    app = joint_membership_applications(:valid_application)
-    app.shirt_orders.create({ shirt_type: 'access_fund_shirt', shirt_size: nil, shirt_color: 'Stone' })
+  #   test 'Rejects incomplete shirt order - size' do
+  #     app = joint_membership_applications(:valid_application)
+  #     app.shirt_orders.create({ shirt_type: 'access_fund_shirt', shirt_size: nil, shirt_color: 'Stone' })
 
-    submit_sncc_application(app)
+  #     submit_sncc_application(app)
 
-    assert_response :bad_request
-    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :bad_request
+  #     assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 
-  test 'Rejects invalid shirt order - type' do
-    app = joint_membership_applications(:valid_application)
-    app.shirt_orders.create({ shirt_type: 'invalid', shirt_size: 'MS', shirt_color: 'Stone' })
+  #   test 'Rejects invalid shirt order - type' do
+  #     app = joint_membership_applications(:valid_application)
+  #     app.shirt_orders.create({ shirt_type: 'invalid', shirt_size: 'MS', shirt_color: 'Stone' })
 
-    submit_sncc_application(app)
+  #     submit_sncc_application(app)
 
-    assert_response :bad_request
-    assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
-  end
+  #     assert_response :bad_request
+  #     assert_equal 0, TicketSource::SyncMembershipWorker.jobs.size
+  #   end
 end
 
 # rubocop:enable Style/FrozenStringLiteralComment

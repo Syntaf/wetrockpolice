@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module Wetrockpolice
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 7.0
 
     config.cache_store = :redis_cache_store, {
       url: ENV['REDIS_URL'],

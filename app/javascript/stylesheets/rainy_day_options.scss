@@ -1,0 +1,224 @@
+@import "vars.scss";
+
+
+body[data-page-controller="rainy_day_options"] {
+    background-color: #eee;
+
+    .page-header {
+        padding: 25px 25px 25px 0;
+        margin-bottom: 30px;
+
+        .container {
+            margin: 0 auto;
+            padding-left: 30px;
+
+            @media (max-width: $mobileBreakpoint) {
+                text-align: center;
+            }
+        }
+
+        .page-content {
+            min-height: 100%;
+        }
+
+        &.card {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        h1, h2 {
+            display: inline-block;
+            font-size: 26px;
+            margin: 0;
+        }
+
+        h1 {
+            font-weight: $extraBold;
+            padding-right: 10px;
+            border-right: 1px solid #eeeeee;
+
+            a {
+                color: black;
+                text-decoration: none;
+            }
+
+            @media (max-width: $mobileBreakpoint) {
+                margin-bottom: 10px;
+                border: none;
+                padding-right: 0;
+            }
+        }
+
+        h2 {
+            padding-left: 10px;
+
+            @media (max-width: $mobileBreakpoint) {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: $mobileBreakpoint) {
+            margin-bottom: 10px;
+        }
+    }
+
+    .crags {
+        display: flex;
+        flex-direction: row;
+        padding: 10px 10px 50px 10px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #eee;
+
+        .crag-list {
+            width: 30%;
+            position: relative;
+            margin-right: 10px;
+
+            .area-header {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                border-bottom: 1px solid #eee;
+                padding: 10px 0;
+                margin-bottom: 10px;
+
+                .header {
+                    color: black;
+                    flex: 1;
+                    font-weight: $bold;
+                    font-size: 26px;
+
+                    @media (max-width: $mobileBreakpoint) {
+                        display: none;
+                    }
+                }
+
+                .header-mobile {
+                    display: none;
+
+                    @media (max-width: $mobileBreakpoint) {
+                        display: block;
+                    }
+                }
+
+                @media (max-width: $mobileBreakpoint) {
+                    margin-bottom: 25px;
+                }
+            }
+
+            .mobile {
+                display: none;
+                position: absolute;
+                top: 21px;
+                right: 0;
+
+                .dropdown-toggle {
+                    outline: none;
+                    border: none;
+                    background: transparent;
+                    color: $primaryColor;
+                    font-weight: $extraBold;
+                }
+
+                @media (max-width: $mobileBreakpoint) {
+                    display: block;
+                }
+            }
+
+            .desktop {
+                display: block;
+                padding: 0;
+
+                li {
+                    font-size: 16px;
+                    padding: 5px 0;
+                    cursor: pointer;
+                    background-color: #eee; //Added background-color
+
+                    &.list-group-item {
+                        min-height: 0;
+                        border: none;
+                        color: #666;
+                        font-weight: $extraBold;
+                    }
+
+                    // &.active {
+                    //     background-color: transparent;
+                    //     color: $primaryColor;
+                    // }
+
+                    &:hover {
+                        background-color: transparent;
+                        color: $primaryColor;
+                    }
+                }
+
+                @media (max-width: $mobileBreakpoint) {
+                    display: none;
+                }
+            }
+
+            @media (max-width: $mobileBreakpoint) {
+                width: 100%;
+            }
+        }
+
+        .mountain-project {
+            width: 70%;
+            padding: 15px;
+            border-radius: 8px;
+
+            @media (max-width: $mobileBreakpoint) {
+                width: 100%;
+
+                #mountainProjectWidget {
+                    height: 300px !important;
+                }
+            }
+        }
+
+        @media (max-width: $mobileBreakpoint) {
+            display: block;
+            padding-bottom: 25px;
+        }
+    }
+
+    .crag-info {
+        // padding: 0 10px 35px 10px;
+        padding: 25px;
+        padding-left: 14px;
+        // margin-bottom: 35px;
+        background-color: #eee;
+
+        &.bottom-border {
+            border-bottom: 1px solid #eee;
+            margin-bottom: 35px;
+        }
+
+        &.bottom-padding {
+            min-height: 200px;
+
+            @media (max-width: $mobileBreakpoint) {
+                min-height: auto;
+                padding-bottom: 10px;
+            }
+        }
+
+        p, td, strong {
+            margin-bottom: 0;
+            color: #666;
+        }
+
+        tr {
+            & > td {
+                width: 225px;
+            }
+        }
+
+        h4 {
+            color: #666;
+            font-weight: $bold;
+            margin-bottom: 20px;
+        }
+    }
+}

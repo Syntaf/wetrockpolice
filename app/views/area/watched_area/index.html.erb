@@ -1,36 +1,43 @@
-<div class="hero-header-content" id="particles-js">
-  <div class="hero-header <%= @watched_area.slug %>"></div>
+<% content_for :body_attributes do %>
+  data-controller="watched-area"
+  data-watched-area-station-value="<%= @watched_area.station %>"
+  data-watched-area-development-mode-value="<%= development_mode? %>"
+<% end %>
+
+<div class="hero-header-content">
+  <!-- Background image container -->
+  <div class="hero-header <%= @watched_area.slug %>"
+    data-controller="async-image"
+    data-async-image-target="imageContainer"
+    data-async-image-image-url-value="<%= asset_pack_path(watched_area_bg_image) %>"
+    ></div>
   <div class="shadow-overlay"></div>
 
-  <!--<div class="notification-menu" id="temp-notification" tabindex="0" data-toggle="popover" data-trigger="focus" title="SNCC Membership Shirt Sale">
-    <i class="fas fa-bell"></i><span class="badge badge-light">1</span>
-  </div>-->
-
-  <div class="hero-container">
+  <div class="hero-container" data-watched-area-target="rainTileSection">
     <h1 class="animated bounceInLeft">Did it rain in <%= @watched_area.name %>?</h1>
     <span>It's been...</span>
     <div class="row time-since-rain">
       <div class="days card">
-        <div class="placeholder" data-role="loading">
+        <div class="placeholder" data-watched-area-target="loading">
           <div class="spinner">
             <div class="bounce1"></div>
             <div class="bounce2"></div>
             <div class="bounce3"></div>
           </div>
         </div>
-        <p data-role="days" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
-        <span data-role="days-label">Days</span>
+        <p data-watched-area-target="daysTile" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
+        <span data-watched-area-target="daysTileLabel">Days</span>
       </div>
       <div class="hours card">
-        <div class="placeholder" data-role="loading">
+        <div class="placeholder" data-watched-area-target="loading">
           <div class="spinner">
             <div class="bounce1"></div>
             <div class="bounce2"></div>
             <div class="bounce3"></div>
           </div>
         </div>
-        <p data-role="hours" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
-        <span data-role="hours-label">Hours</span>
+        <p data-watched-area-target="hoursTile" <% if @watched_area.manual_warn? %>class="manual-warn"<% end %>></p>
+        <span data-watched-area-target="hoursLabel">Hours</span>
       </div>
       <div class="warning-tooltip animated tada delay-2s">
         <i
@@ -51,58 +58,76 @@
       <% end %>
     </span>
     <div class="row call-to-action">
-      <button class="btn weather" data-role="scroll-to-weather">Can I Climb?</button>
-      <%= link_to 'Rainy Day Options', watched_area_rainy_day_options_path, class: 'btn rainy-day-options' %>
+      <button class="btn btn-white weather"
+        data-controller="scroll-to"
+        data-scroll-to-dest-value="#weatherBreakdown">
+        Can I Climb?
+      </button>
+      <%= link_to 'Rainy Day Options',
+        watched_area_rainy_day_options_path,
+        class: 'btn rainy-day-options' %>
     </div>
   </div>
 
   <a class="plug" target="_blank" href="<%= @watched_area.photo_credit_link %>?src=wetrockpolice">
-    <i class="fab fa-instagram"></i>
+    <i class="bi bi-instagram"></i>
     <p>Photography by @<%= @watched_area.photo_credit_name %></p>
   </a>
 
-  <p class="scroll-down"><i class="material-icons">expand_more</i> Scroll Down</p>
+  <div class="scroll-down">
+    <i class="bi bi-arrow-90deg-down"></i>
+    <span>Scroll Down</span>
+  </div>
   <div class="vertical-line"></div>
 </div>
-<div class="weather-breakdown" data-role="weather-section">
+<div class="weather-breakdown"
+  id="weatherBreakdown"
+  data-watched-area-target="rainGraphSection">
   <div class="container">
-    <div class="header" data-aos="fade-up">
+    <div class="header">
       <h2 data-role="weather-breakdown-header">The last recorded precipitation was on</h2>
-      <div class="spinner loading-date" data-role="loading-date">
+      <div class="spinner loading-date" data-watched-area-target="loading">
         <div class="bounce1"></div>
         <div class="bounce2"></div>
         <div class="bounce3"></div>
       </div>
-      <strong data-role="last-rain-date"></strong>
-      <%= link_to 'Where does this data come from?', watched_area_faqs_path %>
+      <strong data-watched-area-target="lastRainDate"></strong>
+      <div class="text-center">
+        <%= link_to 'Where does this data come from?',
+          watched_area_faqs_path,
+          class: 'd-inline-block' %>
+      </div>
     </div>
 
     <div class="content">
-      <div class="graph" data-aos="fade-up">
+      <div class="graph">
         <div class="graph-switcher">
-          <label class="custom-control-label daily-switch" for="graphSwitch">Daily</label>
-          <div class="custom-control custom-switch">
-            <input class="custom-control-input" id="graphSwitch" type="checkbox">
-            <span class="custom-control-track"></span>
-            <label class="custom-control-label" for="graphSwitch">Hourly</label>
+          <div class="d-inline-block me-1">Daily</div>
+          <div class="form-check form-switch d-inline-block">
+              <input type="checkbox"
+                class="form-check-input"
+                data-action="change->watched-area#toggleGraphDisplay"
+                style="cursor: pointer;">
+              <label for="site_state" class="form-check-label">Hourly</label>
           </div>
         </div>
-        <div class="overflow-wrapper">
-          <div class="graph-render" style="position: relative;">
+        <div class="overflow-wrapper d-relative">
+          <div class="graph-render d-flex justify-content-center align-items-center" style="position: relative;">
             <canvas id="timeSeries"></canvas>
           </div>
         </div>
       </div>
-      <div class="text-content" data-aos="fade-up">
-        <div class="text">
+      <div class="text-content">
+        <div class="text mb-3 text-dark">
           <%= @watched_area.landing_paragraph.html_safe %>
-          <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn faq' %>
         </div>
-        <div class="content-widget" data-aos="fade-up" id="customize-script-container"></div>
+      </div>
+      <div class="d-flex align-items-center justify-content-center">
+        <%= link_to 'FAQ', watched_area_faqs_path, class: 'btn btn-outline-dark faq' %>
       </div>
 
       <% if @watched_area.webcam_stid %>
-      <div data-aos="fade-up">
+      <div class="mt-3">
         <a name="windy-webcam-timelapse-player"
            data-id="<%= @watched_area.webcam_stid %>"
            data-play="day"
@@ -113,34 +138,6 @@
     </div>
   </div>
 </div>
-
-<script async type="text/javascript">
-    $(document).ready(function () {
-        var imageLoader = new ImageLoader({
-            'imageContainerSelector': '.hero-header.<%= @watched_area.slug %>',
-            'imageLoadedClass': '.hero-header-loaded'
-        })
-        var landingController = new LandingController({
-            'stid': '<%= @watched_area.station %>'
-        });
-
-        imageLoader.load();
-        landingController.initLandingView();
-
-        $('#temp-notification').popover({
-            trigger: 'focus',
-            html: true,
-            content: "<p>We've got a surprise for you! We've missed our climbing community and since we haven't been able to gather in person because of COVID, " +
-                     "we wanted to share a special Membership Drive with you. We printed up a limited run of brand new SNCC t-shirts with artwork by climber " +
-                     "<a class=\"inline-link\" href=\"http://www.marinainoue.com/\" target=\"_blank\">Marina Inoue</a> and we want to offer them to you all today for FREE!<br><br>" +
-                     "Well.. sort of :) Until July 31st, we'll include a brand new SNCC t-shirt with every $50 Membership purchased. All of you have to do is " +
-                     "join the SNCC or renew your membership here by July 31st.<br><br>We promise to keep advocating for climbers and our climbing areas by partnering " +
-                     "with the BLM in protecting public lands, re-bolting and replacing anchors at our favorite crags, and doing trail work and maintenance across " +
-                     "Southern Nevada's climbing areas, including supplying wag bags across Red Rock National Conservation Area." +
-                     "</p><a class=\"btn btn-primary\" role=\"button\" href=\"/redrock/sncc\">Join SNCC</a>"
-        });
-    });
-</script>
 
 <% if @watched_area.webcam_stid %>
 <script async type="text/javascript" src="https://webcams.windy.com/webcams/public/embed/script/player.js"></script>

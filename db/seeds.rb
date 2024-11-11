@@ -1,4 +1,13 @@
 ActiveRecord::Base.transaction do
+  admin = User.create!(
+    email: 'admin@wetrockpolice',
+    password: 'password',
+    super_admin: true,
+    admin: true,
+    approved: true
+  )
+  admin.confirm
+
   sncc = LocalClimbingOrg.create!(name: "Southern Nevada Climbers Coalition", slug: "sncc")
   bacc = LocalClimbingOrg.create!(name: "Bay Area Climbers Coalition", slug: "bacc")
   scma = LocalClimbingOrg.create!(name: "Southern California Mountaineers Association", slug: "scma")

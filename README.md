@@ -6,7 +6,8 @@
 ## Table of Contents
 
 - [Overview](#Overview)
-  - [Running Locally with Docker](#Running-Locally-with-Docker)
+  - [Dependencies](##Dependencies)
+  - [Running Locally](##Running-Locally-with-RVM-&-Docker)
 - [Contributing](#Contributing-Guide)
   - [Coding Standards](#Coding-Standards)
 - [Development Guide](#Development-Guide)
@@ -22,62 +23,78 @@ WetRockPolice is an open source project written in Rails 6 + PostgreSQL and host
 
 Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wetrockpolice/issues) tab for ideas on how to contribute.
 
-## Running Locally with Docker
+## Dependencies
 
-1. Clone the repository
-    ```
-    ~$: git clone git@github.com:Syntaf/wetrockpolice.git
-    ```
+To work with wetrockpolice locally you'll need the following dependencies installed on your system:
 
-2. Copy over the example environment and fill in any optional integrations
+- [Docker Compose](https://docs.docker.com/compose/install/) for running postgres & redis containers locally
+- [RVM](https://rvm.io/rvm/install) for managing your local ruby version (http server)
+- [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for managing your local node version (webpack server)
+- [VSCode](https://code.visualstudio.com/download) or your own preferred IDE
+
+## Running Locally with RVM & Docker
+
+The easiest way to work with wetrockpolice locally is to leverage Docker for your persistence layer
+dependencies (postgres & redis) and run your own http & webpack services via a native ruby
+installation (like via RVM)
+
+1. Install the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
    ```
-   ~$: cd wetrockpolice
-   ~$: cp .env.example .env
-   ~$: vim .env
+   rvm install 3.1.4
+   rvm use 3.1.4
+   ```
+  
+2. Install the required node version (`20.13.1`) via [NVM's installation docs](https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage)
+   ```
+   nvm install 20.13.1
+   nvm use 20.13.1
    ```
 
-3. Build the containers, and bring them up once finished
+3. Clone the repository
     ```
-    ~$ cd wetrockpolice
-    ~$ docker-compose build && docker-compose up -d
+    git clone git@github.com:Syntaf/wetrockpolice.git
     ```
 
-4. Run the containers (omit -d if you'd like them to run attached to your shell)
+4. Copy over the example environment. **Note:** You shouldn't need to change any configuration from
+   `.env.example` initially
    ```
-   ~$ docker-compose up -d
+   cd wetrockpolice
+   cp .env.example .env
    ```
 
-6. Run pending migrations
+5. Start up your `postgres` and `redis` containers to run in the background
     ```
-    ~$ docker-compose exec web rails db:migrate
-    ~$ docker-compose exec web rails db:migrate RAILS_ENV=test
-    ```
-
-7. Seed development data
-    ```
-    ~$ docker-compose exec web rails db:seed
+    make up
     ```
 
-8. Visit https://localhost:3001
+6. Install required gems & packages for running your webpack & http servers
+   ```
+   make install
+   ```
 
+7. Setup your database, run migrations & seed data
+   ```
+   make reset-db
+   ```
+
+8. Start your http & webpack servers
+   ```
+   ./bin/dev
+   ```
+
+9. Visit https://localhost:3001/redrock
 
 # Contributing
 
-This repository uses [Github Actions](https://github.com/features/actions) for continuous integration. Before a pull request can be merged into master it must pass all existing / new tests *as well* as linting (Rubocop). It is **highly** recommended that you use Rubcop during development as to not have to go back and forth between CI results and your code.
+This repository uses [Github Actions](https://github.com/features/actions) for continuous integration. Before a pull request can be merged into master it must pass all existing / new tests *as well* as linting (Rubocop). Using a rubocop extension is **highly** recommended.
 
 #### Using Rubocop on Visual Studio Code:
 
-- Download the [Solargraph Extension](https://github.com/castwide/vscode-solargraph) and use these settings:
+Download the following extensions which should come pre-configured in the included `.vscode/settings.json`
 
-  ```
-    // settings.json
-
-    {
-        "solargraph.diagnostics": true,
-        "solargraph.formatting": true
-    }
-
-  ```
+- [Shopify LSP](https://marketplace.visualstudio.com/items?itemName=Shopify.ruby-lsp)
+- [Ruby Debugger](https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg)
+- [ERB Formatter](https://marketplace.visualstudio.com/items?itemName=aliariff.vscode-erb-beautify)
 
   **Note: If your solargraph server ever crashes and VSCode stops linting your work, use the developer window reload command to restart it.
 
