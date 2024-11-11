@@ -2,105 +2,79 @@ import { Controller } from "@hotwired/stimulus";
 
 
 export default class extends Controller {
+  static targets = ["link"]; // we now have a this.sourceTarget or a this.sourceTargets array
+  
+  static options = {
+         "mp": {
+             'widgetSelector': '#mountainProjectWidget',
+             'defaultZoom': 11,
+             'height': 500,
+             'urlBase': 'https://www.mountainproject.com/widget'
+         },
+         'areaListElementSelector': '[data-role="rainy-day-list-option"]',
+               'activeSelectorClass': 'active',
+               'activeLabelSelector': '[data-role="active-title"]'
+   }
   connect() {
-    console.log('Hello, rainy day controller!');
+
+    }
+          
+updateMountainProjectWidget(event) {
+  const baseUrl = "https://www.mountainproject.com/widget?loc=fixed&";
+  const target = event.currentTarget
+
+  const x = target.dataset.lon; //Replace const y = $activeElement.data('lon');
+  const y = target.dataset.lat; //Replace const x = $activeElement.data('lat');
+  const z = target.dataset.mtz ? target.dataset.mtz : this.constructor.options.mp.defaultZoom //Replace const z = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
+  const h = this.constructor.options.mp.height //Replace const h = this.options.mp.height
+  const url =  `${baseUrl}x=${x}&y=${y}&z=${z}&h=${h}`
+
+  const iFrame = document.querySelector("iframe")
+  if (url === iFrame.src) return
+
+  return iFrame.setAttribute("src", url)
   }
 
-  // Rebuild the old JQuery based functionality here
-};
 
-// function RainyDayController(watchedAreaSlug, options) {
-//   this.watchedAreaSlug = watchedAreaSlug;
-//   this.options = $.extend(options, {
-//       'mp': {
-//           'widgetSelector': '#mountainProjectWidget',
-//           'defaultZoom': 11,
-//           'height': 500,
-//           'urlBase': 'https://www.mountainproject.com/widget'
-//       },
-//       'areaListElementSelector': '[data-role="rainy-day-list-option"]',
-//       'activeSelectorClass': 'active',
-//       'activeLabelSelector': '[data-role="active-title"]'
-//   });
+/*********This function fetches the area attributes and replaces the old ones with these***********/
 
-//   this.initView();
-// }
+async fetchArea (event) {
+  const href = this.linkTarget.getAttribute("href")
+  let url = href + '/rainy-day-options/'; 
 
-// RainyDayController.prototype.initView = function () {
-//   $(this.options.areaListElementSelector).click(this.handleAreaSelection.bind(this));
+const response = await fetch(url + event.currentTarget.dataset.id)
+    if (!response.ok) {
+      throw new Error('Network response error')
+    }
+    const data = await response.json()
+ 
+    // We need to select the attributes from fetch
+    const description = data.climbing_area.description
+    const rockType = data.climbing_area.rock_type
+    // const drivingTime = data.driving_time
 
-//   this.$activeLocation = $('.' + this.options.activeSelectorClass);
-//   this.$activeLabel = $(this.options.activeLabelSelector);
-//   this.$description = $('p[data-role="area-description"]');
-//   this.$rockType = $('strong[data-role="area-rock-type"]');
-//   this.$driveTime = $('strong[data-role="area-drive-time"]');
+    // We need to select the elements/attributes to replace
+    const areaDescription = document.querySelector('p[data-role="area-description"]')
+    areaDescription.innerHTML = description
 
-//   if (this.$activeLocation.length < 1)
-//   {
-//       console.error('No active list element found');
-//       return;
-//   }
+    const rockTypeElement = document.querySelector('strong[data-role="area-rock-type"]')
+    rockTypeElement.innerHTML = rockType
+    // const drivingTimeElement = document.querySelector('strong[data-role="area-drive-time"]')
+  }
 
-//   this.updateMountainProjectWidget(this.$activeLocation);
-// }
+showArea(event) {
+this.updateMountainProjectWidget(event);
+this.fetchArea(event)
+this.handleAreaSelection(event)
+}
 
-// RainyDayController.prototype.updateMountainProjectWidget = function ($activeElement) {
-//   var longitude = $activeElement.data('lon');
-//   var latitude = $activeElement.data('lat');
-//   var zoom = $activeElement.data('mtz') ? $activeElement.data('mtz') : this.options.mp.defaultZoom;
+// Method for changing the button text when an area from the dropdown menu is selected
+handleAreaSelection(event){
+  // We need to replace the text inside of the button with the active element
+  const menuInfo = document.getElementById("dropdownMenuButton")
+  if (!menuInfo) return 
+  const target = event.currentTarget;
+  menuInfo.innerText = target.innerText;
+}
 
-//   var newUrl = this.buildMountainProjectUrl(longitude, latitude, zoom);
-//   $(this.options.mp.widgetSelector).attr('src', newUrl);
-// }
-
-// RainyDayController.prototype.buildMountainProjectUrl = function (longitude, latitude, zoom) {
-//   return this.options.mp.urlBase + '?loc=fixed&' +
-//       'x=' + longitude + '&' +
-//       'y=' + latitude + '&' +
-//       'z=' + zoom + '&' +
-//       'h=' + this.options.mp.height
-// }
-
-// RainyDayController.prototype.handleAreaSelection = function (ev) {
-//   var $target = $(ev.target);
-//   var areaId = $target.data('id');
-//   var $selectedItems = $('[data-id="' + $target.data('id') + '"]');
-
-//   // Do nothing if the clicked element is already active
-//   if ($target.hasClass(this.options.activeSelectorClass))
-//   {
-//       return;
-//   }
-
-//   this.fetchArea(areaId)
-//       .then(this.displayArea.bind(this, $selectedItems));
-// }
-
-// RainyDayController.prototype.fetchArea = function (id) {
-//   var url = '/' + this.watchedAreaSlug + '/rainy-day-options/';
-//   return $.get(url + id);
-// }
-
-// RainyDayController.prototype.displayArea = function ($newActiveListItem, response) {
-//   if (!response || response.length == 0) {
-//       console.error('Issue connecting to server :(');
-//   }
-
-//   this.swapActiveClass($newActiveListItem);
-//   this.updatePageInformation(response);
-//   this.updateMountainProjectWidget($newActiveListItem);
-
-//   this.$activeLocation = $newActiveListItem;
-// }
-
-// RainyDayController.prototype.swapActiveClass = function($newActiveListItem) {
-//   this.$activeLocation.removeClass(this.options.activeSelectorClass);
-//   $newActiveListItem.addClass(this.options.activeSelectorClass);
-// }
-
-// RainyDayController.prototype.updatePageInformation = function(newAreaInformation) {
-//   this.$description.html(newAreaInformation['climbing_area']['description']);
-//   this.$rockType.html(newAreaInformation['climbing_area']['rock_type']);
-//   this.$driveTime.html(newAreaInformation['driving_time'] + ' minutes');
-//   this.$activeLabel.html(newAreaInformation['climbing_area']['name']);
-// }
+}
