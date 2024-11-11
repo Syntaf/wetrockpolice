@@ -17,7 +17,7 @@ WORKDIR /opt/wetrockpolice
 # instally ruby gems
 COPY Gemfile Gemfile.lock ./
 RUN gem install bundler
-RUN RAILS_ENV=production bundle install --jobs 4 --retry 3
+RUN bundle install --jobs 1
 
 # install node modules
 COPY package.json yarn.lock ./
