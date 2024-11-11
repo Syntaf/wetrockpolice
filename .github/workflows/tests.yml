@@ -12,7 +12,7 @@ jobs:
     environment: test
     services:
       db:
-        image: postgres:11
+        image: postgres:15
         env:
           POSTGRES_USER: wrp
           POSTGRES_PASSWORD: dev
@@ -35,13 +35,13 @@ jobs:
       - name: Setup Ruby & Bundle Install
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: '3.1'
           bundler-cache: true
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 10.13.0
+          node-version: 20.13.1
 
       - name: Configure Yarn Cache Location
         id: cache-locations
