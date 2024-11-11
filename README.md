@@ -7,7 +7,8 @@
 
 - [Overview](#Overview)
   - [Dependencies](##Dependencies)
-  - [Running Locally](##Running-Locally-with-RVM-&-Docker)
+  - [Running Locally with Docker](##Running-Locally-with-RVM-&-Docker)
+  - [Running Locally on OSX](##Running-Locally-on-OSX)
 - [Contributing](#Contributing-Guide)
   - [Coding Standards](#Coding-Standards)
 - [Development Guide](#Development-Guide)
@@ -85,7 +86,10 @@ installation (like via RVM)
 
 9. Visit http://localhost:3001
 
-## Running Locally on OSX -- Recommended
+## Running Locally on OSX 
+
+This option is similar to the above but assumes you are running your database and redis
+instance locally via `brew`, and you're within an OSX environment.
 
 1. Install RVM and the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
    ```
