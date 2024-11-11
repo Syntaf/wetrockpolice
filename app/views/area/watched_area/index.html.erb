@@ -1,6 +1,7 @@
 <% content_for :body_attributes do %>
   data-controller="watched-area"
   data-watched-area-station-value="<%= @watched_area.station %>"
+  data-watched-area-development-mode-value="<%= development_mode? %>"
 <% end %>
 
 <div class="hero-header-content">
@@ -137,37 +138,7 @@
     </div>
   </div>
 </div>
-<!--
-<script async type="text/javascript">
-    $(document).ready(function () {
-        var imageLoader = new ImageLoader({
-            'imageContainerSelector': '.hero-header.<%= @watched_area.slug %>',
-            'imageLoadedClass': '.hero-header-loaded'
-        })
-        var landingController = new LandingController({
-            'stid': '<%= @watched_area.station %>'
-        });
-
-        imageLoader.load();
-        landingController.initLandingView();
-
-        $('#temp-notification').popover({
-            trigger: 'focus',
-            html: true,
-            content: "<p>We've got a surprise for you! We've missed our climbing community and since we haven't been able to gather in person because of COVID, " +
-                     "we wanted to share a special Membership Drive with you. We printed up a limited run of brand new SNCC t-shirts with artwork by climber " +
-                     "<a class=\"inline-link\" href=\"http://www.marinainoue.com/\" target=\"_blank\">Marina Inoue</a> and we want to offer them to you all today for FREE!<br><br>" +
-                     "Well.. sort of :) Until July 31st, we'll include a brand new SNCC t-shirt with every $50 Membership purchased. All of you have to do is " +
-                     "join the SNCC or renew your membership here by July 31st.<br><br>We promise to keep advocating for climbers and our climbing areas by partnering " +
-                     "with the BLM in protecting public lands, re-bolting and replacing anchors at our favorite crags, and doing trail work and maintenance across " +
-                     "Southern Nevada's climbing areas, including supplying wag bags across Red Rock National Conservation Area." +
-                     "</p><a class=\"btn btn-primary\" role=\"button\" href=\"/redrock/sncc\">Join SNCC</a>"
-        });
-    });
-</script>
--->
 
 <% if @watched_area.webcam_stid %>
-
 <script async type="text/javascript" src="https://webcams.windy.com/webcams/public/embed/script/player.js"></script>
 <% end %>

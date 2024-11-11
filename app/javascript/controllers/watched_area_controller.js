@@ -5,6 +5,14 @@ import { parseDailyIntervals, parseHourlyIntervals } from "../utils";
 import Chart from 'chart.js/auto';
 import { format } from 'date-fns';
 
+const apiOptions = {
+  'token': '2153743de639465ebbb30fa392c748de',
+  'stid': '',
+  'recent': 28800,
+  'units': 'english',
+  'interval': 'hour',
+  'precip': 1,
+}
 
 export default class extends Controller {
   static targets = [
@@ -19,16 +27,8 @@ export default class extends Controller {
   ]
 
   static values = {
-    'station': String
-  }
-
-  static apiOptions = {
-    'token': '2153743de639465ebbb30fa392c748de',
-    'stid': '',
-    'recent': 28800,
-    'units': 'english',
-    'interval': 'hour',
-    'precip': 1,
+    'station': String,
+    'developmentMode': Boolean
   }
 
   async connect() {
@@ -68,13 +68,26 @@ export default class extends Controller {
         ], []);
   }
 
-  // TODO -- make the actual API request
   async fetchObservations() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(precipResponse);
-      }, 1500);
+    if (this.developmentModeValue) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(precipResponse);
+        }, 1500);
+      });
+    }
+
+    const fetchParams = new URLSearchParams({
+      ...apiOptions,
+      'stid': this.stationValue
     });
+
+    const response = await fetch(
+      'https://api.synopticdata.com/v2/stations/timeseries?' + fetchParams.toString()
+    );
+
+    return await response.json();
+
   }
 
   renderRainInformation(intervals) {
