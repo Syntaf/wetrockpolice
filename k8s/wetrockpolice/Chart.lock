@@ -3,13 +3,13 @@ dependencies:
   repository: https://helm.nginx.com/stable
   version: 1.2.0
 - name: external-dns
-  repository: https://charts.bitnami.com/bitnami
-  version: 7.2.0
+  repository: https://kubernetes-sigs.github.io/external-dns/
+  version: 1.19.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 15.4.0
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 19.3.0
-digest: sha256:a53bfd1490a7c6fe5a37e02fc4b4649efdd5f17234c09d00371ea3a20ce0ba98
-generated: "2024-07-18T18:30:25.260643-07:00"
+digest: sha256:b237e9ccec23228c9811546ffc6cdbf46f324f6fa678b27d0d759278d35cc68b
+generated: "2025-12-21T09:13:14.823848-08:00"

@@ -6,8 +6,8 @@ dependencies:
     version: "1.2.0"
     repository: "https://helm.nginx.com/stable"
   - name: external-dns
-    version: "7.2.0"
-    repository: "https://charts.bitnami.com/bitnami"
+    repository: https://kubernetes-sigs.github.io/external-dns/
+    version: 1.19.0
   - name: postgresql
     version: "15.4.0"
     repository: "https://charts.bitnami.com/bitnami"

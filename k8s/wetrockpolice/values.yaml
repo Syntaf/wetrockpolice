@@ -19,7 +19,7 @@ image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "9f04e157328d196505c6664e2daabe4668ac5b1c"
+  tag: "27d4872db76918d047dd954cde7d600856bbba0e"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -102,11 +102,12 @@ nginx-ingress:
 external-dns:
   rbac:
     create: true
-  crd:
-    create: true
-  provider: digitalocean
-  digitalocean:
-    apiToken: my-api-token
+  namespaced: true
+  provider:
+    name: digitalocean
+  env:
+    - name: DO_TOKEN
+      value: ""
   interval: "1m"
   policy: sync
   domainFilters: ['wetrockpolice.com']
@@ -114,6 +115,7 @@ external-dns:
     doks.digitalocean.com/node-pool: secondary
 postgresql:
   image:
+    repository: "bitnamilegacy/postgresql"
     tag: 15.1.0-debian-11-r12
   auth:
     username: wetrockpolice
@@ -140,3 +142,5 @@ redis:
       enabled: false
   cluster:
     enabled: false
+  image:
+    repository: "bitnamilegacy/redis"
