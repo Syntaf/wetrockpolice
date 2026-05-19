@@ -11,6 +11,8 @@ paypal:
   secret: ''
 ticketsource:
   secret: ''
+digitalocean:
+  token: ''
 sidekiq:
   replicaCount: 0
   autoscaling:
