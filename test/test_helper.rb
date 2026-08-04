@@ -10,6 +10,13 @@ require 'minitest/autorun'
 require 'rails/test_help'
 require 'webmock/minitest'
 
+# System tests drive chromedriver and the in-process Capybara server over
+# 127.0.0.1; webmock/minitest blocks every connection by default, which turns
+# each browser command into a NetConnectNotAllowedError. Real external hosts
+# stay blocked -- keeping accidental outbound calls out of the suite is the
+# only reason webmock is a dependency here.
+WebMock.disable_net_connect!(allow_localhost: true)
+
 class ActiveSupport::TestCase
   fixtures :all
 end

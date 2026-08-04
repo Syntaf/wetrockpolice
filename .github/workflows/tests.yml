@@ -122,6 +122,45 @@ jobs:
         run: |
           bundle exec rails test
 
+      # `rails test` does not pick up test/system, so system tests need their
+      # own invocation. They run headless Chrome against a Puma booted in
+      # process, and assert the JavaScript half of the weather feature that no
+      # controller test can reach.
+      #
+      # SKIP_JS_BUILD/SKIP_CSS_BUILD stay set for the same reason as the unit
+      # step, and it matters more here: the whole point of this step is to
+      # exercise the bundle, so it must be the yarn-built one from Build
+      # Assets. Letting test:prepare rebuild would hand that to bun and mean
+      # the system test verifies a bundle no other job or image ever produces.
+      # Assets are already on disk from Build Assets, so nothing is missing.
+      #
+      # Chrome itself is preinstalled on ubuntu-latest; selenium-manager
+      # (bundled with selenium-webdriver 4.x) downloads the matching
+      # chromedriver, so there is no browser setup step and no webdrivers gem.
+      - name: Run System Tests
+        env:
+          POSTGRES_TEST_DB: wetrockpolice_test
+          POSTGRES_USER: wrp
+          POSTGRES_PASSWORD: dev
+          POSTGRES_HOST: localhost
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          SKIP_JS_BUILD: "1"
+          SKIP_CSS_BUILD: "1"
+        run: |
+          bundle exec rails test:system
+
+      # A headless browser failure is close to undebuggable from the log
+      # alone; Capybara writes a screenshot of the page at the point of
+      # failure, so keep it when there is one.
+      - name: Upload System Test Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-test-screenshots
+          path: tmp/screenshots
+          if-no-files-found: ignore
+
   # Images publish only for pushes to master, and only after the suite is
   # green. Previously this lived in build.yml and ran unconditionally, so a
   # failing branch still shipped an image to Docker Hub.

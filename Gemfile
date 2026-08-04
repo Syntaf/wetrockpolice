@@ -2,7 +2,10 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 3.1'
+# Single source of truth for the interpreter version: .ruby-version drives
+# rvm locally, ruby/setup-ruby in CI, and this directive, so they cannot drift
+# (the lockfile recorded 3.1.4 while .ruby-version pinned 3.1.7).
+ruby file: '.ruby-version'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -50,9 +53,12 @@ gem 'puma', '~> 6.4', '>= 6.4.3'
 # gem 'bcrypt', '~> 3.1.7'
 
 group :development, :test do
-  # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '~> 2.13'
-  gem 'selenium-webdriver'
+  # Adds support for Capybara system testing and selenium driver.
+  # 3.40 is the current series; 2.18 was a 2018 release that predates the
+  # W3C-WebDriver-only selenium 4 API. selenium 4.x resolves its own
+  # driver binary through selenium-manager, so no webdrivers gem is needed.
+  gem 'capybara', '~> 3.40'
+  gem 'selenium-webdriver', '~> 4.19'
   gem 'webmock'
 end
 
