@@ -44,12 +44,15 @@ gem 'sidekiq', '~> 7.0'
 # gem 'bcrypt', '~> 3.1.7'
 
 group :development, :test do
-  # gem 'codecov', require: false
-
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 2.13'
   gem 'selenium-webdriver'
   gem 'webmock'
+end
+
+group :test do
+  # Test coverage baseline
+  gem 'simplecov', require: false
 end
 
 group :development do
