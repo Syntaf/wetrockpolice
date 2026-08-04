@@ -29,6 +29,12 @@ module Wetrockpolice
     # dependency list at "Postgres".
     config.cache_store = :memory_store
 
+    # Sidekiq is gone. The only background work left is the admin
+    # notification mail, so in-process threads are enough. Set explicitly
+    # rather than leaning on Active Job's default so the decision is
+    # greppable. config/environments/test.rb overrides this with :test.
+    config.active_job.queue_adapter = :async
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
