@@ -31,8 +31,9 @@ gem 'webpacker'
 # Rails framework — pinned to the 7.1 series; the upgrade to 7.2+ is a
 # deliberate, separately-tested step, not something `bundle update` may do.
 gem 'rails', '~> 7.1.6'
-# Use Puma as the app server
-gem 'puma', '~> 6.4'
+# Use Puma as the app server. The `>= 6.4.3` floor is the Phase 0 security
+# patch; the move to Puma 7.x is a separate, deliberate step.
+gem 'puma', '~> 6.4', '>= 6.4.3'
 # Use Redis adapter for caching & cable
 gem 'redis', '~> 4.0'
 # Use faster connection library for Redis
