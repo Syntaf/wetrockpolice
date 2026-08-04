@@ -1,5 +1,14 @@
 .git
 node_modules
+# Stray bun lockfiles (written by cssbundling/jsbundling when a bun binary is
+# on PATH) must never reach the image: jsbundling-rails picks its tool by
+# lockfile presence *before* checking availability, so a copied-in bun.lockb
+# makes assets:precompile run `bun install` in an image that only has yarn.
+bun.lockb
+bun.lock
+# Locally-built assets; the image builds its own via assets:precompile.
+public/assets
+app/assets/builds
 config/master.key
 config/credentials.yml.enc
 secrets.yaml

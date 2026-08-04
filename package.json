@@ -2,6 +2,7 @@
   "name": "wetrockpolice",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.4",
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.0",
     "@popperjs/core": "^2.11.8",
@@ -14,7 +15,7 @@
     "sass": "1.77.8"
   },
   "scripts": {
-    "build": "esbuild app/javascript/application.js --bundle --sourcemap --minify --outdir=app/assets/builds --public-path=/assets",
+    "build": "esbuild app/javascript/application.js app/javascript/rails_admin.js --bundle --sourcemap --minify --format=esm --splitting --chunk-names=[name]-[hash].digested --outdir=app/assets/builds --public-path=/assets",
     "build:css": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css ./app/assets/stylesheets/rails_admin.scss:./app/assets/builds/rails_admin.css --no-source-map --load-path=node_modules --quiet-deps --style=compressed"
   },
   "engines": {

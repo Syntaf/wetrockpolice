@@ -11,7 +11,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,600|Noto+Sans:400,600|Raleway:500,600,800">
 
     <%= stylesheet_link_tag 'application' %>
-    <%= javascript_include_tag 'application', defer: true %>
+    <%# type="module": the esbuild bundle is built with --format=esm
+        --splitting so the dev-only weather fixture loads as a separate
+        chunk; module scripts are deferred by default. %>
+    <%= javascript_include_tag 'application', type: 'module' %>
 
     <%= render partial: 'shared/analytics' %>
 

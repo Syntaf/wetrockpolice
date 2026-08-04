@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus";
-import precipResponse from '../fixtures/precipitation_response';
 import { SYNOPTIC_OK_CODE } from "../constants";
 import { parseDailyIntervals, parseHourlyIntervals } from "../utils";
 // Named imports instead of 'chart.js/auto' so esbuild tree-shakes every
@@ -85,6 +84,12 @@ export default class extends Controller {
 
   async fetchObservations() {
     if (this.developmentModeValue) {
+      // Dynamic import so esbuild splits the 123KB mock Synoptic response
+      // into a separate chunk that is only ever fetched in development —
+      // a static top-level import would ship it to every production visitor.
+      const { default: precipResponse } =
+        await import('../fixtures/precipitation_response');
+
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(precipResponse);
