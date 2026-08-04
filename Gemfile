@@ -20,12 +20,6 @@ gem 'meta-tags', '~> 2.20'
 gem 'pg'
 # Administrative backend
 gem 'rails_admin', '~> 3.1'
-# Third-party integrations client
-gem 'rest-client', '~> 2.1.0'
-# Dump data into seed file
-gem 'seed_dump'
-# K8s health checking
-gem 'rails-healthcheck'
 # Use webpacker js bundler
 gem 'webpacker'
 # Rails framework — pinned to the 7.1 series; the upgrade to 7.2+ is a

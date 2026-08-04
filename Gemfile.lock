@@ -116,7 +116,6 @@ GEM
       responders
       warden (~> 1.2.3)
     docile (1.4.1)
-    domain_name (0.6.20240107)
     dotenv (3.1.0)
     dotenv-rails (3.1.0)
       dotenv (= 3.1.0)
@@ -126,9 +125,6 @@ GEM
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashdiff (1.1.0)
-    http-accept (1.7.0)
-    http-cookie (1.0.5)
-      domain_name (~> 0.5)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     io-console (0.7.2)
@@ -162,9 +158,6 @@ GEM
     marcel (1.2.1)
     meta-tags (2.20.0)
       actionpack (>= 6.0.0, < 7.2)
-    mime-types (3.5.2)
-      mime-types-data (~> 3.2015)
-    mime-types-data (3.2024.0305)
     mini_mime (1.1.5)
     minitest (5.25.1)
     mutex_m (0.2.0)
@@ -178,7 +171,6 @@ GEM
       timeout
     net-smtp (0.5.1)
       net-protocol
-    netrc (0.11.0)
     nio4r (2.7.5)
     nokogiri (1.16.7-aarch64-linux)
       racc (~> 1.4)
@@ -232,9 +224,6 @@ GEM
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
-    rails-healthcheck (1.4.0)
-      actionpack
-      railties
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
@@ -264,11 +253,6 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rest-client (2.1.0)
-      http-accept (>= 1.7.0, < 2.0)
-      http-cookie (>= 1.0.2, < 2.0)
-      mime-types (>= 1.16, < 4.0)
-      netrc (~> 0.8)
     rexml (3.2.6)
     rubocop (1.63.0)
       json (~> 2.3)
@@ -294,9 +278,6 @@ GEM
     ruby-progressbar (1.13.0)
     rubyzip (2.3.2)
     securerandom (0.4.1)
-    seed_dump (3.3.1)
-      activerecord (>= 4)
-      activesupport (>= 4)
     selenium-webdriver (4.19.0)
       base64 (~> 0.2)
       rexml (~> 3.2, >= 3.2.5)
@@ -365,13 +346,10 @@ DEPENDENCIES
   pg
   puma (~> 6.4, >= 6.4.3)
   rails (~> 7.1.6)
-  rails-healthcheck
   rails_admin (~> 3.1)
-  rest-client (~> 2.1.0)
   rubocop
   rubocop-minitest
   rubocop-rails
-  seed_dump
   selenium-webdriver
   simplecov
   tzinfo-data
