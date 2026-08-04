@@ -13,6 +13,10 @@ $primary: $salmon;
 $bootstrap-icons-font-dir: '.';
 @import 'bootstrap-icons/font/bootstrap-icons';
 
+// Base64 hero placeholders + full-res hero backgrounds (was inline <style>
+// in the layout head).
+@import 'hero_placeholders';
+
 html, body {
     width: 100%;
     height: 100%;
