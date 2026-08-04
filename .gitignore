@@ -29,8 +29,6 @@
 
 coverage
 
-/public/packs
-/public/packs-test
 /node_modules
 /yarn-error.log
 yarn-debug.log*
@@ -38,7 +36,9 @@ yarn-debug.log*
 .DS_Store
 
 /config/master.key
-secrets.yaml/public/assets
+secrets.yaml
+
+/public/assets
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /bun.lockb

@@ -18,9 +18,11 @@ install:
 restart-pg:
 	docker compose restart postgres
 
-.PHONY: pcat 
+# Build the JS/CSS bundles tests serve from app/assets/builds (Propshaft
+# serves them live in dev/test; no precompile step needed).
+.PHONY: pcat
 pcat:
-	rm -rf public/packs-test && RAILS_ENV=test NODE_OPTIONS=--openssl-legacy-provider rails assets:precompile
+	yarn build && yarn build:css
 
 .PHONY: db-drop
 db-drop:

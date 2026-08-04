@@ -32,20 +32,20 @@ services:
       - postgres
     env_file:
       - .env
-    
-  webpacker:
+
+  # Watches and rebuilds the esbuild + sass bundles into app/assets/builds,
+  # which the web service serves via Propshaft (replaces webpack-dev-server).
+  assets:
     build:
       context: .
       dockerfile: Dockerfile.development
       args:
         RAILS_ENV: development
-    command: bash -c "rm -rf /opt/wetrockpolice/public/packs && NODE_OPTIONS=--openssl-legacy-provider ./bin/webpack-dev-server"
+    command: bash -c "yarn build --watch & exec yarn build:css --watch"
     volumes:
       - .:/opt/wetrockpolice
       - /opt/wetrockpolice/tmp
       - /opt/wetrockpolice/node_modules
-    ports:
-      - '3035:3035'
     env_file:
       - .env
 

@@ -30,13 +30,13 @@ To work with wetrockpolice locally you'll need the following dependencies instal
 
 - [Docker Compose](https://docs.docker.com/compose/install/) for running the postgres container locally
 - [RVM](https://rvm.io/rvm/install) for managing your local ruby version (http server)
-- [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for managing your local node version (webpack server)
+- [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for managing your local node version (esbuild/sass asset builds)
 - [VSCode](https://code.visualstudio.com/download) or your own preferred IDE
 
 ## Running Locally with RVM & Docker
 
 The easiest way to work with wetrockpolice locally is to leverage Docker for your persistence layer
-dependency (postgres) and run your own http & webpack services via a native ruby
+dependency (postgres) and run your own http server & asset watchers via a native ruby
 installation (like via RVM)
 
 1. Install the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
@@ -68,7 +68,7 @@ installation (like via RVM)
     make up
     ```
 
-6. Install required gems & packages for running your webpack & http servers
+6. Install required gems & packages for running your http server & asset builds
    ```
    make install
    ```
@@ -78,7 +78,7 @@ installation (like via RVM)
    make reset-db
    ```
 
-8. Start your http & webpack servers
+8. Start your http server & esbuild/sass watchers
    ```
    ./bin/dev
    ```

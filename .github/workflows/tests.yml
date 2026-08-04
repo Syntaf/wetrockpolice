@@ -30,7 +30,6 @@ jobs:
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
-      BUNDLE_BUILD__SASSC: "--disable-march-tune-native"
 
     steps:
       - name: Checkout Code
@@ -61,22 +60,17 @@ jobs:
 
       - name: Install Javascript Packages
         run: |
-          NODE_OPTIONS=--openssl-legacy-provider yarn install --pure-lockfile
+          yarn install --pure-lockfile
 
-      - name: Compile Assets
-        env:
-          RAILS_ENV: test
+      # esbuild bundle + both sass builds (app and rails_admin) into
+      # app/assets/builds, served by Propshaft in the test env. Invoked
+      # directly with yarn rather than via javascript:build/css:build
+      # because js/cssbundling-rails prefer bun over yarn whenever a bun
+      # binary is present (GitHub runners ship one), and yarn.lock is this
+      # repo's single source of dependency truth.
+      - name: Build Assets
         run: |
-          NODE_OPTIONS=--openssl-legacy-provider bundle exec rails webpacker:compile
-
-      # rails_admin's stylesheet (asset_source :importmap) is a sass build
-      # into app/assets/builds, served by Propshaft. Invoked directly with
-      # yarn rather than via css:build because cssbundling-rails prefers bun
-      # over yarn whenever a bun binary is present (GitHub runners ship one),
-      # and yarn.lock is this repo's single source of dependency truth.
-      - name: Build rails_admin CSS
-        run: |
-          yarn build:css
+          yarn build && yarn build:css
 
       - name: Create Database
         env:
