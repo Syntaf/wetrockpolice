@@ -29,6 +29,10 @@ class ActiveSupport::TestCase
   fixtures :all
 end
 
+class ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+end
+
 module SnccApplication
   def submit_sncc_application(app)
     post watched_area_local_climbing_org_new_membership_url :redrock, :sncc, params: {
