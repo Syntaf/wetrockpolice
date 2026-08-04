@@ -27,7 +27,7 @@ class WatchedAreaWeatherTest < ApplicationSystemTestCase
 
   # Each tile holds either an integer count or the infinity glyph the
   # controller writes when the fixture contains no rain at all.
-  TILE_TEXT = /\A(\d+|∞)\z/
+  TILE_TEXT = /\A(\d+|∞)\z/.freeze
 
   setup do
     # Read per-request by ApplicationHelper#development_mode? while the page is
@@ -73,7 +73,24 @@ class WatchedAreaWeatherTest < ApplicationSystemTestCase
     # pixels: dimensions, then actual drawn (non-transparent) content.
     assert_selector 'canvas#timeSeries', wait: WAIT
 
-    canvas = page.evaluate_script(<<~JS)
+    canvas = chart_canvas_metrics
+
+    assert_operator canvas['width'].to_i, :>, 0,
+                    'chart canvas has zero width; Chart.js never sized it'
+    assert_operator canvas['height'].to_i, :>, 0,
+                    'chart canvas has zero height; Chart.js never sized it'
+    assert_operator canvas['painted'].to_i, :>, 0,
+                    'chart canvas is blank; Chart.js sized it but drew nothing'
+  end
+
+  private
+
+  # Canvas dimensions plus a count of non-transparent pixels. The pixel count
+  # is the assertion that actually bites: Chart.js sizes the canvas before it
+  # draws, so an unregistered bar controller yields a correctly sized but
+  # entirely blank canvas.
+  def chart_canvas_metrics
+    page.evaluate_script(<<~JS)
       (() => {
         const el = document.getElementById('timeSeries');
         const ctx = el.getContext('2d');
@@ -90,12 +107,5 @@ class WatchedAreaWeatherTest < ApplicationSystemTestCase
         return { width, height, painted };
       })()
     JS
-
-    assert_operator canvas['width'].to_i, :>, 0,
-                    'chart canvas has zero width; Chart.js never sized it'
-    assert_operator canvas['height'].to_i, :>, 0,
-                    'chart canvas has zero height; Chart.js never sized it'
-    assert_operator canvas['painted'].to_i, :>, 0,
-                    'chart canvas is blank; Chart.js sized it but drew nothing'
   end
 end
