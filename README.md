@@ -1,7 +1,6 @@
 # WetRockPolice ![](/docs/police-logo.png)
 
-[![test](https://github.com/Syntaf/wetrockpolice/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Syntaf/wetrockpolice/actions/workflows/tests.yml)
-[![build](https://github.com/Syntaf/wetrockpolice/actions/workflows/build.yml/badge.svg)](https://github.com/Syntaf/wetrockpolice/actions/workflows/build.yml)
+[![test & build](https://github.com/Syntaf/wetrockpolice/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Syntaf/wetrockpolice/actions/workflows/tests.yml)
 
 ## Table of Contents
 

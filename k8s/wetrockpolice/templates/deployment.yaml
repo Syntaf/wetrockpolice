@@ -46,6 +46,8 @@ spec:
               value: redis://wetrockpolice-redis-master:6379/0
             - name: RAILS_SERVE_STATIC_FILES
               value: "true"
+            - name: RAILS_LOG_TO_STDOUT
+              value: "1"
             - name: WETROCKPOLICE_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
