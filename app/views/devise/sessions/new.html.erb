@@ -1,7 +1,7 @@
 <div class="session-page-wrapper">
   <div class="login card">
     <h3>Administration Portal</h3>
-    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <%= form_with(model: resource, as: resource_name, url: session_path(resource_name)) do |f| %>
       <div class="field mb-3">
         <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Email address" %>
       </div>
