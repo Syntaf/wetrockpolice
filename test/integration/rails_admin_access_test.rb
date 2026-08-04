@@ -14,6 +14,39 @@ class RailsAdminAccessTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  # rails_admin 3.3 runs with `asset_source :importmap`: its stylesheet is a
+  # sass build served by Propshaft from app/assets/builds, and its JS arrives
+  # via the engine importmap (config/importmap.rails_admin.rb) whose entry
+  # module is served by Propshaft from app/javascript. If any of that wiring
+  # breaks, the dashboard renders but ships without assets — so assert the
+  # references AND that each locally-served asset actually resolves.
+  test 'dashboard assets are served via importmap + Propshaft, not Webpacker' do
+    sign_in users(:super_admin)
+
+    get rails_admin_path
+    assert_response :success
+
+    assert_no_match %r{/packs/}, response.body,
+                    'admin must no longer reference Webpacker pack assets'
+
+    # Propshaft-digested stylesheet built from app/assets/stylesheets/rails_admin.scss
+    css_paths = response.body.scan(%r{href="(/assets/rails_admin-[a-f0-9]+\.css)"}).flatten
+    assert_equal 1, css_paths.size, 'expected exactly one Propshaft-served rails_admin.css link'
+
+    # The engine importmap is inlined; its "rails_admin" entry pin must
+    # resolve to a local Propshaft asset (app/javascript/rails_admin.js).
+    importmap_json = response.body[%r{<script type="importmap"[^>]*>(.*?)</script>}m, 1]
+    assert importmap_json, 'expected an inline <script type="importmap"> in the dashboard head'
+    imports = JSON.parse(importmap_json).fetch('imports')
+    entry_path = imports.fetch('rails_admin')
+    assert_match %r{\A/assets/rails_admin-[a-f0-9]+\.js\z}, entry_path
+
+    (css_paths + [entry_path]).each do |asset_path|
+      get asset_path
+      assert_response :success, "expected #{asset_path} to be served, got #{response.status}"
+    end
+  end
+
   test 'anonymous visitors are sent to the sign-in page' do
     get rails_admin_path
 
