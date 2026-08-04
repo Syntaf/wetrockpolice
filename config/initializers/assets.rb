@@ -14,3 +14,8 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules/@fortawes
 # bootstrap-icons with $bootstrap-icons-font-dir: "." so the compiled url()s
 # are sibling references, resolved against this directory.
 Rails.application.config.assets.paths << Rails.root.join('node_modules/bootstrap-icons/font/fonts')
+
+# SCSS under app/assets/stylesheets is sass *input* (compiled into
+# app/assets/builds); without this Propshaft digests and ships every raw
+# .scss source into public/assets.
+Rails.application.config.assets.excluded_paths << Rails.root.join('app/assets/stylesheets')
