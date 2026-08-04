@@ -45,18 +45,36 @@ Phases ship independently, in order. Each has an explicit verification gate.
 
 ### Phase 0 — Safety net & hygiene (no framework changes)
 
-- Commit the live `values.yaml` external-dns hotfix; run `helm get values` and reconcile repo vs cluster before any Helm work.
-- `.dockerignore`: add `secrets.yaml`, `.env*`, `k8s/`, `log/`, `tmp/`, `docs/`. Audit pushed Docker Hub image layers for baked secrets (`secrets.yaml`/`.env` were COPY-able until now); rotate any leaked credentials.
-- One-time `pg_dump` of production (pre-migration insurance; also the restore source for Phase 5 cutover).
+Code items (delivered on `modernization/phase-0-safety-net`):
+
+- Commit the live `values.yaml` external-dns hotfix.
+- `.dockerignore`: add `secrets.yaml`, `.env*`, `k8s/`, `log/`, `tmp/`, `docs/`.
 - Fix the live Devise/Turbo bug: `config.responder.error_status = :unprocessable_entity`, `redirect_status = :see_other` (failed sign-ins currently render 200 into Turbo Drive, which discards them).
 - Add ~8 integration tests: sign-in success/failure, rails_admin dashboard as super_admin, `/admin/sidekiq` auth gate (until removed), Devise confirmation redirect, Ability `can?`/`cannot?` matrix (guards the YAML-serialized `users.manages` column through defaults bumps).
 - CI: `ruby-version: .ruby-version` (currently hardcoded 3.1.4 vs pinned 3.1.7), `needs: test` on the image-push job (images currently publish even when tests fail), stop building images on `pull_request`.
 - Regenerate binstubs (all carry Windows `ruby.exe` shebangs; `bin/rails` is unrunnable on macOS).
 - `RAILS_LOG_TO_STDOUT=1` in deployment.yaml; prod `log_level :info`.
-- Security patches within current majors: rails → 7.1.6, puma → 6.4.3+.
+- Security patches within current majors: rails → 7.1.6, puma → 6.4.3+. Re-lock with `bundle lock --conservative` from the pre-branch lockfile so transitive gems stay put — Phase 0 exists to shrink risk before the framework work, and with no staging environment this is the first deploy of the modernization; it must not also carry an unrelated dependency blast radius. (Note: `bundle lock --update <gems> --conservative` is unusable on bundler 2.5.7 — it skips the metadata fetch and silently writes an empty lockfile.)
 - Re-enable SimpleCov to baseline coverage.
 
-**Gate:** suite green in CI on 7.1.6; failed sign-in renders the form with an error visibly in a browser.
+#### Owner actions — outstanding
+
+None of these can be performed from the repository; they need Docker Hub, production database and cluster access. **The Phase 0 gate is not met until each is done or consciously waived.**
+
+- [ ] **Rotate credentials exposed in published Docker Hub layers.** `Dockerfile.production` does a blanket `COPY . .`, and until this branch `.dockerignore` excluded only `.git`, `node_modules`, `config/master.key` and `config/credentials.yml.enc`. Untracked `.env` and `secrets.yaml` sit at the repo root, so any image built by `make build` — which uses the local working tree as its build context — and pushed by `make push` contains them. CI-built images are *not* affected: `actions/checkout` produces a clean tree with no untracked files. The exposure is therefore limited to locally pushed tags, but `make build`/`make push` has been the documented deploy path. Credentials at risk: `SENDGRID_PASSWORD`, `PAYPAL_CLIENT_SECRET`, `TICKETSOURCE_SECRET`, `POSTGRES_PASSWORD`, and the Rails `masterKey` in `secrets.yaml` (which also serves as `SECRET_KEY_BASE` in `k8s/wetrockpolice/templates/deployment.yaml`). The `.dockerignore` fix prevents future leakage only — it does nothing about images already on Docker Hub. Audit the pushed tags, rotate anything found, delete the affected tags. The local push path itself is removed in Phase 5.
+- [ ] **One-time `pg_dump` of production** — pre-migration insurance, and the restore source for the Phase 5 Postgres cutover.
+- [ ] **`helm get values` against the live release, reconciled against the repo.** The external-dns hotfix is committed (dd8ee9b), but nothing records whether the *rest* of the live values match `k8s/wetrockpolice/values.yaml`. Must happen before any Helm work in Phase 5.
+
+#### Deferred with reason — scoped-admin instance checks are not scoped
+
+`Ability` passes both a relation and a block (`&:present?`) to `can`. CanCanCan uses the relation for `accessible_by` but the *block* for single-record `can?` checks, and every persisted record is `present?` — so instance-level checks ignore `users.manages` entirely. rails_admin's member actions (`edit`/`update`/`delete`) call `authorize!(:edit, @object)`, so any approved non-super admin can edit or destroy any `WatchedArea`, `ClimbingArea`, `Location` or `RainyDayArea` through a direct `/admin/manage/<model>/<id>/edit` URL. Only the index screens, which go through `accessible_by`, are scoped.
+
+This predates the modernization. Phase 0 *asserts* it rather than fixing it (`test/models/ability_test.rb:105`, with the failure message `unscoped-instance-check gap closed; update Ability tests`) so that a future fix surfaces as a failing test instead of a silent behavior change. Not fixed here because Phase 0's contract is "no behavior changes beyond the Devise/Turbo bug", and the fix — dropping the block so cancancan derives instance checks from the relation — changes authorization semantics and deserves its own deploy.
+
+- [ ] **Owner: confirm whether any non-super-admin accounts exist in production today.** If none do, the exposure is theoretical; record that fact here either way.
+- Fix scheduled for Phase 4, which already touches this code path for the `serialize :manages, coder: YAML` work.
+
+**Gate:** suite green in CI on 7.1.6; failed sign-in renders the form with an error visibly in a browser; the three owner actions above closed or waived.
 
 ### Phase 1 — Delete the commerce cluster (code + data)
 
@@ -102,6 +120,7 @@ Hop-specific items for this codebase:
 - **7.2:** no `alias_attribute` overrides or enums exist (verified) — expect a quiet hop. Watch `Ability`'s relation+block `can()` pattern under cancancan 3.6.
 - **8.0:** `to_time_preserves_timezone`; keep Propshaft (already migrated); native `/up` route + DB-touching readiness action, point k8s probes at them, add livenessProbe.
 - **8.1:** schema.rb column alphabetization (commit that diff separately); bracket-param parsing change; `respond_with` in `RainyDayOptionsController` → `render json:` (drops the implicit responders dependency); `render file:` 404 → `Rails.public_path.join("404.html")`; explicit `serialize :manages, coder: YAML, type: Array` with Ability tests confirming grants survive.
+- **Close the unscoped-instance-check gap** deferred from Phase 0 (see that section): drop the `&:present?` block from each `can` in `Ability` so cancancan derives single-record checks from the relation, and invert the three deliberately-failing assertions in `test/models/ability_test.rb`. Land it with the `serialize` change above — same code path, same deploy — and smoke a scoped admin against a direct `/admin/manage/watched_area/<id>/edit` URL for an area they do not manage.
 - Finish: Ruby 3.4.x, `load_defaults 8.1`, `force_ssl`/`assume_ssl` on (TLS at ingress), filter_parameter_logging modern list, Puma → 7.2+ (bind `0.0.0.0` explicitly or update Service/probes when trying 8.x).
 
 **Gate per hop:** suite green, staging-style smoke of the manual checklist against a deployed replica, rails_admin exercised on every model (its 8.1 support is unreleased-territory — the one watch item).
@@ -124,7 +143,8 @@ Hop-specific items for this codebase:
 | Silent breakage of the weather feature (zero JS tests) | Controller tests catch pipeline breakage; explicit manual chart checklist per phase; proxy endpoint gains real request tests in Phase 5 |
 | Postgres cutover data loss | Owner accepts reseed; `pg_dump` taken anyway in Phase 0 and again at cutover |
 | Authz regression via `users.manages` serialization across defaults bumps | Ability test matrix in Phase 0; explicit `coder:` in Phase 4 |
-| Leaked secrets in historical Docker Hub layers | Phase 0 audit + rotation; local push path deprecated in Phase 5 |
+| **Live privilege escalation: scoped admins can edit/destroy any record via direct rails_admin member URLs** (relation-plus-block `can` makes instance checks unscoped) | Asserted, not fixed, in Phase 0 — see "Deferred with reason" above; owner to confirm whether non-super-admin accounts exist in production; fix lands in Phase 4 |
+| Leaked secrets in historical Docker Hub layers | Phase 0 audit + rotation (outstanding owner action); local push path deprecated in Phase 5 |
 
 ## Open items (non-blocking)
 
