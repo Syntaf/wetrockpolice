@@ -2,7 +2,10 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 3.1'
+# Single source of truth for the interpreter version: .ruby-version drives
+# rvm locally, ruby/setup-ruby in CI, and this directive, so they cannot drift
+# (the lockfile recorded 3.1.4 while .ruby-version pinned 3.1.7).
+ruby file: '.ruby-version'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
