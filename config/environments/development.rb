@@ -3,8 +3,6 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: 'localhost', port: '3000', protocol: 'http' }
 
-  # Disable yarn integrity checks on development for dockerizing
-  config.webpacker.check_yarn_integrity = false
 
   # Change this line to true if you would like to perform mail deliveries on dev
   config.action_mailer.perform_deliveries = false

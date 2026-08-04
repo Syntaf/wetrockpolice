@@ -1,9 +1,23 @@
 import { Controller } from "@hotwired/stimulus";
-import precipResponse from '../fixtures/precipitation_response';
 import { SYNOPTIC_OK_CODE } from "../constants";
 import { parseDailyIntervals, parseHourlyIntervals } from "../utils";
-import Chart from 'chart.js/auto';
+// Named imports instead of 'chart.js/auto' so esbuild tree-shakes every
+// controller/scale/plugin the bar chart doesn't use. Registered below:
+// type 'bar' needs BarController + BarElement, its default category x-axis
+// needs CategoryScale, the numeric y-axis needs LinearScale, and the
+// default-enabled legend + hover tooltips need their plugins.
+import {
+  Chart,
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+} from 'chart.js';
 import { format } from 'date-fns';
+
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const apiOptions = {
   'token': '2153743de639465ebbb30fa392c748de',
@@ -70,6 +84,12 @@ export default class extends Controller {
 
   async fetchObservations() {
     if (this.developmentModeValue) {
+      // Dynamic import so esbuild splits the 123KB mock Synoptic response
+      // into a separate chunk that is only ever fetched in development —
+      // a static top-level import would ship it to every production visitor.
+      const { default: precipResponse } =
+        await import('../fixtures/precipitation_response');
+
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(precipResponse);
@@ -175,11 +195,6 @@ export default class extends Controller {
   }
 
   renderRainGraph(intervals) {
-    const dailyIntervalLabel = (tooltipItems, data) => 
-        ` ${data.labels[tooltipItems.index].format('ll')} - ${tooltipItems.yLabel.toFixedDown(3)} inches of rain`;
-    const hourlyIntervalLabel = (tooltipItems, data) =>
-        ` ${data.labels[tooltipItems.index].format('lll')} - ${tooltipItems.yLabel.toFixedDown(3)} inches of rain`;
-
     this.timeSeriesDailyData = parseDailyIntervals(intervals);
     this.timeSeriesHourlyData = parseHourlyIntervals(intervals);
 
@@ -231,14 +246,3 @@ export default class extends Controller {
     this.timeSeriesChart.update();
   }
 }
-
-// function LandingController(apiOptions) {
-//     this.apiOptions = $.extend({
-//         'token': '2153743de639465ebbb30fa392c748de',
-//         'stid': '',
-//         'recent': 28800,
-//         'units': 'english',
-//         'interval': 'hour',
-//         'precip': 1,
-//     }, apiOptions);
-// }
