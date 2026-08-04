@@ -28,7 +28,7 @@ Contibutors are welcome! Please visit the [issues](https://github.com/Syntaf/wet
 
 To work with wetrockpolice locally you'll need the following dependencies installed on your system:
 
-- [Docker Compose](https://docs.docker.com/compose/install/) for running postgres & redis containers locally
+- [Docker Compose](https://docs.docker.com/compose/install/) for running the postgres container locally
 - [RVM](https://rvm.io/rvm/install) for managing your local ruby version (http server)
 - [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for managing your local node version (webpack server)
 - [VSCode](https://code.visualstudio.com/download) or your own preferred IDE
@@ -36,7 +36,7 @@ To work with wetrockpolice locally you'll need the following dependencies instal
 ## Running Locally with RVM & Docker
 
 The easiest way to work with wetrockpolice locally is to leverage Docker for your persistence layer
-dependencies (postgres & redis) and run your own http & webpack services via a native ruby
+dependency (postgres) and run your own http & webpack services via a native ruby
 installation (like via RVM)
 
 1. Install the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
@@ -63,7 +63,7 @@ installation (like via RVM)
    cp .env.example .env
    ```
 
-5. Start up your `postgres` and `redis` containers to run in the background
+5. Start up your `postgres` container to run in the background
     ```
     make up
     ```
@@ -87,8 +87,8 @@ installation (like via RVM)
 
 ## Running Locally on OSX 
 
-This option is similar to the above but assumes you are running your database and redis
-instance locally via `brew`, and you're within an OSX environment.
+This option is similar to the above but assumes you are running your database
+locally via `brew`, and you're within an OSX environment.
 
 1. Install RVM and the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
    ```
@@ -102,12 +102,10 @@ instance locally via `brew`, and you're within an OSX environment.
    nvm use 20.13.1
    ```
 
-3. Install & start local postgres & redis instances via `brew`
+3. Install & start a local postgres instance via `brew`
    ```
    brew install postgresql@15
-   brew install redis
    brew services start postgresql@15
-   brew services start redis
    ```
 
 1. Clone the repository
@@ -124,11 +122,6 @@ instance locally via `brew`, and you're within an OSX environment.
 3. Update your `.env` to point towards your locally running services
    ```
    # .env.example
-
-   # Job configuration
-   # ------------------------------------
-   REDIS_URL=redis://0.0.0.0:6379/0
-   JOB_WORKER_URL=redis://0.0.0.0:6379/0
 
    # Database configuration
    # ------------------------------------
@@ -205,7 +198,7 @@ The database is designed to support a site that one day may have many watched ar
 
 #### LocalClimbingOrg
 
-A not-for-profit climbing coalition managing one or more watched areas. The **slug** field is used for displaying the coalitions membership signup form within the watched area, i.e. `/redrock/sncc` where `sncc` is the slug of the climbing org instance.
+A not-for-profit climbing coalition managing one or more watched areas. Watched areas belong to one, and the association is what lets site content credit the coalition responsible for an area.
 
 #### WatchedArea
 
@@ -213,7 +206,6 @@ Represents an area being monitored for rain. Uses it's `slug` field to define a 
 - Landing page (`/redrock`)
 - Rainy day options page (`/redrock/rainy-day-options`)
 - FAQ page (`/redrock/faq`)
-- Membership signup page (`/redrock/sncc`)
 
 Fields like `info_bubble_excerpt` and `park_type_word` allow for dynamic content on the landing page depending on the current watched area being rendered.
 

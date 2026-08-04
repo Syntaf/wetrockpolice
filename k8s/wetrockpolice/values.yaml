@@ -8,11 +8,6 @@ sendgrid:
   password: ''
 digitalocean:
   token: ''
-paypal:
-  clientId: ''
-  secret: ''
-ticketsource:
-  secret: ''
 image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
