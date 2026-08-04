@@ -81,6 +81,23 @@ jobs:
           bundle exec rake db:create
           bundle exec rake db:migrate
 
+      # Nothing else in CI eager loads: test and development both set
+      # config.eager_load = false, so production would otherwise be the first
+      # boot to load every app class and engine under the reduced framework set
+      # from config/application.rb. zeitwerk:check calls
+      # Zeitwerk::Loader.eager_load_all regardless of the env's eager_load
+      # setting, which is exactly that failure mode.
+      - name: Check Eager Loading
+        env:
+          POSTGRES_TEST_DB: wetrockpolice_test
+          POSTGRES_USER: wrp
+          POSTGRES_PASSWORD: dev
+          POSTGRES_HOST: localhost
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        run: |
+          bundle exec rails zeitwerk:check
+
       - name: Run Tests
         env:
           POSTGRES_TEST_DB: wetrockpolice_test

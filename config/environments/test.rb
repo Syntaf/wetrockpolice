@@ -30,6 +30,12 @@ Rails.application.configure do
   config.action_controller.allow_forgery_protection = false
   config.action_mailer.perform_caching = false
 
+  # Enqueue jobs into an inspectable array instead of running them on the
+  # :async adapter's real thread pool. `User` is `after_create_commit ->
+  # deliver_later`, so without this every test that creates a user races a
+  # background thread, and assert_enqueued_emails/assert_emails cannot work.
+  config.active_job.queue_adapter = :test
+
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.

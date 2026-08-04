@@ -33,8 +33,6 @@ class Ability
                 .where(watched_areas: { id: user.manages }),
         &:present?
 
-    can :manage, JointMembershipApplication if user.super_admin?
-
     # Give super admins (me) full access to everything
     can :manage, :all if user.super_admin?
   end

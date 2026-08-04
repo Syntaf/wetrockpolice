@@ -7,7 +7,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable
 
-  after_create :send_admin_mail
+  after_create_commit :send_admin_mail
   serialize :manages, type: Array
 
   attr_accessor :skip_password
@@ -41,7 +41,7 @@ class User < ApplicationRecord
   end
 
   def send_admin_mail
-    AdminMailer.new_user_waiting_for_approval(email).deliver
+    AdminMailer.new_user_waiting_for_approval(email).deliver_later
   end
 
   protected

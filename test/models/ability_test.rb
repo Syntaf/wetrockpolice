@@ -35,7 +35,7 @@ class AbilityTest < ActiveSupport::TestCase
     assert ability.can?(:manage, @castlerock)
     assert ability.can?(:manage, @unmanaged_area)
     assert ability.can?(:manage, users(:plain_user))
-    assert ability.can?(:manage, JointMembershipApplication.new)
+    assert ability.can?(:manage, Faq.new)
   end
 
   test 'super admin sees every record through accessible_by' do
@@ -90,8 +90,7 @@ class AbilityTest < ActiveSupport::TestCase
     ability = Ability.new(users(:area_admin))
 
     assert ability.cannot?(:manage, users(:plain_user))
-    assert ability.cannot?(:manage, JointMembershipApplication.new)
-    assert ability.cannot?(:manage, ShirtOrder.new)
+    assert ability.cannot?(:manage, Faq.new)
   end
 
   # KNOWN GAP, asserted deliberately so a future fix shows up as a failing

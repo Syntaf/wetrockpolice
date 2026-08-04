@@ -14,13 +14,6 @@ services:
     env_file:
       - .env
 
-  redis:
-    image: redis
-    ports:
-      - '6379:6379'
-    volumes:
-      - wetrockpolice-redis:/var/lib/redis/data
-
   web:
     build:
       context: .
@@ -37,7 +30,6 @@ services:
       - "3001:3001"
     depends_on:
       - postgres
-      - redis
     env_file:
       - .env
     
@@ -57,21 +49,5 @@ services:
     env_file:
       - .env
 
-  sidekiq:
-    build:
-      context: .
-      dockerfile: Dockerfile.development
-    command: bundle exec sidekiq -q default -q mailers
-    volumes:
-      - .:/opt/wetrockpolice
-      - /opt/wetrockpolice/tmp
-      - /opt/wetrockpolice/node_modules
-    depends_on:
-      - postgres
-      - redis
-    env_file:
-      - .env
-
 volumes:
-  wetrockpolice-redis:
   wetrockpolice-postgres:

@@ -31,12 +31,6 @@
 
 en:
   hello: "Hello world"
-  admin:
-    actions:
-      mark_delivered:
-        title: "Mark selected memberships as delivered"
-        bulk_link: "Mark selected as delivered"
-        breadcrumb: "Mark selected as delivered"
   activerecord:
     errors:
       models:

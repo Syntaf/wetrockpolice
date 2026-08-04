@@ -6,15 +6,6 @@ replicaCount: 2
 masterKey: rails-master-key
 sendgrid:
   password: ''
-paypal:
-  clientId: ''
-  secret: ''
-ticketsource:
-  secret: ''
-sidekiq:
-  replicaCount: 0
-  autoscaling:
-    enabled: false
 image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
@@ -134,19 +125,3 @@ postgresql:
         cpu: 125m
     nodeSelector:
       doks.digitalocean.com/node-pool: secondary
-redis:
-  architecture: standalone
-  auth:
-    enabled: false
-  master:
-    persistence:
-      enabled: true
-    nodeSelector:
-      doks.digitalocean.com/node-pool: secondary
-  slave:
-    persistence:
-      enabled: false
-  cluster:
-    enabled: false
-  image:
-    repository: "bitnamilegacy/redis"

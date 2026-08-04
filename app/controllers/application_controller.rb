@@ -18,11 +18,9 @@ class ApplicationController < ActionController::Base
   def reload_rails_admin
     models = %w[
       ClimbingArea
-      JointMembershipApplication
       LocalClimbingOrg
       Location
       RainyDayArea
-      ShirtOrder
       User
       WatchedArea
     ]
@@ -33,7 +31,6 @@ class ApplicationController < ActionController::Base
     RailsAdmin::Config::Actions.reset
 
     load(Rails.root.join('config/initializers/rails_admin.rb'))
-    load(Rails.root.join('lib/rails_admin/mark_delivered_action.rb'))
   end
 
   def rails_admin_path?

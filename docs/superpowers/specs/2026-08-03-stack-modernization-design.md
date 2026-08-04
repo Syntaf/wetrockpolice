@@ -87,7 +87,9 @@ This predates the modernization. Phase 0 *asserts* it rather than fixing it (`te
 - Redis removal: `redis` gem, cache store → `:memory_store`, `REDIS_URL`, Redis subchart + vendored tarball, compose service.
 - Prune `db/seeds.rb` of deleted models.
 
-**Gate:** suite green; `rails routes` has no dead endpoints; app boots with no Redis running locally; admin CRUD works for all remaining models.
+**Gate:** suite green; `rails zeitwerk:check` passes (the explicit-railtie change in `config/application.rb` only bites under eager loading, and no test/dev environment eager loads); `rails routes` has no dead endpoints; app boots with no Redis running locally; admin CRUD works for all remaining models.
+
+**Rollback caveat — this phase breaks the "revertable" property at one point.** `helm rollback` + previous image tag is safe *only before* `db:migrate` runs. Once `20260804000000_drop_commerce_tables` executes, the previous image still defines `JointMembershipApplication`/`ShirtOrder`/`RaffleEntry` and still registers them in rails_admin, so its dashboard 500s against the dropped tables; the migration is deliberately `IrreversibleMigration` on `down`. Public microsites and Devise survive, the admin UI does not. After the migration the recovery path is roll-forward or a database restore — so take a backup immediately before migrating, and deploy the image first, migrate second.
 
 ### Phase 2 — Frontend replatform (still on Rails 7.1)
 
