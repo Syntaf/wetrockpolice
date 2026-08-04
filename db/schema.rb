@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_04_11_034737) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_04_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,28 +31,6 @@ ActiveRecord::Schema[7.1].define(version: 2023_04_11_034737) do
     t.index ["watched_area_id"], name: "index_faqs_on_watched_area_id"
   end
 
-  create_table "joint_membership_applications", force: :cascade do |t|
-    t.string "first_name"
-    t.string "last_name"
-    t.string "email"
-    t.string "phone_number"
-    t.string "street_line_one"
-    t.string "street_line_two"
-    t.string "city"
-    t.string "state"
-    t.string "zipcode"
-    t.string "organization"
-    t.string "amount_paid"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.string "order_id"
-    t.boolean "paid_cash", default: false, null: false
-    t.boolean "pending", default: false, null: false
-    t.string "delivery_method"
-    t.boolean "delivered", default: false
-    t.boolean "cover_fee", default: false
-  end
-
   create_table "local_climbing_orgs", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
@@ -71,17 +49,6 @@ ActiveRecord::Schema[7.1].define(version: 2023_04_11_034737) do
     t.index ["climbing_area_id"], name: "index_locations_on_climbing_area_id"
   end
 
-  create_table "raffle_entries", force: :cascade do |t|
-    t.string "contact"
-    t.string "email"
-    t.string "phone_number"
-    t.integer "entries"
-    t.string "amount_paid"
-    t.string "order_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "rainy_day_areas", force: :cascade do |t|
     t.bigint "climbing_area_id"
     t.bigint "watched_area_id"
@@ -90,16 +57,6 @@ ActiveRecord::Schema[7.1].define(version: 2023_04_11_034737) do
     t.integer "driving_time"
     t.index ["climbing_area_id"], name: "index_rainy_day_areas_on_climbing_area_id"
     t.index ["watched_area_id"], name: "index_rainy_day_areas_on_watched_area_id"
-  end
-
-  create_table "shirt_orders", force: :cascade do |t|
-    t.string "shirt_type", null: false
-    t.string "shirt_size", null: false
-    t.string "shirt_color", null: false
-    t.bigint "joint_membership_application_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["joint_membership_application_id"], name: "index_shirt_orders_on_joint_membership_application_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -147,6 +104,5 @@ ActiveRecord::Schema[7.1].define(version: 2023_04_11_034737) do
   add_foreign_key "locations", "climbing_areas"
   add_foreign_key "rainy_day_areas", "climbing_areas"
   add_foreign_key "rainy_day_areas", "watched_areas"
-  add_foreign_key "shirt_orders", "joint_membership_applications"
   add_foreign_key "watched_areas", "local_climbing_orgs"
 end
