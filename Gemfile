@@ -53,9 +53,12 @@ gem 'puma', '~> 6.4', '>= 6.4.3'
 # gem 'bcrypt', '~> 3.1.7'
 
 group :development, :test do
-  # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '~> 2.13'
-  gem 'selenium-webdriver'
+  # Adds support for Capybara system testing and selenium driver.
+  # 3.40 is the current series; 2.18 was a 2018 release that predates the
+  # W3C-WebDriver-only selenium 4 API. selenium 4.x resolves its own
+  # driver binary through selenium-manager, so no webdrivers gem is needed.
+  gem 'capybara', '~> 3.40'
+  gem 'selenium-webdriver', '~> 4.19'
   gem 'webmock'
 end
 
