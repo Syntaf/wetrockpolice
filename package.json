@@ -5,7 +5,7 @@
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.0",
     "@popperjs/core": "^2.11.8",
-    "bootstrap": "5.1.2",
+    "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.4",
     "date-fns": "^4.1.0",
@@ -15,9 +15,7 @@
   },
   "scripts": {
     "build": "esbuild app/javascript/application.js --bundle --sourcemap --minify --outdir=app/assets/builds --public-path=/assets",
-    "build:css:app": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules --quiet-deps --style=compressed",
-    "build:css:admin": "sass ./app/assets/stylesheets/rails_admin.scss:./app/assets/builds/rails_admin.css --no-source-map --load-path=node_modules/rails_admin/node_modules --load-path=node_modules",
-    "build:css": "yarn build:css:app && yarn build:css:admin"
+    "build:css": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css ./app/assets/stylesheets/rails_admin.scss:./app/assets/builds/rails_admin.css --no-source-map --load-path=node_modules --quiet-deps --style=compressed"
   },
   "engines": {
     "node": "20.x"

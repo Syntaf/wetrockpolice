@@ -5,18 +5,18 @@
     <h3>Administration Portal</h3>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-      <div class="field form-group">
+      <div class="field mb-3">
         <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Email" %>
       </div>
 
-      <div class="field form-group">
+      <div class="field mb-3">
         <% if @minimum_password_length %>
           <% @extra = ' ( ' + @minimum_password_length.to_s + ' characters minimum)' %>
         <% end %>
         <%= f.password_field :password, autocomplete: "new-password", class: "form-control", placeholder: "password" + @extra %>
       </div>
 
-      <div class="field form-group">
+      <div class="field mb-3">
         <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", placeholder: "password confirmation" %>
       </div>
 
