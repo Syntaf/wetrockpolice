@@ -105,6 +105,12 @@ external-dns:
   rbac:
     create: true
   namespaced: true
+  # Ingress-only: the wetrockpolice.com record is served from the Ingress, and no
+  # Service uses external-dns annotations. Omitting the default `service` source
+  # avoids the cluster-scoped Node informer, which a namespaced Role cannot grant
+  # (nodes are cluster-scoped) — that mismatch was crashlooping the pod.
+  sources:
+    - ingress
   provider:
     name: digitalocean
   env:
