@@ -28,11 +28,14 @@ gem 'rails_admin', '~> 3.3.0'
 # Propshaft needs. The app's own JS/CSS move to jsbundling/cssbundling next.
 gem 'importmap-rails'
 gem 'propshaft'
-# Builds rails_admin's stylesheet (dart-sass from the rails_admin npm
-# package) into app/assets/builds for Propshaft, and hooks the build into
-# assets:precompile and test:prepare. The app's own CSS joins this build
-# when it leaves Webpacker (next step of Phase 2).
+# Builds the app's stylesheet and rails_admin's stylesheet (dart-sass) into
+# app/assets/builds for Propshaft, and hooks the build into
+# assets:precompile and test:prepare.
 gem 'cssbundling-rails'
+# Bundles app/javascript/application.js with esbuild into app/assets/builds
+# for Propshaft (tree-shaken, minified single bundle), and hooks the build
+# into assets:precompile and test:prepare.
+gem 'jsbundling-rails'
 # Turbo as a first-class dependency (was only ever transitive via
 # rails_admin). rails_admin 3.3 allows turbo-rails < 3; the app adopts Turbo
 # properly in the next step of Phase 2.

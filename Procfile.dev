@@ -1,2 +1,3 @@
 web: bundle exec rails server -p 3001
-webpack: NODE_OPTIONS=--openssl-legacy-provider ./bin/webpack-dev-server
+js: yarn build --watch
+css: yarn build:css:app --watch

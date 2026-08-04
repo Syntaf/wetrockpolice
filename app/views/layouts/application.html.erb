@@ -6,12 +6,12 @@
 
     <%= csrf_meta_tags %>
 
-    <%= Rails.env.production? ?
-      javascript_pack_tag('application') :
-      javascript_packs_with_chunks_tag('application') %>
-    <%= Rails.env.production? ?
-      stylesheet_pack_tag('application') :
-      stylesheet_packs_with_chunks_tag('application') %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,600|Noto+Sans:400,600|Raleway:500,600,800">
+
+    <%= stylesheet_link_tag 'application' %>
+    <%= javascript_include_tag 'application', defer: true %>
 
     <%= render partial: 'shared/analytics' %>
 
@@ -74,7 +74,7 @@
       <div class="footer-container d-flex flex-column flex-md-row">
         <div class="d-flex flex-column flex-md-row px-2 mb-3 mb-md-0">
           <div class="text-center me-md-3">
-            <%= image_pack_tag 'logo.png',
+            <%= image_tag 'logo.png',
               style: 'max-width: 50px; width: 100%; height: auto;' %>
           </div>
           <div>
@@ -111,7 +111,7 @@
               embolt.app
             </a>
           </div>
-          <%= image_pack_tag(
+          <%= image_tag(
             'embolt-icon.svg',
             class: 'embolt-icon ms-md-3'
           ) %>

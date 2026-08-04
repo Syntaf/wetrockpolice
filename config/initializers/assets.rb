@@ -9,3 +9,8 @@
 # serve them. This mirrors what `rails g rails_admin:install --asset=importmap`
 # appends here.
 Rails.application.config.assets.paths << Rails.root.join('node_modules/@fortawesome/fontawesome-free/webfonts')
+
+# Same pattern for the app's icon font: application.scss imports
+# bootstrap-icons with $bootstrap-icons-font-dir: "." so the compiled url()s
+# are sibling references, resolved against this directory.
+Rails.application.config.assets.paths << Rails.root.join('node_modules/bootstrap-icons/font/fonts')
