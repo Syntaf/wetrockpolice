@@ -11,10 +11,10 @@ module Wetrockpolice
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    config.cache_store = :redis_cache_store, {
-      url: ENV['REDIS_URL'],
-      namespace: 'wetrockpolice::cache'
-    }
+    # No Redis, and nothing in the app calls Rails.cache today. :memory_store
+    # is per-process, which is fine at this scale and keeps the runtime
+    # dependency list at "Postgres".
+    config.cache_store = :memory_store
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

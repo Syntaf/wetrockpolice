@@ -126,7 +126,6 @@ GEM
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashdiff (1.1.0)
-    hiredis (0.6.3)
     http-accept (1.7.0)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
@@ -259,7 +258,6 @@ GEM
     rake (13.2.1)
     rdoc (6.7.0)
       psych (>= 4.0.0)
-    redis (4.8.1)
     regexp_parser (2.9.0)
     reline (0.5.10)
       io-console (~> 0.5)
@@ -363,14 +361,12 @@ DEPENDENCIES
   capybara (~> 2.13)
   devise (~> 4.9.3)
   dotenv-rails
-  hiredis
   meta-tags (~> 2.20)
   pg
   puma (~> 6.4, >= 6.4.3)
   rails (~> 7.1.6)
   rails-healthcheck
   rails_admin (~> 3.1)
-  redis (~> 4.0)
   rest-client (~> 2.1.0)
   rubocop
   rubocop-minitest

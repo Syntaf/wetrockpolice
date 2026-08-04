@@ -40,8 +40,6 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-rails-master-key
                   key: key
-            - name: REDIS_URL
-              value: redis://wetrockpolice-redis-master:6379/0
             - name: RAILS_SERVE_STATIC_FILES
               value: "true"
             - name: RAILS_LOG_TO_STDOUT

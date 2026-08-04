@@ -34,10 +34,6 @@ gem 'rails', '~> 7.1.6'
 # Use Puma as the app server. The `>= 6.4.3` floor is the Phase 0 security
 # patch; the move to Puma 7.x is a separate, deliberate step.
 gem 'puma', '~> 6.4', '>= 6.4.3'
-# Use Redis adapter for caching & cable
-gem 'redis', '~> 4.0'
-# Use faster connection library for Redis
-gem 'hiredis'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
