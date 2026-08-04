@@ -18,9 +18,26 @@ gem 'dotenv-rails'
 gem 'meta-tags', '~> 2.20'
 # Postgres client
 gem 'pg'
-# Administrative backend
-gem 'rails_admin', '~> 3.1'
-# Use webpacker js bundler
+# Administrative backend. 3.3 serves its own assets via importmap-rails +
+# Propshaft (`config.asset_source = :importmap`), engine-isolated from the
+# app's bundle — no rails_admin npm package, no app-side pack.
+gem 'rails_admin', '~> 3.3.0'
+# rails_admin's importmap asset mode: importmap-rails resolves the engine's
+# pinned modules, Propshaft digests/serves them. Propshaft coexists with
+# webpacker (below) — webpacker is not sprockets and claims no helpers that
+# Propshaft needs. The app's own JS/CSS move to jsbundling/cssbundling next.
+gem 'importmap-rails'
+gem 'propshaft'
+# Builds rails_admin's stylesheet (dart-sass from the rails_admin npm
+# package) into app/assets/builds for Propshaft, and hooks the build into
+# assets:precompile and test:prepare. The app's own CSS joins this build
+# when it leaves Webpacker (next step of Phase 2).
+gem 'cssbundling-rails'
+# Turbo as a first-class dependency (was only ever transitive via
+# rails_admin). rails_admin 3.3 allows turbo-rails < 3; the app adopts Turbo
+# properly in the next step of Phase 2.
+gem 'turbo-rails', '~> 2.0'
+# Use webpacker js bundler (app assets only; removed later in Phase 2)
 gem 'webpacker'
 # Rails framework — pinned to the 7.1 series; the upgrade to 7.2+ is a
 # deliberate, separately-tested step, not something `bundle update` may do.
