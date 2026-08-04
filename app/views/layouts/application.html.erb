@@ -36,7 +36,12 @@
         background-size: cover;
       }
       .hero-header.castlerock.hero-header-loaded {
-        background-image: url(<%= asset_path 'castlerock/hero-image.jpg'%>);
+        <%# These two hero images have never existed in the repo: before
+            Propshaft, `asset_path` had no pipeline and emitted these exact
+            public URLs, which 404 silently. Propshaft raises on missing
+            assets, so the literal (equally-404ing) URLs are kept verbatim
+            until the broken-asset-reference cleanup later in Phase 2. %>
+        background-image: url(/castlerock/hero-image.jpg);
         background-size: cover;
         background-position: bottom;
       }
@@ -46,7 +51,7 @@
 
       }
       .hero-header.stoneypoint.hero-header-loaded {
-        background-image: url(<%= asset_path 'stoneypoint/hero-image.png' %>);
+        background-image: url(/stoneypoint/hero-image.png);
         background-size: cover;
         background-position: bottom;
       }
