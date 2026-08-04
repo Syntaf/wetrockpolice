@@ -1,0 +1,9 @@
+// rails_admin stylesheet source (asset_source :importmap). Built by the
+// `build:css` script in package.json (dart-sass, load paths preferring
+// rails_admin's own node_modules) into app/assets/builds/rails_admin.css,
+// which Propshaft digests and the engine layout links as "rails_admin.css".
+// $fa-font-path "." makes Font Awesome resolve its webfonts as siblings of
+// the compiled CSS; config/initializers/assets.rb puts the fontawesome
+// webfonts directory on the Propshaft load path to satisfy that.
+$fa-font-path: ".";
+@import "rails_admin/src/rails_admin/styles/base";

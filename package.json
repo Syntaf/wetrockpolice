@@ -15,13 +15,14 @@
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.4",
     "date-fns": "^4.1.0",
-    "rails_admin": "3.1.2"
+    "rails_admin": "3.3.0",
+    "sass": "1.77.8"
   },
   "devDependencies": {
     "webpack-dev-server": "^3"
   },
-  "resolutions": {
-    "rails_admin/@fortawesome/fontawesome-free": "^5.15.0"
+  "scripts": {
+    "build:css": "sass ./app/assets/stylesheets/rails_admin.scss:./app/assets/builds/rails_admin.css --no-source-map --load-path=node_modules/rails_admin/node_modules --load-path=node_modules"
   },
   "engines": {
     "node": "20.x"
