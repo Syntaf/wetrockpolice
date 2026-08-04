@@ -1,6 +1,19 @@
 require_relative 'boot'
 
-require 'rails/all'
+# Explicit railtie requires instead of `rails/all`. The frameworks left out
+# are the ones this app has never used: Action Cable, Action Mailbox,
+# Action Text and Active Storage. Loading them cost boot time, pulled in
+# config surface that had to be maintained through every defaults bump, and
+# invited accidental coupling.
+require 'rails'
+
+require 'active_model/railtie'
+require 'active_record/railtie'
+require 'action_controller/railtie'
+require 'action_view/railtie'
+require 'action_mailer/railtie'
+require 'active_job/railtie'
+require 'rails/test_unit/railtie'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
