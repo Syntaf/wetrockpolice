@@ -28,8 +28,9 @@ gem 'seed_dump'
 gem 'rails-healthcheck'
 # Use webpacker js bundler
 gem 'webpacker'
-# Rails framework
-gem 'rails', '~> 7.1'
+# Rails framework — pinned to the 7.1 series; the upgrade to 7.2+ is a
+# deliberate, separately-tested step, not something `bundle update` may do.
+gem 'rails', '~> 7.1.6'
 # Use Puma as the app server
 gem 'puma', '~> 6.4'
 # Use Redis adapter for caching & cable
