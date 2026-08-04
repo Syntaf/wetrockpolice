@@ -1,14 +1,8 @@
-require 'sidekiq/web'
-
 Rails.application.routes.draw do
   devise_for :users
 
   mount RailsAdmin::Engine => '/admin/manage', as: 'rails_admin'
   get '/admin', to: redirect('/admin/manage')
-
-  authenticated :user do
-    mount Sidekiq::Web => '/admin/sidekiq'
-  end
 
   get '/health_check', to: proc { [200, {}, ['success']] }
 

@@ -8,17 +8,7 @@ SimpleCov.start 'rails'
 require File.expand_path('../../config/environment', __FILE__)
 require 'minitest/autorun'
 require 'rails/test_help'
-require 'sidekiq/testing'
 require 'webmock/minitest'
-
-Sidekiq::Testing.fake!
-
-module SidekiqMinitestSupport
-  def after_teardown
-    Sidekiq::Worker.clear_all
-    super
-  end
-end
 
 class ActiveSupport::TestCase
   fixtures :all

@@ -57,21 +57,6 @@ services:
     env_file:
       - .env
 
-  sidekiq:
-    build:
-      context: .
-      dockerfile: Dockerfile.development
-    command: bundle exec sidekiq -q default -q mailers
-    volumes:
-      - .:/opt/wetrockpolice
-      - /opt/wetrockpolice/tmp
-      - /opt/wetrockpolice/node_modules
-    depends_on:
-      - postgres
-      - redis
-    env_file:
-      - .env
-
 volumes:
   wetrockpolice-redis:
   wetrockpolice-postgres:

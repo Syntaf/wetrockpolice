@@ -6,17 +6,13 @@ replicaCount: 2
 masterKey: rails-master-key
 sendgrid:
   password: ''
+digitalocean:
+  token: ''
 paypal:
   clientId: ''
   secret: ''
 ticketsource:
   secret: ''
-digitalocean:
-  token: ''
-sidekiq:
-  replicaCount: 0
-  autoscaling:
-    enabled: false
 image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
