@@ -13,3 +13,45 @@ super_admin:
   confirmed_at: <%= Time.now %>
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
 
+# Approved admin scoped to the redrock watched area via the serialized
+# `manages` column. Guards Ability's YAML-array scoping.
+area_admin:
+  email: 'area-admin@test.com'
+  admin: true
+  super_admin: false
+  approved: true
+  manages: [<%= ActiveRecord::FixtureSet.identify(:redrock) %>]
+  confirmed_at: <%= Time.now %>
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+
+# Approved but non-admin: signs in fine, gets nothing from Ability.
+plain_user:
+  email: 'plain@test.com'
+  admin: false
+  super_admin: false
+  approved: true
+  manages: []
+  confirmed_at: <%= Time.now %>
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+
+# Confirmed but not approved: User#active_for_authentication? blocks sign-in.
+unapproved_user:
+  email: 'unapproved@test.com'
+  admin: false
+  super_admin: false
+  approved: false
+  manages: []
+  confirmed_at: <%= Time.now %>
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+
+# Registered but never confirmed; used by the confirmation-flow test.
+unconfirmed_user:
+  email: 'unconfirmed@test.com'
+  admin: false
+  super_admin: false
+  approved: true
+  manages: []
+  confirmation_token: 'unconfirmed-token'
+  confirmation_sent_at: <%= Time.now %>
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+
