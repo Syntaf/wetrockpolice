@@ -2,10 +2,15 @@
 # Bitnami subchart. The data is reseedable (db/seeds.rb) and the owner
 # accepts reseed as the disaster-recovery path, so this stays deliberately
 # minimal: one replica, one PVC, no replication.
+#
+# Named `-postgres`, not the Bitnami `-postgresql`: see the
+# wetrockpolice.postgresql.statefulsetName helper for why reusing the old
+# name would break the cutover upgrade, and README "Deploying to
+# Kubernetes" for the cutover/data-migration procedure.
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "wetrockpolice.postgresql.fullname" . }}
+  name: {{ include "wetrockpolice.postgresql.statefulsetName" . }}
   labels:
     {{- include "wetrockpolice.postgresql.labels" . | nindent 4 }}
 spec:

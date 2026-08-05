@@ -60,6 +60,23 @@ password from the Secret of the same name (key `postgres-password`).
 {{- end }}
 
 {{/*
+StatefulSet name. Deliberately NOT the Bitnami-era `<release>-postgresql`:
+a StatefulSet's selector and volumeClaimTemplates are immutable, and both
+differ from what the Bitnami subchart deployed, so reusing that name would
+make the cutover `helm upgrade` try an in-place patch the API server
+rejects (`spec: Forbidden`), failing the release mid-rollout. A fresh name
+turns the cutover into delete-old/create-new: Helm removes the Bitnami
+StatefulSet (its manifest left the chart) and creates this one, whose pod
+binds a brand-new PVC instead of silently inheriting the PG 15 volume
+(`data-<release>-postgresql-0`), which is left behind for manual backup or
+cleanup. Only Services and the Secret keep the old name — those are what
+the app points at, and they are mutable.
+*/}}
+{{- define "wetrockpolice.postgresql.statefulsetName" -}}
+{{- printf "%s-postgres" .Release.Name }}
+{{- end }}
+
+{{/*
 Postgres selector labels. Deliberately a different `name` label than the app's
 selectorLabels: label selectors match on subsets, so sharing the app's
 name+instance pair would put the postgres pod behind the app's Service.
