@@ -29,8 +29,10 @@ threads threads_count, threads_count
 
 # Bind to all interfaces explicitly: Puma 7 narrowed the default bind to
 # localhost, which k8s Services and kubelet probes cannot reach from outside
-# the pod's loopback. Port stays env-driven; default is 3000.
-bind "tcp://0.0.0.0:#{ENV.fetch('PORT', 3000)}"
+# the pod's loopback. Port stays env-driven; default is 3001 to match every
+# other port declaration in the repo (Dockerfiles, docker-compose,
+# Procfile.dev, k8s containerPort/Service targetPort, README).
+bind "tcp://0.0.0.0:#{ENV.fetch('PORT', 3001)}"
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
