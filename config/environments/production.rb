@@ -42,18 +42,15 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
-  # config.assume_ssl = true
-
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # Deliberately off for now: TLS terminates at the ingress. The
-  # force_ssl/assume_ssl flip is scheduled for Phase 4c (the Rails 8.1 hop)
-  # per the modernization spec.
-  # config.force_ssl = true
-
-  # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  # TLS terminates at the nginx ingress, so every request reaching the pod is
+  # plain HTTP: assume_ssl makes Rails treat them as HTTPS (no redirect loop
+  # behind the terminating proxy), while force_ssl adds
+  # Strict-Transport-Security and marks cookies Secure. Because assume_ssl
+  # applies to every request — including the kubelet's plain-HTTP probes of
+  # /up and /ready — the SSL middleware never redirects them, so no
+  # ssl_options exclusion is needed.
+  config.assume_ssl = true
+  config.force_ssl = true
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
