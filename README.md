@@ -293,4 +293,15 @@ Because of this strategy however, updating landing page images can be a little m
 
 Wetrockpolice is hosted on a digital ocean kubernetes cluster, deploying to this cluster (with credentials) is done through `Makefile` commands and `helm`. (k9s)[https://k9scli.io/] is a highly recommended tool.
 
-The order of commands should be `commit`, `build`, `push`, the finally `deploy`
+CI is the image source of truth: every push to `master` that passes the
+test suite builds `Dockerfile.production` and publishes
+`syntaf/wetrockpolice:<commit-sha>` (see
+`.github/workflows/tests.yml`). To deploy, set `image.tag` in
+`k8s/wetrockpolice/values.yaml` to the desired commit sha and run
+`make deploy`. (`make build`/`make push` still exist as a deprecated
+escape hatch, but local pushes bypass the test gate.)
+
+On boot the web container runs `bin/rails db:prepare` from
+`bin/docker-entrypoint`, so migrations (or schema load + seed on a
+fresh database) happen automatically at rollout; set
+`SKIP_DB_PREPARE=1` on the container to suppress it.
