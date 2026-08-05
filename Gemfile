@@ -14,7 +14,7 @@ end
 
 # Authorization & Authentication
 gem 'cancancan', '~> 3.3.0'
-gem 'devise', '~> 4.9.3'
+gem 'devise', '~> 5.0'
 # Environment management
 gem 'dotenv-rails'
 # SEO
