@@ -60,9 +60,20 @@ spec:
             - name: http
               containerPort: 3001
               protocol: TCP
+          # Liveness deliberately hits /up (Rails' built-in, DB-free
+          # endpoint), never /ready: a slow or down database must mark the
+          # pod unready, not restart it. The high failureThreshold keeps
+          # restarts a last resort for a truly wedged process.
+          livenessProbe:
+            httpGet:
+              path: /up
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 15
           readinessProbe:
             httpGet:
-              path: /health_check
+              path: /ready
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
