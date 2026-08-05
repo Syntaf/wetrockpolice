@@ -5,9 +5,9 @@ require 'test_helper'
 # Pins the authorization matrix produced by app/models/ability.rb.
 #
 # Its main job is to guard the YAML-serialized `users.manages` column: every
-# grant below flows through `WatchedArea.where(id: user.manages)`, so a
-# serialization change (Rails defaults bump, explicit `coder:`) that turns
-# `manages` into a String or nil would silently widen or void admin access.
+# grant below is a hash condition keyed on `user.manages`, so a serialization
+# change (Rails defaults bump, explicit `coder:`) that turns `manages` into a
+# String or nil would silently widen or void admin access.
 class AbilityTest < ActiveSupport::TestCase
   def setup
     @redrock = watched_areas(:redrock)
@@ -103,22 +103,29 @@ class AbilityTest < ActiveSupport::TestCase
     assert ability.cannot?(:manage, Faq.new)
   end
 
-  # KNOWN GAP, asserted deliberately so a future fix shows up as a failing
-  # test rather than a silent behavior change: Ability passes both a relation
-  # AND the block `&:present?` to `can`. CanCanCan uses the relation only for
-  # `accessible_by`; for a single-record `can?` check it calls the block, and
-  # any persisted record is `present?`. So instance checks are effectively
-  # unscoped — a scoped admin passes `can?(:manage, <any watched area>)`.
-  # rails_admin's index screens go through `accessible_by`, which IS scoped,
-  # so the practical exposure is direct member URLs.
-  test 'scoped admin instance checks are NOT scoped by manages (known gap)' do
+  # Closes the gap deliberately asserted here since Phase 0: Ability used to
+  # pass both a relation AND the block `&:present?` to `can`, so `can?` on a
+  # single record called the block and any persisted record passed. Grants
+  # are now hash conditions, which cancancan uses for BOTH `accessible_by`
+  # and single-record checks — so direct rails_admin member URLs (edit,
+  # update, delete) are scoped by `manages` exactly like the index screens.
+  # The engine-level smoke lives in test/integration/rails_admin_access_test.rb.
+  test 'scoped admin instance checks are scoped by manages' do
     ability = Ability.new(users(:area_admin))
 
     assert ability.can?(:manage, @redrock)
-    assert ability.can?(:manage, @castlerock),
-           'unscoped-instance-check gap closed; update Ability tests'
-    assert ability.can?(:manage, @unmanaged_area),
-           'unscoped-instance-check gap closed; update Ability tests'
+    assert ability.cannot?(:manage, @castlerock)
+    assert ability.cannot?(:manage, @unmanaged_area)
+  end
+
+  test 'scoped admin instance checks are scoped on every granted model' do
+    ability = Ability.new(users(:area_admin))
+
+    assert ability.can?(:manage, @managed_area)
+    assert ability.can?(:manage, rainy_day_areas(:area1_redrock))
+    assert ability.cannot?(:manage, rainy_day_areas(:area3_castlerock))
+    assert ability.can?(:manage, locations(:area1_location))
+    assert ability.cannot?(:manage, locations(:area3_location))
   end
 
   # --- non-admins --------------------------------------------------------

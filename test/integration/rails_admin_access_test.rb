@@ -71,4 +71,42 @@ class RailsAdminAccessTest < ActionDispatch::IntegrationTest
 
     assert_raises(CanCan::AccessDenied) { get rails_admin_path }
   end
+
+  # Direct member URLs bypass the accessible_by-scoped index screens, so they
+  # are the exposure surface for the formerly-unscoped instance checks (the
+  # relation + `&:present?` pattern Ability used through Phase 4b). A scoped
+  # admin must reach member actions only inside their `manages` grant.
+  test 'scoped admin can edit a watched area they manage' do
+    sign_in users(:area_admin)
+
+    get "/admin/manage/watched_area/#{watched_areas(:redrock).id}/edit"
+
+    assert_response :success
+  end
+
+  # A request that raises drops the integration session's signed-in state, so
+  # each denied request re-signs-in first; otherwise the follow-up request
+  # would 302 to the sign-in page without ever reaching the authorization
+  # check, and the assert_raises would fail for the wrong reason.
+  test 'scoped admin is denied member URLs for a watched area outside manages' do
+    castlerock = watched_areas(:castlerock)
+
+    sign_in users(:area_admin)
+    assert_raises(CanCan::AccessDenied) do
+      get "/admin/manage/watched_area/#{castlerock.id}/edit"
+    end
+
+    sign_in users(:area_admin)
+    assert_raises(CanCan::AccessDenied) do
+      put "/admin/manage/watched_area/#{castlerock.id}/edit",
+          params: { watched_area: { name: 'hijacked' } }
+    end
+
+    sign_in users(:area_admin)
+    assert_raises(CanCan::AccessDenied) do
+      delete "/admin/manage/watched_area/#{castlerock.id}/delete"
+    end
+
+    assert_equal 'Castle Rock', castlerock.reload.name
+  end
 end
