@@ -8,6 +8,9 @@ sendgrid:
   password: ''
 digitalocean:
   token: ''
+# Placeholder — the real value comes from secrets.yaml at deploy time.
+synoptic:
+  token: ''
 image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent
