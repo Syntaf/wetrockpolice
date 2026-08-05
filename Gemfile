@@ -13,7 +13,7 @@ git_source(:github) do |repo_name|
 end
 
 # Authorization & Authentication
-gem 'cancancan', '~> 3.3.0'
+gem 'cancancan', '~> 3.6'
 gem 'devise', '~> 5.0'
 # Environment management
 gem 'dotenv-rails'

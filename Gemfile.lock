@@ -93,7 +93,7 @@ GEM
     bigdecimal (3.1.8)
     bindex (0.8.1)
     builder (3.3.0)
-    cancancan (3.3.0)
+    cancancan (3.6.1)
     capybara (3.40.0)
       addressable
       matrix
@@ -347,7 +347,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  cancancan (~> 3.3.0)
+  cancancan (~> 3.6)
   capybara (~> 3.40)
   cssbundling-rails
   devise (~> 5.0)
