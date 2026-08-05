@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+# Enable jemalloc for reduced memory usage and latency.
+if [ -z "${LD_PRELOAD+x}" ]; then
+    LD_PRELOAD=$(find /usr/lib -name libjemalloc.so.2 -print -quit)
+    export LD_PRELOAD
+fi
+
+# When this container is the web server, create/migrate the database first
+# (db:prepare is idempotent; concurrent replicas serialize on Active
+# Record's migration advisory lock). Set SKIP_DB_PREPARE=1 to opt out,
+# e.g. while debugging a broken migration or running one-off commands
+# that should not touch the schema.
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ] && [ -z "${SKIP_DB_PREPARE:-}" ]; then
+  ./bin/rails db:prepare
+fi
+
+exec "${@}"

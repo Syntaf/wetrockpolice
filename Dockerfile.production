@@ -1,31 +1,80 @@
-# Development environment
-FROM ruby:3.4.10
+# syntax=docker/dockerfile:1
+# Production image, modeled on the Rails 8 default Dockerfile.
+# Built by CI on pushes to master (see .github/workflows/tests.yml);
+# local `make build`/`make push` are deprecated.
 
-ENV RAILS_ENV=production
-ENV INSTALL_PATH /opt/wetrockpolice
-RUN mkdir -p $INSTALL_PATH
+ARG RUBY_VERSION=3.4.10
+FROM ruby:$RUBY_VERSION-slim AS base
 
-# nodejs, yarn & bun
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - 
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg -o /root/yarn-pubkey.gpg && apt-key add /root/yarn-pubkey.gpg
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs yarn python3 python-is-python3
-
-# set working directory
 WORKDIR /opt/wetrockpolice
 
-# instally ruby gems
-COPY Gemfile Gemfile.lock ./
-RUN gem install bundler
-RUN bundle install --jobs 1
+# Runtime packages only: libpq5 for the pg gem, curl for probes/debugging,
+# libjemalloc2 for lower memory fragmentation (enabled in the entrypoint).
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 libpq5 && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# install node modules
+ENV RAILS_ENV="production" \
+    BUNDLE_DEPLOYMENT="1" \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT="development test"
+
+# ------------------------------------------------------------------
+# Build stage: gems with native extensions, node_modules, asset build.
+# Nothing from here ships except the app dir and the installed bundle.
+FROM base AS build
+
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+      build-essential git libpq-dev libyaml-dev pkg-config && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Node (pinned to .nvmrc) + yarn, needed only to build assets.
+ARG NODE_VERSION=20.13.1
+ENV PATH=/usr/local/node/bin:$PATH
+RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+    npm install -g yarn && \
+    rm -rf /tmp/node-build-master
+
+# .ruby-version rides along because the Gemfile reads it (ruby file: ...).
+COPY Gemfile Gemfile.lock .ruby-version ./
+RUN bundle install && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+    bundle exec bootsnap precompile --gemfile
+
 COPY package.json yarn.lock ./
-RUN yarn install --check-files
+RUN yarn install --frozen-lockfile
 
 COPY . .
 
-RUN SECRET_KEY_BASE=dummy RAILS_ENV=production rails assets:precompile
+RUN bundle exec bootsnap precompile app/ lib/
 
+# jsbundling/cssbundling hook `yarn build`/`yarn build:css` into
+# assets:precompile; Propshaft digests the results into public/assets.
+RUN SECRET_KEY_BASE=dummy ./bin/rails assets:precompile
+
+# The compiled bundles are in public/assets now; node_modules never ships.
+RUN rm -rf node_modules
+
+# ------------------------------------------------------------------
+# Runtime stage: no Node, no compilers.
+FROM base
+
+COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
+COPY --from=build /opt/wetrockpolice /opt/wetrockpolice
+
+# Run as a non-root user; only the dirs Rails writes to are owned by it
+# (log/ and tmp/ are dockerignored, so create them here).
+RUN groupadd --system --gid 1000 rails && \
+    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
+    mkdir -p db log tmp && \
+    chown -R rails:rails db log tmp
+USER 1000:1000
+
+# Runs db:prepare before the web server starts (SKIP_DB_PREPARE=1 opts out).
+ENTRYPOINT ["/opt/wetrockpolice/bin/docker-entrypoint"]
+
+# Puma binds 0.0.0.0:3001 via config/puma.rb (ENV PORT overrides).
 EXPOSE 3001
-CMD ["bundle", "exec", "rails", "server", "-p", "3001", "-b", "0.0.0.0"]
+CMD ["./bin/rails", "server"]

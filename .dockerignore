@@ -17,3 +17,6 @@ k8s/
 log/
 tmp/
 docs/
+coverage/
+.github/
+node_modules/.cache
