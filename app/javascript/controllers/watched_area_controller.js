@@ -19,15 +19,6 @@ import { format } from 'date-fns';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const apiOptions = {
-  'token': '2153743de639465ebbb30fa392c748de',
-  'stid': '',
-  'recent': 28800,
-  'units': 'english',
-  'interval': 'hour',
-  'precip': 1,
-}
-
 export default class extends Controller {
   static targets = [
     "rainTileSection",
@@ -41,7 +32,7 @@ export default class extends Controller {
   ]
 
   static values = {
-    'station': String,
+    'precipitationUrl': String,
     'developmentMode': Boolean
   }
 
@@ -97,17 +88,12 @@ export default class extends Controller {
       });
     }
 
-    const fetchParams = new URLSearchParams({
-      ...apiOptions,
-      'stid': this.stationValue
-    });
-
-    const response = await fetch(
-      'https://api.synopticdata.com/v2/stations/timeseries?' + fetchParams.toString()
-    );
+    // Rails proxies the Synoptic request server-side (Area::WeatherController)
+    // so the API token never ships to the browser. The proxy passes the
+    // upstream JSON through unchanged, so the parsing above is untouched.
+    const response = await fetch(this.precipitationUrlValue);
 
     return await response.json();
-
   }
 
   renderRainInformation(intervals) {

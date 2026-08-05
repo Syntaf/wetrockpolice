@@ -1,6 +1,6 @@
 <% content_for :body_attributes do %>
   data-controller="watched-area"
-  data-watched-area-station-value="<%= @watched_area.station %>"
+  data-watched-area-precipitation-url-value="<%= watched_area_precipitation_path(slug: @watched_area.slug) %>"
   data-watched-area-development-mode-value="<%= development_mode? %>"
 <% end %>
 
