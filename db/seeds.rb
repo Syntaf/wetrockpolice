@@ -1,7 +1,33 @@
+# Production guard, two layers:
+#
+# 1. `db:prepare` (run by bin/docker-entrypoint on every web boot) seeds any
+#    database whose schema it just loaded — which is exactly what happens on
+#    the first boot after the Postgres cutover, and would also trample a
+#    pg_dump restore in flight. Seeding production is therefore explicit
+#    opt-in, never a boot side effect.
+# 2. Even when opted in, the super-admin's password must come from the
+#    environment: the development default below is guessable and the
+#    production sign-in page is on the public internet.
+#
+#   ALLOW_PRODUCTION_SEED=1 SEED_ADMIN_PASSWORD=... bin/rails db:seed
+if Rails.env.production? && ENV['ALLOW_PRODUCTION_SEED'] != '1'
+  puts 'Skipping db:seed in production. To seed explicitly, run: ' \
+       'ALLOW_PRODUCTION_SEED=1 SEED_ADMIN_PASSWORD=<password> bin/rails db:seed'
+  return
+end
+
+admin_password =
+  if Rails.env.production?
+    # No default on purpose: aborting beats seeding a guessable admin.
+    ENV.fetch('SEED_ADMIN_PASSWORD')
+  else
+    'password'
+  end
+
 ActiveRecord::Base.transaction do
   admin = User.create!(
     email: 'admin@wetrockpolice',
-    password: 'password',
+    password: admin_password,
     super_admin: true,
     admin: true,
     approved: true

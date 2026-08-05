@@ -5,8 +5,5 @@ dependencies:
 - name: external-dns
   repository: https://kubernetes-sigs.github.io/external-dns/
   version: 1.19.0
-- name: postgresql
-  repository: https://charts.bitnami.com/bitnami
-  version: 15.4.0
-digest: sha256:e6b9d86e9dfcb685ec30dafe2f7ef2c1830954c5d76e836a0a34c518f9618da6
-generated: "2026-08-04T00:17:22.396591-07:00"
+digest: sha256:7297b22e51a317685b428472e20b7c191f5d72a2a67f644d94bc8f4b31584b6a
+generated: "2026-08-04T20:26:12.213081-07:00"

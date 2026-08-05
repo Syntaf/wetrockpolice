@@ -110,18 +110,36 @@ external-dns:
   domainFilters: ['wetrockpolice.com']
   nodeSelector:
     doks.digitalocean.com/node-pool: secondary
+# In-chart Postgres (templates/postgresql/): a single-replica StatefulSet
+# on the official image, replacing the frozen Bitnami subchart. The value
+# paths below (auth.*) intentionally match what secrets.yaml already sets.
 postgresql:
   image:
-    repository: "bitnamilegacy/postgresql"
-    tag: 15.1.0-debian-11-r12
+    repository: postgres
+    tag: "17"
   auth:
     username: wetrockpolice
     database: wetrockpolice_production
+    # Placeholder — the real value comes from secrets.yaml at deploy time.
+    # Written to the {{ .Release.Name }}-postgresql secret under the
+    # `postgres-password` key, which both the postgres container and the
+    # app pods (WETROCKPOLICE_DATABASE_PASSWORD) read.
     postgresPassword: my-postgresql-password
-    password: ''
+  persistence:
+    size: 2Gi
+    # Empty string = the cluster default (do-block-storage on DOKS).
+    storageClass: ''
   primary:
     resources:
       requests:
         cpu: 125m
     nodeSelector:
       doks.digitalocean.com/node-pool: secondary
+  # Optional weekly pg_dump CronJob to a small PVC. Off by default:
+  # the data is reseedable (db/seeds.rb) and the owner accepts reseed
+  # as the recovery path, so the extra volume is opt-in.
+  backup:
+    enabled: false
+    schedule: '0 9 * * 0'
+    size: 2Gi
+    keepDays: 30

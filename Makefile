@@ -56,14 +56,19 @@ LATEST_CHART_VERSION := $(shell yq e '.version' k8s/wetrockpolice/Chart.yaml)
 dev:
 	./bin/dev	
 
+# DEPRECATED: CI is the image source of truth — pushes to master build and
+# publish the image (.github/workflows/tests.yml). Kept only as an escape
+# hatch; local pushes bypass the test gate.
 .PHONY: build
 build:
+	@echo "WARNING: 'make build' is deprecated; CI builds the image on pushes to master (.github/workflows/tests.yml)."
 	docker build -t syntaf/wetrockpolice:$(LATEST_HASH) \
 		-f ./Dockerfile.production \
 		.
 
 .PHONY: push
 push:
+	@echo "WARNING: 'make push' is deprecated; CI publishes the image on pushes to master (.github/workflows/tests.yml)."
 	docker push syntaf/wetrockpolice:$(LATEST_HASH)
 
 .PHONY: sync
