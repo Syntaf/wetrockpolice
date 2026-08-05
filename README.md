@@ -316,6 +316,19 @@ test suite builds `Dockerfile.production` and publishes
 `make deploy`. (`make build`/`make push` still exist as a deprecated
 escape hatch, but local pushes bypass the test gate.)
 
+`make deploy` merges the untracked `secrets.yaml` over `values.yaml`
+(`helm upgrade -f secrets.yaml`); every value the chart ships as an
+empty placeholder must be set there, or the release deploys broken in
+ways the templates cannot catch:
+
+- `masterKey` — Rails `SECRET_KEY_BASE`
+- `postgresql.auth.postgresPassword` — the database password
+- `sendgrid.password` — outbound mail
+- `synoptic.token` — the Synoptic API token for the weather proxy.
+  Without it the app still boots and passes its probes, but
+  `GET /:slug/precipitation` answers 503 and every landing page renders
+  its weather-unavailable state.
+
 On boot the web container runs `bin/rails db:prepare_locked` from
 `bin/docker-entrypoint`: `db:prepare` wrapped in a Postgres advisory
 lock (`lib/tasks/db_prepare_locked.rake`) so concurrent replicas can't

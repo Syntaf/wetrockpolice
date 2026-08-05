@@ -81,6 +81,33 @@ class WatchedAreaWeatherProxyTest < ApplicationSystemTestCase
     assert_no_match(/system-test-token/, page.html)
   end
 
+  test 'a Synoptic outage degrades to a message instead of hanging the page' do
+    # Declared after the setup stub, so WebMock prefers it: upstream now
+    # fails, the proxy answers 502 { "error": ... }, and the browser-side
+    # error path -- not just the controller's -- is what's under test.
+    stub_request(:get, 'https://api.synopticdata.com/v2/stations/timeseries')
+      .with(query: hash_including('stid' => 'RRKN2'))
+      .to_return(status: 500, body: 'upstream exploded')
+
+    visit '/redrock'
+
+    assert_selector 'h1', text: 'Did it rain in Red Rock?'
+
+    # The failure state must fully land: spinners cleared, tiles filled
+    # with an honest placeholder, and a human-readable message. Before
+    # this state existed, every proxy error left the spinners running
+    # forever on an uncaught TypeError.
+    assert_selector '[data-watched-area-target="lastRainDate"]',
+                    text: /temporarily unavailable/i, wait: WAIT
+
+    assert_selector '[data-watched-area-target="daysTile"]', text: '?'
+    assert_selector '[data-watched-area-target="hoursTile"]', text: '?'
+
+    assert_no_selector '[data-watched-area-target="loading"]',
+                       visible: :all,
+                       wait: WAIT
+  end
+
   private
 
   def chart_canvas_metrics
