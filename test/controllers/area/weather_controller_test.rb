@@ -93,6 +93,46 @@ class WeatherControllerTest < ActionDispatch::IntegrationTest
     assert_requested(stub, times: 1)
   end
 
+  test 'an upstream failure is cached: repeat views do not hammer Synoptic' do
+    stub = stub_request(:get, UPSTREAM_URL)
+           .with(query: hash_including('stid' => 'RRKN2'))
+           .to_return(status: 500, body: 'upstream exploded')
+
+    Rails.stub(:cache, ActiveSupport::Cache::MemoryStore.new) do
+      get '/redrock/precipitation'
+      assert_response :bad_gateway
+
+      get '/redrock/precipitation'
+      assert_response :bad_gateway
+    end
+
+    # One upstream attempt per failure window, not one per page view --
+    # this is what keeps a Synoptic outage from parking every Puma thread
+    # on a hanging call and 503ing the whole site.
+    assert_requested(stub, times: 1)
+  end
+
+  test 'the failure cache expires, so recovery needs no deploy or restart' do
+    stub = stub_request(:get, UPSTREAM_URL)
+           .with(query: hash_including('stid' => 'RRKN2'))
+           .to_return({ status: 500, body: 'blip' },
+                      { status: 200,
+                        body: file_fixture('synoptic_timeseries.json').read,
+                        headers: { 'Content-Type' => 'application/json' } })
+
+    Rails.stub(:cache, ActiveSupport::Cache::MemoryStore.new) do
+      get '/redrock/precipitation'
+      assert_response :bad_gateway
+
+      travel(Area::WeatherController::FAILURE_TTL + 1.second) do
+        get '/redrock/precipitation'
+        assert_response :success
+      end
+    end
+
+    assert_requested(stub, times: 2)
+  end
+
   test 'query parameters are rejected, so upstream params cannot be forged' do
     stub = stub_upstream_success
 

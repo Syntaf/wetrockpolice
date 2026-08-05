@@ -11,6 +11,7 @@ module Area
   # controller holds the token (ENV, never rendered or logged), makes the one
   # request shape the chart code consumes, and caches the response per station
   # so a busy microsite costs Synoptic one upstream call every ten minutes.
+  # Failures are cached too (briefly): see FAILURE_TTL.
   #
   # Deliberately not a general proxy: the caller supplies nothing but the
   # slug. The station id comes from the WatchedArea row, every other upstream
@@ -40,6 +41,15 @@ module Area
     STATION_FORMAT = /\A[A-Za-z0-9]{3,10}\z/.freeze
 
     CACHE_TTL = 10.minutes
+    # Upstream failures are memoized too, under the same key. Without that,
+    # a Synoptic outage is retried on every page view: with single-process
+    # pods at 3 Puma threads each, a handful of visitors parked on a
+    # hanging upstream call (up to OPEN_TIMEOUT + READ_TIMEOUT seconds)
+    # saturates the fleet, readiness probes queue behind them, and the
+    # whole site — not just the chart — goes 503. Kept short so recovery
+    # is quick once Synoptic is back.
+    FAILURE_TTL = 45.seconds
+    FAILURE = 'synoptic-upstream-failure'
     OPEN_TIMEOUT = 5
     READ_TIMEOUT = 10
 
@@ -50,13 +60,10 @@ module Area
       token = ENV.fetch('SYNOPTIC_API_TOKEN', '')
       return service_unavailable('weather service is not configured') if token.empty?
 
-      body = Rails.cache.fetch("synoptic/precipitation/#{station}", expires_in: CACHE_TTL) do
-        fetch_upstream(station, token)
-      end
+      body = cached_upstream_body(station, token)
+      return bad_gateway if body == FAILURE
 
       render json: body
-    rescue UpstreamError
-      render json: { error: 'weather data is temporarily unavailable' }, status: :bad_gateway
     end
 
     private
@@ -71,6 +78,28 @@ module Area
 
     def service_unavailable(message)
       render json: { error: message }, status: :service_unavailable
+    end
+
+    def bad_gateway
+      render json: { error: 'weather data is temporarily unavailable' }, status: :bad_gateway
+    end
+
+    # One cache key, two TTLs: successes are kept for CACHE_TTL, failures
+    # for FAILURE_TTL — an outage costs one upstream attempt per window
+    # per process, instead of one per page view. (Rails.cache.fetch can't
+    # express this: a raised error caches nothing, and a rescued write
+    # inside the block would pin the failure to the success TTL.)
+    def cached_upstream_body(station, token)
+      key = "synoptic/precipitation/#{station}"
+      cached = Rails.cache.read(key)
+      return cached unless cached.nil?
+
+      body = fetch_upstream(station, token)
+      Rails.cache.write(key, body, expires_in: CACHE_TTL)
+      body
+    rescue UpstreamError
+      Rails.cache.write(key, FAILURE, expires_in: FAILURE_TTL)
+      FAILURE
     end
 
     # Returns the raw upstream JSON body. Raised errors deliberately carry no
