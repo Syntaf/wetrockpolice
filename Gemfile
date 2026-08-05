@@ -42,9 +42,9 @@ gem 'jsbundling-rails'
 # rails_admin). rails_admin 3.3 allows turbo-rails < 3; the app adopts Turbo
 # properly in the next step of Phase 2.
 gem 'turbo-rails', '~> 2.0'
-# Rails framework — pinned to the 7.1 series; the upgrade to 7.2+ is a
+# Rails framework — pinned to the 7.2 series; the upgrade to 8.0+ is a
 # deliberate, separately-tested step, not something `bundle update` may do.
-gem 'rails', '~> 7.1.6'
+gem 'rails', '~> 7.2.0'
 # Use Puma as the app server. The `>= 6.4.3` floor is the Phase 0 security
 # patch; the move to Puma 7.x is a separate, deliberate step.
 gem 'puma', '~> 6.4', '>= 6.4.3'
