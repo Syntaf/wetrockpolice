@@ -15,6 +15,9 @@ Rails.application.routes.draw do
     resources :rainy_day_options, path: 'rainy-day-options', only: %i( index show )
     resources :faqs, path: 'faq', only: %i( index )
 
+    # Server-side Synoptic proxy; keeps the API token out of shipped JS.
+    get 'precipitation', controller: 'weather', action: :show, as: :precipitation
+
     get '/', action: :index
   end
 

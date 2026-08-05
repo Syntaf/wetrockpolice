@@ -6,6 +6,12 @@ replicaCount: 2
 masterKey: rails-master-key
 sendgrid:
   password: ''
+# Placeholder — the real value MUST come from secrets.yaml at deploy
+# time (see README "Deploying to Kubernetes"). Left empty, the app boots
+# and passes its probes, but the weather proxy answers 503 and every
+# landing page renders its weather-unavailable state.
+synoptic:
+  token: ''
 image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent

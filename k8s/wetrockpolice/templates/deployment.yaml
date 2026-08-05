@@ -56,6 +56,11 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-sendgrid
                   key: password
+            - name: SYNOPTIC_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-synoptic
+                  key: token
           ports:
             - name: http
               containerPort: 3001

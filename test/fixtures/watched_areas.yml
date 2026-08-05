@@ -4,6 +4,7 @@ redrock:
   name: Red Rock
   slug: redrock
   local_climbing_org: sncc
+  station: RRKN2
 
 # Second area, deliberately NOT in any user's `manages`; proves Ability's
 # scope actually filters rather than returning everything.
