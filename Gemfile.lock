@@ -203,7 +203,7 @@ GEM
     psych (5.1.2)
       stringio
     public_suffix (5.0.5)
-    puma (6.6.1)
+    puma (7.2.1)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.1.7)
@@ -352,7 +352,7 @@ DEPENDENCIES
   meta-tags (~> 2.21)
   pg
   propshaft
-  puma (~> 6.4, >= 6.4.3)
+  puma (~> 7.2)
   rails (~> 8.1.0)
   rails_admin (~> 3.3.0)
   rubocop

@@ -45,9 +45,9 @@ gem 'turbo-rails', '~> 2.0'
 # Rails framework — pinned to the 8.1 series (current stable); series bumps
 # are deliberate, separately-tested steps, not something `bundle update` may do.
 gem 'rails', '~> 8.1.0'
-# Use Puma as the app server. The `>= 6.4.3` floor is the Phase 0 security
-# patch; the move to Puma 7.x is a separate, deliberate step.
-gem 'puma', '~> 6.4', '>= 6.4.3'
+# Use Puma as the app server. 7.x tightened the default bind to localhost,
+# so config/puma.rb binds 0.0.0.0 explicitly for the k8s pods.
+gem 'puma', '~> 7.2'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
