@@ -1,19 +1,19 @@
-require_relative 'boot'
+require_relative "boot"
 
 # Explicit railtie requires instead of `rails/all`. The frameworks left out
 # are the ones this app has never used: Action Cable, Action Mailbox,
 # Action Text and Active Storage. Loading them cost boot time, pulled in
 # config surface that had to be maintained through every defaults bump, and
 # invited accidental coupling.
-require 'rails'
+require "rails"
 
-require 'active_model/railtie'
-require 'active_record/railtie'
-require 'action_controller/railtie'
-require 'action_view/railtie'
-require 'action_mailer/railtie'
-require 'active_job/railtie'
-require 'rails/test_unit/railtie'
+require "active_model/railtie"
+require "active_record/railtie"
+require "action_controller/railtie"
+require "action_view/railtie"
+require "action_mailer/railtie"
+require "active_job/railtie"
+require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -23,6 +23,11 @@ module Wetrockpolice
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
+
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # No Redis, and nothing in the app calls Rails.cache today. :memory_store
     # is per-process, which is fine at this scale and keeps the runtime
