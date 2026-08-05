@@ -258,6 +258,21 @@ JS code is encapsulated into vanilla "controllers"; each controller is responsib
 </script>
 ```
 
+## Weather Data
+
+Precipitation data comes from [Synoptic Data](https://synopticdata.com/). The
+browser never talks to Synoptic directly: the landing page's Stimulus
+controller fetches `GET /:slug/precipitation`, a small Rails proxy
+(`Area::WeatherController`) that calls Synoptic with the station id stored on
+the `WatchedArea` row, caches each response for 10 minutes, and passes the
+JSON through unchanged. The API token lives only on the server, read from the
+`SYNOPTIC_API_TOKEN` environment variable (in production, via the
+`synoptic.token` Helm secret supplied by `secrets.yaml`).
+
+In development you normally don't need a token at all: with
+`MOCK_WEATHER_DATA=true` (the `.env.example` default) the page serves a
+bundled fixture response instead of fetching live data.
+
 ## Creating or Updating Hero Images
 
 This repository uses a custom strategy for loading large background images on the client to ensure the first-load experience isn't poor. Without this strategy, the page would load with the large image missing, then slowly load the image top-down as if the page was being printed out.
