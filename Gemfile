@@ -18,7 +18,7 @@ gem 'devise', '~> 4.9.3'
 # Environment management
 gem 'dotenv-rails'
 # SEO
-gem 'meta-tags', '~> 2.20'
+gem 'meta-tags', '~> 2.21'
 # Postgres client
 gem 'pg'
 # Administrative backend. 3.3 serves its own assets via importmap-rails +

@@ -168,8 +168,8 @@ GEM
       net-smtp
     marcel (1.2.1)
     matrix (0.4.3)
-    meta-tags (2.20.0)
-      actionpack (>= 6.0.0, < 7.2)
+    meta-tags (2.23.0)
+      actionpack (>= 6.0.0)
     mini_mime (1.1.5)
     minitest (5.25.1)
     mutex_m (0.2.0)
@@ -354,7 +354,7 @@ DEPENDENCIES
   dotenv-rails
   importmap-rails
   jsbundling-rails
-  meta-tags (~> 2.20)
+  meta-tags (~> 2.21)
   pg
   propshaft
   puma (~> 6.4, >= 6.4.3)
