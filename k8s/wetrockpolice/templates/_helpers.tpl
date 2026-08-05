@@ -51,6 +51,35 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Postgres object name. Matches the name the Bitnami subchart produced, because
+the app deployment reaches the database at this Service name and reads its
+password from the Secret of the same name (key `postgres-password`).
+*/}}
+{{- define "wetrockpolice.postgresql.fullname" -}}
+{{- printf "%s-postgresql" .Release.Name }}
+{{- end }}
+
+{{/*
+Postgres selector labels. Deliberately a different `name` label than the app's
+selectorLabels: label selectors match on subsets, so sharing the app's
+name+instance pair would put the postgres pod behind the app's Service.
+*/}}
+{{- define "wetrockpolice.postgresql.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "wetrockpolice.name" . }}-postgresql
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Postgres common labels
+*/}}
+{{- define "wetrockpolice.postgresql.labels" -}}
+helm.sh/chart: {{ include "wetrockpolice.chart" . }}
+{{ include "wetrockpolice.postgresql.selectorLabels" . }}
+app.kubernetes.io/component: postgresql
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "wetrockpolice.serviceAccountName" -}}

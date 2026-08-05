@@ -1,0 +1,34 @@
+# App-facing Service: keeps the DNS name the deployment template points
+# WETROCKPOLICE_DATABASE_HOST at ({{ .Release.Name }}-postgresql).
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "wetrockpolice.postgresql.fullname" . }}
+  labels:
+    {{- include "wetrockpolice.postgresql.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+      protocol: TCP
+  selector:
+    {{- include "wetrockpolice.postgresql.selectorLabels" . | nindent 4 }}
+---
+# Headless governing Service for the StatefulSet (stable pod DNS identity).
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "wetrockpolice.postgresql.fullname" . }}-hl
+  labels:
+    {{- include "wetrockpolice.postgresql.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+      protocol: TCP
+  selector:
+    {{- include "wetrockpolice.postgresql.selectorLabels" . | nindent 4 }}

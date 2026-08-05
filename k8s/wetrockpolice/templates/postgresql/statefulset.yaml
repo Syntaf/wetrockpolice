@@ -1,0 +1,85 @@
+# Single-replica Postgres on the official image, replacing the frozen
+# Bitnami subchart. The data is reseedable (db/seeds.rb) and the owner
+# accepts reseed as the disaster-recovery path, so this stays deliberately
+# minimal: one replica, one PVC, no replication.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "wetrockpolice.postgresql.fullname" . }}
+  labels:
+    {{- include "wetrockpolice.postgresql.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "wetrockpolice.postgresql.fullname" . }}-hl
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "wetrockpolice.postgresql.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "wetrockpolice.postgresql.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.postgresql.primary.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: postgresql
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.auth.username | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresql.auth.database | quote }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wetrockpolice.postgresql.fullname" . }}
+                  key: postgres-password
+            # Subdirectory of the mount so initdb tolerates the volume's
+            # lost+found directory.
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - name: postgresql
+              containerPort: 5432
+              protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -h 127.0.0.1 -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -h 127.0.0.1 -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          {{- with .Values.postgresql.primary.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        {{- with .Values.postgresql.persistence.storageClass }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.postgresql.persistence.size }}

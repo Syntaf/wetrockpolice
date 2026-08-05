@@ -1,0 +1,73 @@
+# Optional pg_dump CronJob, off by default: the database is reseedable
+# (db/seeds.rb) and reseed is the accepted recovery path, so the backup
+# volume is opt-in via postgresql.backup.enabled.
+{{- if .Values.postgresql.backup.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "wetrockpolice.postgresql.fullname" . }}-backup
+  labels:
+    {{- include "wetrockpolice.postgresql.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- with .Values.postgresql.persistence.storageClass }}
+  storageClassName: {{ . | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.postgresql.backup.size }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "wetrockpolice.postgresql.fullname" . }}-backup
+  labels:
+    {{- include "wetrockpolice.postgresql.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.postgresql.backup.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            {{- include "wetrockpolice.postgresql.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: postgresql-backup
+        spec:
+          restartPolicy: Never
+          {{- with .Values.postgresql.primary.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: pg-dump
+              image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "wetrockpolice.postgresql.fullname" . }}
+                      key: postgres-password
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  pg_dump \
+                    -h {{ include "wetrockpolice.postgresql.fullname" . }} \
+                    -U {{ .Values.postgresql.auth.username }} \
+                    -d {{ .Values.postgresql.auth.database }} \
+                    | gzip > "/backups/{{ .Values.postgresql.auth.database }}-$(date +%Y%m%d-%H%M%S).sql.gz"
+                  find /backups -name '*.sql.gz' -mtime +{{ .Values.postgresql.backup.keepDays }} -delete
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: {{ include "wetrockpolice.postgresql.fullname" . }}-backup
+{{- end }}
