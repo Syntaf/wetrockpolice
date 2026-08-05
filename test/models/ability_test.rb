@@ -63,6 +63,16 @@ class AbilityTest < ActiveSupport::TestCase
     assert_equal [@redrock.id], manages
   end
 
+  test 'manages survives a save-and-reload round trip through the coder' do
+    user = users(:area_admin)
+    user.update!(manages: [@redrock.id, @castlerock.id])
+
+    reloaded = User.find(user.id).manages
+
+    assert_kind_of Array, reloaded
+    assert_equal [@redrock.id, @castlerock.id], reloaded
+  end
+
   test 'scoped admin accessible_by is limited to the watched areas in manages' do
     ability = Ability.new(users(:area_admin))
 
