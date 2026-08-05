@@ -20,7 +20,7 @@ class UserConfirmationTest < ActionDispatch::IntegrationTest
 
   test 'a valid token confirms the account and redirects to sign-in' do
     user = users(:unconfirmed_user)
-    refute user.confirmed?
+    assert_not user.confirmed?
 
     get user_confirmation_url(confirmation_token: user.confirmation_token)
 
@@ -32,7 +32,9 @@ class UserConfirmationTest < ActionDispatch::IntegrationTest
 
   test 'an admin confirming lands on sign-in, not the admin backend' do
     user = users(:unconfirmed_user)
-    user.update_columns(admin: true, super_admin: true)
+    # update_columns on purpose: promote the fixture without tripping
+    # validations or the after_create_commit admin mail.
+    user.update_columns(admin: true, super_admin: true) # rubocop:disable Rails/SkipsModelValidations
 
     get user_confirmation_url(confirmation_token: user.confirmation_token)
 
@@ -45,7 +47,7 @@ class UserConfirmationTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'form[action=?]', user_confirmation_path
-    refute users(:unconfirmed_user).reload.confirmed?
+    assert_not users(:unconfirmed_user).reload.confirmed?
   end
 
   test 'the resend-confirmation form is reachable' do

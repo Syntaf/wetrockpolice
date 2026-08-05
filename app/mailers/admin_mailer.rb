@@ -8,7 +8,7 @@ class AdminMailer < Devise::Mailer
     @email = email
 
     mail(
-      to: 'gmercer015@gmail.com',
+      to: ENV.fetch('ADMIN_EMAIL', 'gmercer015@gmail.com'),
       subject: 'New User Awaiting Admin Approval'
     )
   end
