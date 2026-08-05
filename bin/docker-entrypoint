@@ -6,13 +6,19 @@ if [ -z "${LD_PRELOAD+x}" ]; then
     export LD_PRELOAD
 fi
 
-# When this container is the web server, create/migrate the database first
-# (db:prepare is idempotent; concurrent replicas serialize on Active
-# Record's migration advisory lock). Set SKIP_DB_PREPARE=1 to opt out,
-# e.g. while debugging a broken migration or running one-off commands
-# that should not touch the schema.
+# When this container is the web server, create/migrate the database
+# first. db:prepare is idempotent, but on its own it only serializes
+# concurrent replicas on the *migration* path (Active Record's migration
+# advisory lock); the schema-load path a fresh database takes has no lock
+# at all. db:prepare_locked (lib/tasks/db_prepare_locked.rake) wraps the
+# whole run in a Postgres advisory lock so replicas booting together
+# cannot race it. Seeding never happens implicitly here: db/seeds.rb
+# no-ops in production unless ALLOW_PRODUCTION_SEED=1 is set.
+# Set SKIP_DB_PREPARE=1 to opt out entirely, e.g. while debugging a
+# broken migration, restoring a database dump, or running one-off
+# commands that should not touch the schema.
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ] && [ -z "${SKIP_DB_PREPARE:-}" ]; then
-  ./bin/rails db:prepare
+  ./bin/rails db:prepare_locked
 fi
 
 exec "${@}"

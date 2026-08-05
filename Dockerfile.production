@@ -72,7 +72,8 @@ RUN groupadd --system --gid 1000 rails && \
     chown -R rails:rails db log tmp
 USER 1000:1000
 
-# Runs db:prepare before the web server starts (SKIP_DB_PREPARE=1 opts out).
+# Runs db:prepare_locked before the web server starts
+# (SKIP_DB_PREPARE=1 opts out).
 ENTRYPOINT ["/opt/wetrockpolice/bin/docker-entrypoint"]
 
 # Puma binds 0.0.0.0:3001 via config/puma.rb (ENV PORT overrides).

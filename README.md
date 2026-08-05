@@ -301,7 +301,55 @@ test suite builds `Dockerfile.production` and publishes
 `make deploy`. (`make build`/`make push` still exist as a deprecated
 escape hatch, but local pushes bypass the test gate.)
 
-On boot the web container runs `bin/rails db:prepare` from
-`bin/docker-entrypoint`, so migrations (or schema load + seed on a
-fresh database) happen automatically at rollout; set
-`SKIP_DB_PREPARE=1` on the container to suppress it.
+On boot the web container runs `bin/rails db:prepare_locked` from
+`bin/docker-entrypoint`: `db:prepare` wrapped in a Postgres advisory
+lock (`lib/tasks/db_prepare_locked.rake`) so concurrent replicas can't
+race the schema load on a fresh database. Migrations (or schema load on
+a fresh database) happen automatically at rollout; seeding does **not**
+— `db/seeds.rb` refuses to run in production unless you explicitly seed
+with `ALLOW_PRODUCTION_SEED=1` and `SEED_ADMIN_PASSWORD` set (see
+below). Set `SKIP_DB_PREPARE=1` on the container to suppress the
+prepare entirely.
+
+### Postgres cutover (Bitnami subchart → in-chart StatefulSet)
+
+The chart now ships its own Postgres 17 StatefulSet
+(`k8s/wetrockpolice/templates/postgresql/`) in place of the frozen
+Bitnami subchart. The StatefulSet is deliberately named
+`wetrockpolice-postgres` — *not* the Bitnami `wetrockpolice-postgresql`
+— because a StatefulSet's selector and volume claim template are
+immutable: reusing the old name would make `helm upgrade` patch the
+existing object and be rejected by the API server. Only the Services
+and the password Secret keep the old `wetrockpolice-postgresql` name,
+since that's what the app deployment points at.
+
+The first `make deploy` after the cutover therefore:
+
+1. Deletes the Bitnami StatefulSet and its pod
+   (`wetrockpolice-postgresql-0`). Its PVC
+   (`data-wetrockpolice-postgresql-0`, 8Gi, Postgres 15) is **left
+   behind untouched** — take a final `pg_dump` from it first if you
+   want to migrate data rather than reseed, and delete it manually once
+   you no longer need it.
+2. Creates `wetrockpolice-postgres` with a fresh, empty PVC
+   (`data-wetrockpolice-postgres-0`). The container's initdb creates an
+   empty `wetrockpolice_production`, and the first web pod to boot
+   loads the schema via `db:prepare_locked`. No data is migrated
+   automatically.
+
+To restore a dump instead of reseeding, the restore must land before
+the app prepares the fresh database: scale the web Deployment to 0 (or
+`kubectl set env deployment/wetrockpolice SKIP_DB_PREPARE=1`), restore
+the dump, then roll the web pods normally.
+
+To reseed instead (the accepted disaster-recovery path — content and
+admin only, no user data), run a one-off inside a web pod:
+
+```
+kubectl exec -n wetrockpolice deploy/wetrockpolice -- \
+  env ALLOW_PRODUCTION_SEED=1 SEED_ADMIN_PASSWORD='<strong password>' \
+  ./bin/rails db:seed
+```
+
+`SEED_ADMIN_PASSWORD` has no default in production: seeding without it
+fails rather than creating an admin with a guessable password.
