@@ -63,3 +63,26 @@ export const parseHourlyIntervals = (intervals) => {
 
     return data;
 };
+
+// The most recent hour any point got rain in Open-Meteo's model, if it's
+// newer than the gauge's last rain. `forecasts` is Open-Meteo's response for
+// several points (an array, one entry per point, in the same order).
+export const findModelRainAfter = (forecasts, points, gaugeLastRain, now = new Date(), minMm = 0.1) => {
+    let found = null;
+
+    forecasts.forEach((forecast, idx) => {
+        const times = forecast?.hourly?.time ?? [];
+        const precip = forecast?.hourly?.precipitation ?? [];
+
+        times.forEach((time, i) => {
+            const at = new Date(time + 'Z'); // hour ending, UTC
+            const mm = precip[i] ?? 0;
+
+            if (at > now || mm < minMm) return;
+            if (gaugeLastRain && at <= gaugeLastRain) return;
+            if (!found || at > found.at) found = { at, mm, name: points[idx].name };
+        });
+    });
+
+    return found;
+};
