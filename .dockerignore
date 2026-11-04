@@ -2,3 +2,9 @@
 node_modules
 config/master.key
 config/credentials.yml.enc
+secrets.yaml
+.env*
+k8s/
+log/
+tmp/
+docs/

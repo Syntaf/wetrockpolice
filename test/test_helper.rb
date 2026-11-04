@@ -2,13 +2,8 @@
 
 # rubocop:disable Style/ClassAndModuleChildren, Style/ExpandPathArguments
 
-# unless ENV['CODECOV_TOKEN'].nil?
-#   require 'simplecov'
-#   SimpleCov.start
-
-#   require 'codecov'
-#   SimpleCov.formatter = SimpleCov::Formatter::Codecov
-# end
+require 'simplecov'
+SimpleCov.start 'rails'
 
 require File.expand_path('../../config/environment', __FILE__)
 require 'minitest/autorun'
@@ -27,6 +22,10 @@ end
 
 class ActiveSupport::TestCase
   fixtures :all
+end
+
+class ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
 end
 
 module SnccApplication

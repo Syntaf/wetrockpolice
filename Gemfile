@@ -28,10 +28,12 @@ gem 'seed_dump'
 gem 'rails-healthcheck'
 # Use webpacker js bundler
 gem 'webpacker'
-# Rails framework
-gem 'rails', '~> 7.1'
-# Use Puma as the app server
-gem 'puma', '~> 6.4'
+# Rails framework — pinned to the 7.1 series; the upgrade to 7.2+ is a
+# deliberate, separately-tested step, not something `bundle update` may do.
+gem 'rails', '~> 7.1.6'
+# Use Puma as the app server. The `>= 6.4.3` floor is the Phase 0 security
+# patch; the move to Puma 7.x is a separate, deliberate step.
+gem 'puma', '~> 6.4', '>= 6.4.3'
 # Use Redis adapter for caching & cable
 gem 'redis', '~> 4.0'
 # Use faster connection library for Redis
@@ -43,12 +45,15 @@ gem 'sidekiq', '~> 7.0'
 # gem 'bcrypt', '~> 3.1.7'
 
 group :development, :test do
-  # gem 'codecov', require: false
-
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 2.13'
   gem 'selenium-webdriver'
   gem 'webmock'
+end
+
+group :test do
+  # Test coverage baseline
+  gem 'simplecov', require: false
 end
 
 group :development do
