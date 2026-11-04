@@ -1,5 +1,5 @@
 # Development environment
-FROM ruby:3.3.12
+FROM ruby:3.4.10
 
 ENV RAILS_ENV=production
 ENV INSTALL_PATH /opt/wetrockpolice

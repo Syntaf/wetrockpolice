@@ -39,10 +39,10 @@ The easiest way to work with wetrockpolice locally is to leverage Docker for you
 dependency (postgres) and run your own http server & asset watchers via a native ruby
 installation (like via RVM)
 
-1. Install the required ruby version (`3.3.12`) via [RVM's installation docs](https://rvm.io/rubies/installing)
+1. Install the required ruby version (`3.4.10`) via [RVM's installation docs](https://rvm.io/rubies/installing)
    ```
-   rvm install 3.3.12
-   rvm use 3.3.12
+   rvm install 3.4.10
+   rvm use 3.4.10
    ```
   
 2. Install the required node version (`20.13.1`) via [NVM's installation docs](https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage)
@@ -90,10 +90,10 @@ installation (like via RVM)
 This option is similar to the above but assumes you are running your database
 locally via `brew`, and you're within an OSX environment.
 
-1. Install RVM and the required ruby version (`3.3.12`) via [RVM's installation docs](https://rvm.io/rubies/installing)
+1. Install RVM and the required ruby version (`3.4.10`) via [RVM's installation docs](https://rvm.io/rubies/installing)
    ```
-   rvm install 3.3.12
-   rvm use 3.3.12
+   rvm install 3.4.10
+   rvm use 3.4.10
    ```
 
 2. Install the required node version (`20.13.1`) via [NVM's installation docs](https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage)

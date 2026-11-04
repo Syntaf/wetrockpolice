@@ -20,4 +20,22 @@ class RainyDayOptionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal area.to_json, @response.body
   end
+
+  test 'renders JSON null when no rainy day area matches' do
+    get watched_area_rainy_day_option_url(:redrock, -1, format: :json)
+
+    assert_response :success
+    assert_equal 'null', @response.body
+  end
+
+  test 'show rejects non-JSON formats' do
+    area = rainy_day_areas(:area1_redrock)
+
+    assert_raises(ActionController::UnknownFormat) do
+      get watched_area_rainy_day_option_url(
+        area.watched_area.slug,
+        area.climbing_area.id
+      )
+    end
+  end
 end

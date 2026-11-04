@@ -27,10 +27,11 @@ Regexp.timeout = 1
 module Wetrockpolice
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    # 8.0 covers to_time_preserves_timezone = :zone and
-    # action_dispatch.strict_freshness = true, both proven suite-green
-    # individually before this flip.
-    config.load_defaults 8.0
+    # 8.1 covers the six new_framework_defaults_8_1 settings (JSON escaping
+    # relaxations, order-dependent-finder raise, path-relative-redirect raise,
+    # Ruby render tracker, hidden-field autocomplete removal), each proven
+    # suite-green individually before this flip.
+    config.load_defaults 8.1
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
