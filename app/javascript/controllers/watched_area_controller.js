@@ -19,15 +19,6 @@ import { format } from 'date-fns';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const apiOptions = {
-  'token': '2153743de639465ebbb30fa392c748de',
-  'stid': '',
-  'recent': 28800,
-  'units': 'english',
-  'interval': 'hour',
-  'precip': 1,
-}
-
 export default class extends Controller {
   static targets = [
     "rainTileSection",
@@ -41,12 +32,26 @@ export default class extends Controller {
   ]
 
   static values = {
-    'station': String,
+    'precipitationUrl': String,
     'developmentMode': Boolean
   }
 
   async connect() {
-    const intervals = await this.fetchPrecipitationIntervals();
+    let intervals = null;
+
+    try {
+      intervals = await this.fetchPrecipitationIntervals();
+    } catch (error) {
+      // A rejected fetch (network down), a non-JSON body (ingress error
+      // page), an unexpected shape -- whatever went wrong, the page must
+      // degrade to a message, never hang on the spinners.
+      console.error('Failed to fetch precipitation data', error);
+    }
+
+    if (intervals === null) {
+      this.renderWeatherUnavailable();
+      return;
+    }
 
     this.renderRainInformation(intervals);
     this.renderRainGraph(intervals);
@@ -54,6 +59,14 @@ export default class extends Controller {
 
   async fetchPrecipitationIntervals() {
       const data = await this.fetchObservations();
+
+      // The Rails proxy reports its own failures as { "error": ... }:
+      // 502 when Synoptic is down, 503 when the token or station is not
+      // configured. All of them land in the same degraded rendering.
+      if (data['error']) {
+        console.error('Precipitation proxy returned an error', data['error']);
+        return null;
+      }
 
       if (!data['SUMMARY']) {
         console.error('Received malformed response', data);
@@ -97,17 +110,23 @@ export default class extends Controller {
       });
     }
 
-    const fetchParams = new URLSearchParams({
-      ...apiOptions,
-      'stid': this.stationValue
-    });
-
-    const response = await fetch(
-      'https://api.synopticdata.com/v2/stations/timeseries?' + fetchParams.toString()
-    );
+    // Rails proxies the Synoptic request server-side (Area::WeatherController)
+    // so the API token never ships to the browser. The proxy passes the
+    // upstream JSON through unchanged, so the parsing above is untouched.
+    const response = await fetch(this.precipitationUrlValue);
 
     return await response.json();
+  }
 
+  // Terminal state for every failure path: clear the spinners, put
+  // something honest in the tiles, and skip the chart entirely.
+  renderWeatherUnavailable() {
+    this.loadingTargets.forEach(el => el.remove());
+    this.daysTileTarget.innerHTML = '?';
+    this.hoursTileTarget.innerHTML = '?';
+
+    this.lastRainDateTarget.innerHTML =
+      'Weather data is temporarily unavailable — please check back shortly.';
   }
 
   renderRainInformation(intervals) {
@@ -229,6 +248,9 @@ export default class extends Controller {
   }
 
   toggleGraphDisplay(event) {
+    // No chart exists when the weather data failed to load.
+    if (!this.timeSeriesChart) return;
+
     const checked = event.target.checked;
 
     if (checked) {
