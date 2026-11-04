@@ -6,13 +6,9 @@ SHELL=/opt/homebrew/bin/bash
 http:
 	bundle exec rails server -p 3002 -b 0.0.0.0
 
-.PHONY: worker
-worker:
-	bundle exec sidekiq -q default -q mailers
-
 .PHONY: up
 up:
-	docker-compose up -d postgres redis
+	docker-compose up -d postgres
 
 .PHONY: install
 install:

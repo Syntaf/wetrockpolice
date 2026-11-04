@@ -20,12 +20,6 @@ gem 'meta-tags', '~> 2.20'
 gem 'pg'
 # Administrative backend
 gem 'rails_admin', '~> 3.1'
-# Third-party integrations client
-gem 'rest-client', '~> 2.1.0'
-# Dump data into seed file
-gem 'seed_dump'
-# K8s health checking
-gem 'rails-healthcheck'
 # Use webpacker js bundler
 gem 'webpacker'
 # Rails framework — pinned to the 7.1 series; the upgrade to 7.2+ is a
@@ -34,12 +28,6 @@ gem 'rails', '~> 7.1.6'
 # Use Puma as the app server. The `>= 6.4.3` floor is the Phase 0 security
 # patch; the move to Puma 7.x is a separate, deliberate step.
 gem 'puma', '~> 6.4', '>= 6.4.3'
-# Use Redis adapter for caching & cable
-gem 'redis', '~> 4.0'
-# Use faster connection library for Redis
-gem 'hiredis'
-# Sidekiq for jobs
-gem 'sidekiq', '~> 7.0'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

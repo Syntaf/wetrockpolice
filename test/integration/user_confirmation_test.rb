@@ -2,13 +2,14 @@
 
 require 'test_helper'
 
-# Pins the Devise confirmation flow, including one thing that is easy to
-# misread from the code: app/controllers/confirmations_controller.rb exists but
-# is NOT wired up — `devise_for :users` declares no `controllers:` override, so
-# /users/confirmation is served by Devise::ConfirmationsController and the
-# custom `after_confirmation_path_for` (which would sign the user in and bounce
-# admins to rails_admin) never runs. These tests assert the behavior that is
-# actually shipped, so Phase 1's deletion of that file is a no-op by proof.
+# Pins the Devise confirmation flow. `devise_for :users` declares no
+# `controllers:` override, so /users/confirmation is served by
+# Devise::ConfirmationsController. Phase 1 deleted the unreferenced
+# app/controllers/confirmations_controller.rb on the strength of these
+# assertions — its custom `after_confirmation_path_for` (which would have
+# signed the user in and bounced admins to rails_admin) never ran, and the
+# first test below keeps proving that nothing re-routes /users/confirmation
+# away from Devise.
 class UserConfirmationTest < ActionDispatch::IntegrationTest
   test 'the custom ConfirmationsController is not routed' do
     assert_equal 'devise/confirmations#show',
