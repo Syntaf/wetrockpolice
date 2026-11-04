@@ -37,6 +37,17 @@ RailsAdmin.config do |config|
     end
   end
 
+  # Devise 5 declares the password length validator with procs
+  # (`maximum: proc { password_length.max }`), and rails_admin 3.3's generated
+  # field help does `[length, valid_length[:maximum]].min`, which raises
+  # "comparison of Integer with Proc failed" — the User new/edit forms 500.
+  # Explicit help text skips that computation.
+  config.model User do
+    configure :password do
+      help { "#{required? ? 'Required' : 'Optional'}. Length of #{Devise.password_length.min}-#{Devise.password_length.max}." }
+    end
+  end
+
   config.model Location do
     edit do
       configure :rainy_day_areas do
