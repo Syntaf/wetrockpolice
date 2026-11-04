@@ -39,10 +39,10 @@ The easiest way to work with wetrockpolice locally is to leverage Docker for you
 dependency (postgres) and run your own http server & asset watchers via a native ruby
 installation (like via RVM)
 
-1. Install the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
+1. Install the required ruby version (`3.3.12`) via [RVM's installation docs](https://rvm.io/rubies/installing)
    ```
-   rvm install 3.1.4
-   rvm use 3.1.4
+   rvm install 3.3.12
+   rvm use 3.3.12
    ```
   
 2. Install the required node version (`20.13.1`) via [NVM's installation docs](https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage)
@@ -90,10 +90,10 @@ installation (like via RVM)
 This option is similar to the above but assumes you are running your database
 locally via `brew`, and you're within an OSX environment.
 
-1. Install RVM and the required ruby version (`3.1.4`) via [RVM's installation docs](https://rvm.io/rubies/installing)
+1. Install RVM and the required ruby version (`3.3.12`) via [RVM's installation docs](https://rvm.io/rubies/installing)
    ```
-   rvm install 3.1.4
-   rvm use 3.1.4
+   rvm install 3.3.12
+   rvm use 3.3.12
    ```
 
 2. Install the required node version (`20.13.1`) via [NVM's installation docs](https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage)
@@ -153,6 +153,21 @@ locally via `brew`, and you're within an OSX environment.
 # Contributing
 
 This repository uses [Github Actions](https://github.com/features/actions) for continuous integration. Before a pull request can be merged into master it must pass all existing / new tests *as well* as linting (Rubocop). Using a rubocop extension is **highly** recommended.
+
+## Running the tests
+
+```
+bundle exec rails test          # unit / integration
+bundle exec rails test:system   # headless Chrome, requires Chrome installed
+```
+
+`rails test` does **not** include `test/system`, so run both.
+
+System tests drive the real compiled bundle, so build it first (`make pcat`).
+They also refuse to run while `public/assets/` exists: Propshaft serves that
+precompiled copy in preference to `app/assets/builds`, which would silently
+test whatever `assets:precompile` last wrote. If you hit that, run
+`bundle exec rails assets:clobber && make pcat`.
 
 #### Using Rubocop on Visual Studio Code:
 
