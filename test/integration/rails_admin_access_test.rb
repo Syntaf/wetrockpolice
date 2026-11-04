@@ -53,6 +53,29 @@ class RailsAdminAccessTest < ActionDispatch::IntegrationTest
     end
   end
 
+  # Every model's forms, not just the dashboard: field help/validators are
+  # computed per form, and a gem bump can break one model's form alone
+  # (Devise 5's proc-based password length 500'd the User forms).
+  test 'super admin can open index, new, show and edit for every model' do
+    sign_in users(:super_admin)
+
+    RailsAdmin::Config.models.map(&:abstract_model).each do |am|
+      base = "/admin/manage/#{am.to_param}"
+      get base
+      assert_response :success, "index #{am.model_name}"
+      get "#{base}/new"
+      assert_response :success, "new #{am.model_name}"
+
+      record = am.model.first
+      next unless record
+
+      get "#{base}/#{record.id}"
+      assert_response :success, "show #{am.model_name}"
+      get "#{base}/#{record.id}/edit"
+      assert_response :success, "edit #{am.model_name}"
+    end
+  end
+
   test 'anonymous visitors are sent to the sign-in page' do
     get rails_admin_path
 
