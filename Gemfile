@@ -45,6 +45,8 @@ gem 'turbo-rails', '~> 2.0'
 # Rails framework — pinned to the 8.1 series (current stable); series bumps
 # are deliberate, separately-tested steps, not something `bundle update` may do.
 gem 'rails', '~> 8.1.0'
+# Boot-time cache (load-path + ISeq); required from config/boot.rb.
+gem 'bootsnap', require: false
 # Use Puma as the app server. 7.x tightened the default bind to localhost,
 # so config/puma.rb binds 0.0.0.0 explicitly for the k8s pods.
 gem 'puma', '~> 7.2'
