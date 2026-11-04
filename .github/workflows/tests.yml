@@ -30,7 +30,6 @@ jobs:
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
-      BUNDLE_BUILD__SASSC: "--disable-march-tune-native"
 
     steps:
       - name: Checkout Code
@@ -61,13 +60,19 @@ jobs:
 
       - name: Install Javascript Packages
         run: |
-          NODE_OPTIONS=--openssl-legacy-provider yarn install --pure-lockfile
+          yarn install --pure-lockfile
 
-      - name: Compile Assets
-        env:
-          RAILS_ENV: test
+      # esbuild bundle + both sass builds (app and rails_admin) into
+      # app/assets/builds, served by Propshaft in the test env. Invoked
+      # directly with yarn rather than via javascript:build/css:build because
+      # cssbundling-rails runs `bun install`/`bun run build:css` whenever a
+      # bun binary exists alongside yarn.lock (GitHub runners ship bun), and
+      # that first bun install writes bun.lockb, which flips jsbundling-rails
+      # (lockfile-first tool detection) onto bun too. yarn.lock is this
+      # repo's single source of dependency truth, so bun must never run.
+      - name: Build Assets
         run: |
-          NODE_OPTIONS=--openssl-legacy-provider bundle exec rails webpacker:compile
+          yarn build && yarn build:css
 
       - name: Create Database
         env:
@@ -98,6 +103,12 @@ jobs:
         run: |
           bundle exec rails zeitwerk:check
 
+      # SKIP_JS_BUILD/SKIP_CSS_BUILD: a bare `rails test` runs test:prepare,
+      # which js/cssbundling-rails enhance with javascript:build/css:build —
+      # on a bun-equipped runner that would silently rebuild the assets with
+      # bun, overwriting the yarn-built ones from the Build Assets step. Both
+      # gems check these env vars at rake load time and skip the enhancement,
+      # so the manual yarn build above stays the only build path.
       - name: Run Tests
         env:
           POSTGRES_TEST_DB: wetrockpolice_test
@@ -106,6 +117,8 @@ jobs:
           POSTGRES_HOST: localhost
           RAILS_ENV: test
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          SKIP_JS_BUILD: "1"
+          SKIP_CSS_BUILD: "1"
         run: |
           bundle exec rails test
 

@@ -8,11 +8,11 @@ module ApplicationHelper
   def watched_area_bg_image
     case @watched_area.slug
     when 'redrock'
-      'media/images/redrock-winter-2020-hero.jpg'
+      'redrock-winter-2020-hero.jpg'
     when 'castlerock'
-      'media/images/castlerock/hero-image.jpg'
+      'castlerock/hero-image.jpg'
     when 'stoneypoint'
-      'media/images/stoneypoint/hero-image.png'
+      'stoneypoint/hero-image.png'
     end
   end
 end

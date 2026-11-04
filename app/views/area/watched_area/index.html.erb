@@ -9,7 +9,7 @@
   <div class="hero-header <%= @watched_area.slug %>"
     data-controller="async-image"
     data-async-image-target="imageContainer"
-    data-async-image-image-url-value="<%= asset_pack_path(watched_area_bg_image) %>"
+    data-async-image-image-url-value="<%= asset_path(watched_area_bg_image) %>"
     ></div>
   <div class="shadow-overlay"></div>
 
@@ -41,10 +41,11 @@
       </div>
       <div class="warning-tooltip animated tada delay-2s">
         <i
-          class="fas fa-exclamation-circle"
+          class="bi bi-exclamation-circle-fill"
           data-role="tooltip"
-          data-toggle="tooltip"
-          data-placement="right"
+          data-controller="tooltip"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
           title="<%= @watched_area.info_bubble_excerpt %>">
         </i>
       </div>
