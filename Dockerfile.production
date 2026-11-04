@@ -7,15 +7,16 @@ RUN mkdir -p $INSTALL_PATH
 
 # nodejs, yarn & bun
 RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - 
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg -o /root/yarn-pubkey.gpg && apt-key add /root/yarn-pubkey.gpg
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs yarn python3 python-is-python3
+# apt-key is gone from current Debian (ruby:3.3+ images), so yarn comes from
+# npm rather than the dl.yarnpkg.com apt repo.
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs python3 python-is-python3 && \
+    npm install -g yarn
 
 # set working directory
 WORKDIR /opt/wetrockpolice
 
 # instally ruby gems
-COPY Gemfile Gemfile.lock ./
+COPY Gemfile Gemfile.lock .ruby-version ./
 RUN gem install bundler
 RUN bundle install --jobs 1
 
