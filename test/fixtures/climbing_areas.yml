@@ -9,3 +9,8 @@ area2:
   name: area2
   rock_type: example rock type 2
   description: ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem
+
+area3:
+  name: area3
+  rock_type: example rock type 3
+  description: dolor sit amet dolor sit amet dolor sit amet dolor sit amet dolor sit

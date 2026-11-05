@@ -10,3 +10,8 @@ area2_location:
   latitude: 6
   mt_z: 2
   climbing_area: area2
+
+area3_location:
+  longitude: 9
+  latitude: 9
+  climbing_area: area3

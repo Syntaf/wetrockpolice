@@ -1,9 +1,7 @@
-require 'rails_admin/mark_delivered_action'
-
 RailsAdmin.config do |config|  
   ### Popular gems integration
   config.main_app_name = Proc.new{|controller| [ 'Wetrockpolice', "Admin - #{controller.params[:action].try(:titleize)}"]}
-  config.asset_source = :webpacker
+  config.asset_source = :importmap
 
   ## == Devise ==
   config.authenticate_with do
@@ -39,18 +37,23 @@ RailsAdmin.config do |config|
     end
   end
 
+  # Devise 5 declares the password length validator with procs
+  # (`maximum: proc { password_length.max }`), and rails_admin 3.3's generated
+  # field help does `[length, valid_length[:maximum]].min`, which raises
+  # "comparison of Integer with Proc failed" — the User new/edit forms 500.
+  # Explicit help text skips that computation.
+  config.model User do
+    configure :password do
+      help { "#{required? ? 'Required' : 'Optional'}. Length of #{Devise.password_length.min}-#{Devise.password_length.max}." }
+    end
+  end
+
   config.model Location do
     edit do
       configure :rainy_day_areas do
         hide
       end
     end
-  end
-
-  config.model JointMembershipApplication do
-    include_fields :delivered, :created_at, :first_name, :last_name, :amount_paid, :cover_fee,
-      :order_id, :email, :phone_number, :street_line_one, :street_line_two, :city, :state,
-      :zipcode, :organization, :delivery_method, :delivered, :shirt_orders
   end
 
   config.actions do
@@ -63,10 +66,6 @@ RailsAdmin.config do |config|
     edit
     delete
     show_in_app
-
-    mark_delivered do
-      only ['JointMembershipApplication']
-    end
 
     ## With an audit adapter, you can add:
     # history_index

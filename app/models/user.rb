@@ -7,8 +7,12 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable
 
-  after_create :send_admin_mail
-  serialize :manages, type: Array
+  after_create_commit :send_admin_mail
+  # coder: YAML is what the implicit default was before Rails 7.1's
+  # default_column_serializer = nil (part of load_defaults 7.2): stated
+  # explicitly so the on-disk format of existing rows survives defaults
+  # bumps. The Ability test matrix guards the grants round-trip.
+  serialize :manages, coder: YAML, type: Array
 
   attr_accessor :skip_password
 
@@ -41,7 +45,7 @@ class User < ApplicationRecord
   end
 
   def send_admin_mail
-    AdminMailer.new_user_waiting_for_approval(email).deliver
+    AdminMailer.new_user_waiting_for_approval(email).deliver_later
   end
 
   protected

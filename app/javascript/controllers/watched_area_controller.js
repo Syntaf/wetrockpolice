@@ -1,18 +1,23 @@
 import { Controller } from "@hotwired/stimulus";
-import precipResponse from '../fixtures/precipitation_response';
 import { SYNOPTIC_OK_CODE } from "../constants";
 import { findModelRainAfter, parseDailyIntervals, parseHourlyIntervals } from "../utils";
-import Chart from 'chart.js/auto';
+// Named imports instead of 'chart.js/auto' so esbuild tree-shakes every
+// controller/scale/plugin the bar chart doesn't use. Registered below:
+// type 'bar' needs BarController + BarElement, its default category x-axis
+// needs CategoryScale, the numeric y-axis needs LinearScale, and the
+// default-enabled legend + hover tooltips need their plugins.
+import {
+  Chart,
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+} from 'chart.js';
 import { format } from 'date-fns';
 
-const apiOptions = {
-  'token': '2153743de639465ebbb30fa392c748de',
-  'stid': '',
-  'recent': 28800,
-  'units': 'english',
-  'interval': 'hour',
-  'precip': 1,
-}
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 // Spots around each gauge to check with Open-Meteo's modeled rain, to catch
 // showers that miss the gauge (#87). When the model has rain more recent than
@@ -44,16 +49,33 @@ export default class extends Controller {
   ]
 
   static values = {
+    'precipitationUrl': String,
     'station': String,
     'developmentMode': Boolean
   }
 
   async connect() {
-    const [intervals, forecasts] = await Promise.all([
-      this.fetchPrecipitationIntervals(),
-      this.fetchModelForecasts(),
-    ]);
-    const modelRain = this.findMissedModelRain(intervals, forecasts);
+    let intervals = null;
+
+    // Never rejects (it returns null on any failure), so a slow or broken
+    // Open-Meteo can only delay the page by MODEL_TIMEOUT_MS, never break it.
+    const forecastsPromise = this.fetchModelForecasts();
+
+    try {
+      intervals = await this.fetchPrecipitationIntervals();
+    } catch (error) {
+      // A rejected fetch (network down), a non-JSON body (ingress error
+      // page), an unexpected shape -- whatever went wrong, the page must
+      // degrade to a message, never hang on the spinners.
+      console.error('Failed to fetch precipitation data', error);
+    }
+
+    if (intervals === null) {
+      this.renderWeatherUnavailable();
+      return;
+    }
+
+    const modelRain = this.findMissedModelRain(intervals, await forecastsPromise);
 
     this.renderRainInformation(intervals, modelRain);
     this.renderRainGraph(intervals);
@@ -107,6 +129,14 @@ export default class extends Controller {
   async fetchPrecipitationIntervals() {
       const data = await this.fetchObservations();
 
+      // The Rails proxy reports its own failures as { "error": ... }:
+      // 502 when Synoptic is down, 503 when the token or station is not
+      // configured. All of them land in the same degraded rendering.
+      if (data['error']) {
+        console.error('Precipitation proxy returned an error', data['error']);
+        return null;
+      }
+
       if (!data['SUMMARY']) {
         console.error('Received malformed response', data);
         return null;
@@ -136,6 +166,12 @@ export default class extends Controller {
 
   async fetchObservations() {
     if (this.developmentModeValue) {
+      // Dynamic import so esbuild splits the 123KB mock Synoptic response
+      // into a separate chunk that is only ever fetched in development —
+      // a static top-level import would ship it to every production visitor.
+      const { default: precipResponse } =
+        await import('../fixtures/precipitation_response');
+
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(precipResponse);
@@ -143,17 +179,23 @@ export default class extends Controller {
       });
     }
 
-    const fetchParams = new URLSearchParams({
-      ...apiOptions,
-      'stid': this.stationValue
-    });
-
-    const response = await fetch(
-      'https://api.synopticdata.com/v2/stations/timeseries?' + fetchParams.toString()
-    );
+    // Rails proxies the Synoptic request server-side (Area::WeatherController)
+    // so the API token never ships to the browser. The proxy passes the
+    // upstream JSON through unchanged, so the parsing above is untouched.
+    const response = await fetch(this.precipitationUrlValue);
 
     return await response.json();
+  }
 
+  // Terminal state for every failure path: clear the spinners, put
+  // something honest in the tiles, and skip the chart entirely.
+  renderWeatherUnavailable() {
+    this.loadingTargets.forEach(el => el.remove());
+    this.daysTileTarget.innerHTML = '?';
+    this.hoursTileTarget.innerHTML = '?';
+
+    this.lastRainDateTarget.innerHTML =
+      'Weather data is temporarily unavailable — please check back shortly.';
   }
 
   renderRainInformation(intervals, modelRain = null) {
@@ -170,7 +212,7 @@ export default class extends Controller {
         this.loadingTargets.forEach(el => el.remove());
         this.daysTileTarget.innerHTML = '&#8734;';
         this.hoursTileTarget.innerHTML = '&#8734;' ;
-        
+
         this.lastRainDateTarget.innerHTML =
           'Nothing to look at down here, come back when weather is looking bleak.';
 
@@ -223,7 +265,7 @@ export default class extends Controller {
 
     const latestRainInterval = 
       intervals.toReversed().find(interval => interval.precip > 0);
-    
+
     if (!latestRainInterval) return null;
 
     const now = new Date();
@@ -266,11 +308,6 @@ export default class extends Controller {
   }
 
   renderRainGraph(intervals) {
-    const dailyIntervalLabel = (tooltipItems, data) => 
-        ` ${data.labels[tooltipItems.index].format('ll')} - ${tooltipItems.yLabel.toFixedDown(3)} inches of rain`;
-    const hourlyIntervalLabel = (tooltipItems, data) =>
-        ` ${data.labels[tooltipItems.index].format('lll')} - ${tooltipItems.yLabel.toFixedDown(3)} inches of rain`;
-
     this.timeSeriesDailyData = parseDailyIntervals(intervals);
     this.timeSeriesHourlyData = parseHourlyIntervals(intervals);
 
@@ -305,6 +342,9 @@ export default class extends Controller {
   }
 
   toggleGraphDisplay(event) {
+    // No chart exists when the weather data failed to load.
+    if (!this.timeSeriesChart) return;
+
     const checked = event.target.checked;
 
     if (checked) {
@@ -322,14 +362,3 @@ export default class extends Controller {
     this.timeSeriesChart.update();
   }
 }
-
-// function LandingController(apiOptions) {
-//     this.apiOptions = $.extend({
-//         'token': '2153743de639465ebbb30fa392c748de',
-//         'stid': '',
-//         'recent': 28800,
-//         'units': 'english',
-//         'interval': 'hour',
-//         'precip': 1,
-//     }, apiOptions);
-// }

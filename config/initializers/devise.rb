@@ -256,6 +256,13 @@ Devise.setup do |config|
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
 
+  # ==> Turbo configuration
+  # Turbo Drive discards non-2xx-with-redirect responses unless failures come
+  # back as 422 and redirects as 303. Without these, a failed sign-in renders
+  # the form with a 200 and Turbo silently drops it (blank/unchanged page).
+  config.responder.error_status = :unprocessable_entity
+  config.responder.redirect_status = :see_other
+
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.

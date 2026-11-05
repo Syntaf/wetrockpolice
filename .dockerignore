@@ -1,4 +1,27 @@
 .git
 node_modules
+# Stray bun lockfiles (written by cssbundling/jsbundling when a bun binary is
+# on PATH) must never reach the image: jsbundling-rails picks its tool by
+# lockfile presence *before* checking availability, so a copied-in bun.lockb
+# makes assets:precompile run `bun install` in an image that only has yarn.
+bun.lockb
+bun.lock
+# Locally-built assets; the image builds its own via assets:precompile.
+# Keep app/assets/builds/.keep: Propshaft only adds app/assets/* directories
+# that exist at boot, so if the directory is missing when assets:precompile
+# starts, the esbuild/sass output written into it is left out of the manifest
+# and every page 500s with "application.css was not found in the load path".
+public/assets
+app/assets/builds/*
+!app/assets/builds/.keep
 config/master.key
 config/credentials.yml.enc
+secrets.yaml
+.env*
+k8s/
+log/
+tmp/
+docs/
+coverage/
+.github/
+node_modules/.cache

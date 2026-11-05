@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
+concurrency:
+  group: test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -26,20 +30,19 @@ jobs:
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
-      BUNDLE_BUILD__SASSC: "--disable-march-tune-native"
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Ruby & Bundle Install
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1.4'
+          ruby-version: '.ruby-version'
           bundler-cache: true
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20.13.1
 
@@ -50,20 +53,26 @@ jobs:
 
       - name: Check Yarn Cache
         id: cache-yarn
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.cache-locations.outputs.yarn_dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install Javascript Packages
         run: |
-          NODE_OPTIONS=--openssl-legacy-provider yarn install --pure-lockfile
-      
-      - name: Compile Assets
-        env:
-          RAILS_ENV: test
+          yarn install --pure-lockfile
+
+      # esbuild bundle + both sass builds (app and rails_admin) into
+      # app/assets/builds, served by Propshaft in the test env. Invoked
+      # directly with yarn rather than via javascript:build/css:build because
+      # cssbundling-rails runs `bun install`/`bun run build:css` whenever a
+      # bun binary exists alongside yarn.lock (GitHub runners ship bun), and
+      # that first bun install writes bun.lockb, which flips jsbundling-rails
+      # (lockfile-first tool detection) onto bun too. yarn.lock is this
+      # repo's single source of dependency truth, so bun must never run.
+      - name: Build Assets
         run: |
-          NODE_OPTIONS=--openssl-legacy-provider bundle exec rails webpacker:compile
+          yarn build && yarn build:css
 
       - name: Create Database
         env:
@@ -77,6 +86,29 @@ jobs:
           bundle exec rake db:create
           bundle exec rake db:migrate
 
+      # Nothing else in CI eager loads: test and development both set
+      # config.eager_load = false, so production would otherwise be the first
+      # boot to load every app class and engine under the reduced framework set
+      # from config/application.rb. zeitwerk:check calls
+      # Zeitwerk::Loader.eager_load_all regardless of the env's eager_load
+      # setting, which is exactly that failure mode.
+      - name: Check Eager Loading
+        env:
+          POSTGRES_TEST_DB: wetrockpolice_test
+          POSTGRES_USER: wrp
+          POSTGRES_PASSWORD: dev
+          POSTGRES_HOST: localhost
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        run: |
+          bundle exec rails zeitwerk:check
+
+      # SKIP_JS_BUILD/SKIP_CSS_BUILD: a bare `rails test` runs test:prepare,
+      # which js/cssbundling-rails enhance with javascript:build/css:build —
+      # on a bun-equipped runner that would silently rebuild the assets with
+      # bun, overwriting the yarn-built ones from the Build Assets step. Both
+      # gems check these env vars at rake load time and skip the enhancement,
+      # so the manual yarn build above stays the only build path.
       - name: Run Tests
         env:
           POSTGRES_TEST_DB: wetrockpolice_test
@@ -85,6 +117,77 @@ jobs:
           POSTGRES_HOST: localhost
           RAILS_ENV: test
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          SKIP_JS_BUILD: "1"
+          SKIP_CSS_BUILD: "1"
         run: |
           bundle exec rails test
+
+      # `rails test` does not pick up test/system, so system tests need their
+      # own invocation. They run headless Chrome against a Puma booted in
+      # process, and assert the JavaScript half of the weather feature that no
+      # controller test can reach.
+      #
+      # SKIP_JS_BUILD/SKIP_CSS_BUILD stay set for the same reason as the unit
+      # step, and it matters more here: the whole point of this step is to
+      # exercise the bundle, so it must be the yarn-built one from Build
+      # Assets. Letting test:prepare rebuild would hand that to bun and mean
+      # the system test verifies a bundle no other job or image ever produces.
+      # Assets are already on disk from Build Assets, so nothing is missing.
+      #
+      # Chrome itself is preinstalled on ubuntu-latest; selenium-manager
+      # (bundled with selenium-webdriver 4.x) downloads the matching
+      # chromedriver, so there is no browser setup step and no webdrivers gem.
+      - name: Run System Tests
+        env:
+          POSTGRES_TEST_DB: wetrockpolice_test
+          POSTGRES_USER: wrp
+          POSTGRES_PASSWORD: dev
+          POSTGRES_HOST: localhost
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          SKIP_JS_BUILD: "1"
+          SKIP_CSS_BUILD: "1"
+        run: |
+          bundle exec rails test:system
+
+      # A headless browser failure is close to undebuggable from the log
+      # alone; Capybara writes a screenshot of the page at the point of
+      # failure, so keep it when there is one.
+      - name: Upload System Test Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-test-screenshots
+          path: tmp/screenshots
+          if-no-files-found: ignore
+
+  # Images publish only for pushes to master, and only after the suite is
+  # green. Previously this lived in build.yml and ran unconditionally, so a
+  # failing branch still shipped an image to Docker Hub.
+  build:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile.production
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/wetrockpolice:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -6,13 +6,9 @@ SHELL=/opt/homebrew/bin/bash
 http:
 	bundle exec rails server -p 3002 -b 0.0.0.0
 
-.PHONY: worker
-worker:
-	bundle exec sidekiq -q default -q mailers
-
 .PHONY: up
 up:
-	docker-compose up -d postgres redis
+	docker-compose up -d postgres
 
 .PHONY: install
 install:
@@ -22,9 +18,11 @@ install:
 restart-pg:
 	docker compose restart postgres
 
-.PHONY: pcat 
+# Build the JS/CSS bundles tests serve from app/assets/builds (Propshaft
+# serves them live in dev/test; no precompile step needed).
+.PHONY: pcat
 pcat:
-	rm -rf public/packs-test && RAILS_ENV=test NODE_OPTIONS=--openssl-legacy-provider rails assets:precompile
+	yarn build && yarn build:css
 
 .PHONY: db-drop
 db-drop:
@@ -58,14 +56,19 @@ LATEST_CHART_VERSION := $(shell yq e '.version' k8s/wetrockpolice/Chart.yaml)
 dev:
 	./bin/dev	
 
+# DEPRECATED: CI is the image source of truth — pushes to master build and
+# publish the image (.github/workflows/tests.yml). Kept only as an escape
+# hatch; local pushes bypass the test gate.
 .PHONY: build
 build:
+	@echo "WARNING: 'make build' is deprecated; CI builds the image on pushes to master (.github/workflows/tests.yml)."
 	docker build -t syntaf/wetrockpolice:$(LATEST_HASH) \
 		-f ./Dockerfile.production \
 		.
 
 .PHONY: push
 push:
+	@echo "WARNING: 'make push' is deprecated; CI publishes the image on pushes to master (.github/workflows/tests.yml)."
 	docker push syntaf/wetrockpolice:$(LATEST_HASH)
 
 .PHONY: sync

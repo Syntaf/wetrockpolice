@@ -7,3 +7,7 @@ area1_redrock:
 area2_redrock:
   climbing_area: area2
   watched_area: redrock
+
+area3_castlerock:
+  climbing_area: area3
+  watched_area: castlerock
