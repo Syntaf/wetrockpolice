@@ -31,6 +31,10 @@ const MODEL_POINTS = {
   ],
 };
 const MODEL_PAST_DAYS = 3;
+// The hour-by-hour median of these is what counts. Open-Meteo's default model
+// alone (HRRR-led in the US) showed 0mm at Red Rock for the 2026-10-30
+// overnight storm that ECMWF, ICON and GEM each put at 10-15mm.
+const MODEL_NAMES = ['ncep_hrrr_conus', 'ecmwf_ifs025', 'icon_seamless', 'gem_seamless'];
 // mm in an hour before modeled rain counts; the model reports tiny amounts
 // that never wet the rock
 const MODEL_MIN_MM = 0.25;
@@ -95,6 +99,7 @@ export default class extends Controller {
         latitude: points.map(p => p.lat).join(','),
         longitude: points.map(p => p.lng).join(','),
         hourly: 'precipitation',
+        models: MODEL_NAMES.join(','),
         past_days: MODEL_PAST_DAYS,
         forecast_days: 1,
         timezone: 'GMT',
@@ -123,7 +128,7 @@ export default class extends Controller {
     const gaugeRain = this.findLastRainInterval(intervals);
     const gaugeLastRain = gaugeRain ? new Date(gaugeRain.interval.last_report) : null;
 
-    return findModelRainAfter(forecasts, points, gaugeLastRain, new Date(), MODEL_MIN_MM);
+    return findModelRainAfter(forecasts, points, MODEL_NAMES, gaugeLastRain, new Date(), MODEL_MIN_MM);
   }
 
   async fetchPrecipitationIntervals() {
@@ -252,17 +257,20 @@ export default class extends Controller {
     this.hoursTileTarget.classList.add('manual-warn');
 
     const excerpt = this.element.querySelector('[data-role="excerpt"]');
-    if (!excerpt || excerpt.classList.contains('manual-warn')) return;
+    if (!excerpt) return;
 
+    // An area with manual_warn already has the class (and its own warning),
+    // but the note and credit still go in: CC BY wants the credit wherever
+    // the model's numbers show.
     excerpt.classList.add('manual-warn');
+    if (excerpt.querySelector('[data-role="model-rain-note"]')) return;
+
     excerpt.insertAdjacentHTML('beforeend',
-      `<br><small>Rain modeled at ${modelRain.name}, which the rain gauge didn't record. ` +
+      `<br><small data-role="model-rain-note">Rain modeled at ${modelRain.name}, which the rain gauge didn't record. ` +
       '<a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a></small>');
   }
 
   findLastRainInterval(intervals) {
-    if (!intervals) return null;
-
     const latestRainInterval = 
       intervals.toReversed().find(interval => interval.precip > 0);
 
