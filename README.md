@@ -287,9 +287,17 @@ Gauges can be another Synoptic station or a station on
 SNCC's Black Velvet gauge, on DRI's organization). For CampbellCloud,
 `CampbellCloudPrecipitation` logs in with `CAMPBELL_CLOUD_USERNAME` /
 `CAMPBELL_CLOUD_PASSWORD` (password grant; the API has no API keys), finds the
-datastream for the gauge's datalogger `campbell_table`/`campbell_field`
-(e.g. `Rain_30min`/`Rain_in_Tot`), pulls 20 days of datapoints and sums them
-into hourly totals in inches. To see a station's tables and fields:
+datastream for the gauge's datalogger `campbell_table`/`campbell_field`,
+pulls 20 days of datapoints and sums them into hourly totals in inches.
+
+The field is either a per-interval amount (e.g. `Rain_30min`/`Rain_in_Tot`) or,
+with the gauge's `cumulative` box ticked, a running total (e.g. `cum_ppt_in`).
+Black Velvet uses the running total: some of its readings never upload, and a
+missing per-interval reading loses its rain, while the next running-total
+reading still includes it. Each interval is the change in the total since the
+previous reading, so rain from a gap lands on the first reading after it. A
+drop in the table's `record` number marks a logger restart, where the total
+starts over from 0. To see a station's tables and fields:
 
 ```
 bin/rails "campbell_cloud:datastreams[<station uuid>]"

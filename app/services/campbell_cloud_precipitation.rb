@@ -49,11 +49,66 @@ class CampbellCloudPrecipitation < ApplicationService
   def call
     raise NotConfigured, 'CampbellCloud credentials are not configured' unless self.class.configured?
 
-    points = fetch_datapoints(datastream_id)
+    points = @gauge.cumulative? ? intervals_from_cumulative : fetch_datapoints(datastream_id(@gauge.campbell_field))
     series = HourlySeries.build(points, units: @gauge.units)
     raise Error, 'gauge returned no datapoints' if series.empty?
 
     JSON.generate(synoptic_shape(series))
+  end
+
+  # Turns a running-total field (cum_ppt_in) into per-reading increments, the
+  # same { "ts", "value" } shape a per-interval field (Rain_in_Tot) has.
+  #
+  # Why: the logger records every interval, but some uploads never reach
+  # CampbellCloud (a quarter of them in the gauge's first week). A missing
+  # per-interval reading loses its rain; a running total still includes it,
+  # so the next reading's increment covers the whole gap. That rain is
+  # credited to the first reading after the gap: when it fell inside the
+  # gap is unknown, and the latest possible time is the cautious answer for
+  # "how long since it rained".
+  #
+  # The total resets to 0 when the logger restarts, and the table's record
+  # number resets with it. A reset (record number or total going down) makes
+  # the increment the new total itself: the rain since the restart.
+  module Cumulative
+    # Totals are floats like 0.770625; a "drop" smaller than this is noise.
+    EPSILON = 1e-6
+
+    module_function
+
+    def to_intervals(totals, records = [])
+      record_at = Array(records).to_h { |point| [point['ts'], HourlySeries.numeric(point['value'])] }
+      previous = nil
+
+      readings(totals).filter_map do |ts, total|
+        current = { total: total, record: record_at[ts] }
+        increment = previous && increment(previous, current)
+        previous = current
+        # The window's first reading has nothing to diff against.
+        { 'ts' => ts, 'value' => increment } if increment
+      end
+    end
+
+    # Oldest first (the API returns newest first); unreadable totals (NAN,
+    # missing stamp) are dropped, which makes them part of a gap.
+    def readings(totals)
+      Array(totals).filter_map do |point|
+        total = HourlySeries.numeric(point['value'])
+        [point['ts'], total] if point['ts'].is_a?(Integer) && total
+      end.sort_by(&:first)
+    end
+
+    def increment(previous, current)
+      return current[:total] if reset?(previous, current)
+
+      [current[:total] - previous[:total], 0.0].max
+    end
+
+    def reset?(previous, current)
+      return true if current[:total] < previous[:total] - EPSILON
+
+      previous[:record] && current[:record] && current[:record] < previous[:record]
+    end
   end
 
   # Turns CampbellCloud datapoints ({ "ts" => ms, "value" => n }) into an
@@ -127,20 +182,27 @@ class CampbellCloudPrecipitation < ApplicationService
     }
   end
 
-  def datastream_id
-    key = "campbell_cloud/datastream/#{@gauge.station}/#{@gauge.campbell_table}/#{@gauge.campbell_field}"
-    Rails.cache.fetch(key, expires_in: DATASTREAM_TTL) { find_datastream_id }
+  # Every Campbell logger table has a `record` field: the row's sequence
+  # number, used to spot logger restarts (see Cumulative).
+  def intervals_from_cumulative
+    totals = fetch_datapoints(datastream_id(@gauge.campbell_field))
+    records = fetch_datapoints(datastream_id('record'))
+    Cumulative.to_intervals(totals, records)
   end
 
-  def find_datastream_id
+  def datastream_id(field)
+    key = "campbell_cloud/datastream/#{@gauge.station}/#{@gauge.campbell_table}/#{field}"
+    Rails.cache.fetch(key, expires_in: DATASTREAM_TTL) { find_datastream_id(field) }
+  end
+
+  def find_datastream_id(field)
     datastreams = authorized_get(org_path('datastreams'), stationId: @gauge.station, limit: 250)
 
     match = Array(datastreams).find do |ds|
-      ds.dig('metadata', 'table') == @gauge.campbell_table &&
-        ds.dig('metadata', 'field') == @gauge.campbell_field
+      ds.dig('metadata', 'table') == @gauge.campbell_table && ds.dig('metadata', 'field') == field
     end
 
-    raise Error, "no datastream #{@gauge.campbell_table}.#{@gauge.campbell_field} on station" unless match
+    raise Error, "no datastream #{@gauge.campbell_table}.#{field} on station" unless match
 
     match['id']
   end
