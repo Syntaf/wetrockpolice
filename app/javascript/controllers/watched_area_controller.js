@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { SYNOPTIC_OK_CODE } from "../constants";
-import { parseDailyIntervals, parseHourlyIntervals } from "../utils";
+import { findModelRainAfter, parseDailyIntervals, parseHourlyIntervals } from "../utils";
 // Named imports instead of 'chart.js/auto' so esbuild tree-shakes every
 // controller/scale/plugin the bar chart doesn't use. Registered below:
 // type 'bar' needs BarController + BarElement, its default category x-axis
@@ -19,6 +19,27 @@ import { format } from 'date-fns';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
+// Spots around each gauge to check with Open-Meteo's modeled rain, to catch
+// showers that miss the gauge (#87). When the model has rain more recent than
+// the gauge's, the time-since-rain tiles use it. Free, keyless, non-commercial
+// use, CC BY 4.0 (credit shown whenever it's used).
+const MODEL_POINTS = {
+  'RRKN2': [
+    { name: 'Calico Basin', lat: 36.153, lng: -115.427 },
+    { name: 'Pine Creek', lat: 36.108, lng: -115.484 },
+    { name: 'Black Velvet', lat: 36.038, lng: -115.465 },
+  ],
+};
+const MODEL_PAST_DAYS = 3;
+// The hour-by-hour median of these is what counts. Open-Meteo's default model
+// alone (HRRR-led in the US) showed 0mm at Red Rock for the 2026-10-30
+// overnight storm that ECMWF, ICON and GEM each put at 10-15mm.
+const MODEL_NAMES = ['ncep_hrrr_conus', 'ecmwf_ifs025', 'icon_seamless', 'gem_seamless'];
+// mm in an hour before modeled rain counts; the model reports tiny amounts
+// that never wet the rock
+const MODEL_MIN_MM = 0.25;
+const MODEL_TIMEOUT_MS = 5000;
+
 export default class extends Controller {
   static targets = [
     "rainTileSection",
@@ -33,11 +54,16 @@ export default class extends Controller {
 
   static values = {
     'precipitationUrl': String,
+    'station': String,
     'developmentMode': Boolean
   }
 
   async connect() {
     let intervals = null;
+
+    // Never rejects (it returns null on any failure), so a slow or broken
+    // Open-Meteo can only delay the page by MODEL_TIMEOUT_MS, never break it.
+    const forecastsPromise = this.fetchModelForecasts();
 
     try {
       intervals = await this.fetchPrecipitationIntervals();
@@ -53,8 +79,56 @@ export default class extends Controller {
       return;
     }
 
-    this.renderRainInformation(intervals);
+    const modelRain = this.findMissedModelRain(intervals, await forecastsPromise);
+
+    this.renderRainInformation(intervals, modelRain);
     this.renderRainGraph(intervals);
+  }
+
+  // Open-Meteo's modeled hourly rain at this area's points, or null (no points
+  // configured, or the request failed or was slow: the gauge still works)
+  async fetchModelForecasts() {
+    const points = MODEL_POINTS[this.stationValue];
+    if (!points) return null;
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), MODEL_TIMEOUT_MS);
+
+    try {
+      const fetchParams = new URLSearchParams({
+        latitude: points.map(p => p.lat).join(','),
+        longitude: points.map(p => p.lng).join(','),
+        hourly: 'precipitation',
+        models: MODEL_NAMES.join(','),
+        past_days: MODEL_PAST_DAYS,
+        forecast_days: 1,
+        timezone: 'GMT',
+      });
+      const response = await fetch(
+        'https://api.open-meteo.com/v1/forecast?' + fetchParams.toString(),
+        { signal: controller.signal }
+      );
+      if (!response.ok) return null;
+
+      const data = await response.json();
+      return Array.isArray(data) ? data : [data];
+    } catch (error) {
+      console.error('Could not fetch modeled rain', error);
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  // Modeled rain newer than anything the gauge recorded, if any
+  findMissedModelRain(intervals, forecasts) {
+    const points = MODEL_POINTS[this.stationValue];
+    if (!points || !forecasts) return null;
+
+    const gaugeRain = this.findLastRainInterval(intervals);
+    const gaugeLastRain = gaugeRain ? new Date(gaugeRain.interval.last_report) : null;
+
+    return findModelRainAfter(forecasts, points, MODEL_NAMES, gaugeLastRain, new Date(), MODEL_MIN_MM);
   }
 
   async fetchPrecipitationIntervals() {
@@ -129,14 +203,21 @@ export default class extends Controller {
       'Weather data is temporarily unavailable — please check back shortly.';
   }
 
-  renderRainInformation(intervals) {
-    const lastRainInterval = this.findLastRainInterval(intervals);
+  renderRainInformation(intervals, modelRain = null) {
+    const gaugeRain = this.findLastRainInterval(intervals);
+    // the model only comes back when it's newer than the gauge's last rain
+    const lastRainInterval = modelRain
+      ? {
+          elapsedHours: (new Date() - modelRain.at) / (1000 * 60 * 60),
+          interval: { last_report: modelRain.at.toISOString() }
+        }
+      : gaugeRain;
 
     if (!lastRainInterval) {
         this.loadingTargets.forEach(el => el.remove());
         this.daysTileTarget.innerHTML = '&#8734;';
         this.hoursTileTarget.innerHTML = '&#8734;' ;
-        
+
         this.lastRainDateTarget.innerHTML =
           'Nothing to look at down here, come back when weather is looking bleak.';
 
@@ -166,12 +247,33 @@ export default class extends Controller {
     const day = this.getOrdinalSuffix(dateOfRain.getDate());
 
     this.lastRainDateTarget.innerHTML = `${month} ${day}`;
+
+    if (modelRain) this.showModelRainSource(modelRain);
+  }
+
+  // Say where the time came from, since the gauge didn't record this rain
+  showModelRainSource(modelRain) {
+    this.daysTileTarget.classList.add('manual-warn');
+    this.hoursTileTarget.classList.add('manual-warn');
+
+    const excerpt = this.element.querySelector('[data-role="excerpt"]');
+    if (!excerpt) return;
+
+    // An area with manual_warn already has the class (and its own warning),
+    // but the note and credit still go in: CC BY wants the credit wherever
+    // the model's numbers show.
+    excerpt.classList.add('manual-warn');
+    if (excerpt.querySelector('[data-role="model-rain-note"]')) return;
+
+    excerpt.insertAdjacentHTML('beforeend',
+      `<br><small data-role="model-rain-note">Rain modeled at ${modelRain.name}, which the rain gauge didn't record. ` +
+      '<a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a></small>');
   }
 
   findLastRainInterval(intervals) {
     const latestRainInterval = 
       intervals.toReversed().find(interval => interval.precip > 0);
-    
+
     if (!latestRainInterval) return null;
 
     const now = new Date();
