@@ -273,6 +273,31 @@ In development you normally don't need a token at all: with
 `MOCK_WEATHER_DATA=true` (the `.env.example` default) the page serves a
 bundled fixture response instead of fetching live data.
 
+### Alternate rain gauges (CampbellCloud)
+
+A watched area can also have alternate gauges (`RainGauge` rows, editable in
+Rails Admin). When it does, the area name in the hero title becomes a button
+that switches the tiles and chart between gauges, and `?gauge=<slug>` opens
+the page on a given gauge. Each alternate gauge is served by
+`GET /:slug/precipitation/:gauge`, which always answers in Synoptic's JSON
+shape so the chart code is provider-agnostic.
+
+Gauges can be another Synoptic station or a station on
+[CampbellCloud](https://us-west-2.campbell-cloud.com/api/v1/docs/) (e.g.
+SNCC's Black Velvet gauge, on DRI's organization). For CampbellCloud,
+`CampbellCloudPrecipitation` logs in with `CAMPBELL_CLOUD_USERNAME` /
+`CAMPBELL_CLOUD_PASSWORD` (password grant; the API has no API keys), finds the
+datastream for the gauge's datalogger `campbell_table`/`campbell_field`
+(e.g. `Rain_30min`/`Rain_in_Tot`), pulls 20 days of datapoints and sums them
+into hourly totals in inches. To see a station's tables and fields:
+
+```
+bin/rails "campbell_cloud:datastreams[<station uuid>]"
+```
+
+In production the credentials come from the `campbellCloud.username` /
+`campbellCloud.password` Helm values (`secrets.yaml`).
+
 ## Creating or Updating Hero Images
 
 This repository uses a custom strategy for loading large background images on the client to ensure the first-load experience isn't poor. Without this strategy, the page would load with the large image missing, then slowly load the image top-down as if the page was being printed out.

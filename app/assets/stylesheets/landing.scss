@@ -100,6 +100,52 @@ body[data-page-controller="watched_area"] {
                 font-family: 'Raleway', system-ui;
             }
 
+            // Clickable area name when the area has alternate rain gauges
+            // (e.g. Red Rock <-> Black Velvet). Red dashed underline + the
+            // callout pill below are the "you can click this" affordance.
+            .gauge-switch {
+                font: inherit;
+                letter-spacing: inherit;
+                color: inherit;
+                background: none;
+                border: 0;
+                padding: 0 2px;
+                cursor: pointer;
+                text-decoration: underline dashed $warnRed;
+                text-decoration-thickness: 3px;
+                text-underline-offset: 10px;
+                transition: color 0.2s ease;
+
+                &:hover {
+                    color: #ffd6d9;
+                }
+
+                &:focus-visible {
+                    outline: 2px solid #fff;
+                    outline-offset: 4px;
+                }
+            }
+
+            .gauge-callout {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                width: fit-content;
+                margin: 4px auto 14px;
+                padding: 3px 12px;
+                border-radius: 999px;
+                background: $warnRed;
+                color: #fff;
+                font-size: 13px;
+                font-weight: $bold;
+                letter-spacing: 0.5px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+
+                i {
+                    font-size: 14px;
+                }
+            }
+
             span {
                 font-style: italic;
                 letter-spacing: 2px;

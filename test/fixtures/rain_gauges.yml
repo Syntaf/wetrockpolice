@@ -1,0 +1,22 @@
+# Red Rock's alternate gauge: SNCC's Black Velvet gauge on CampbellCloud.
+black_velvet:
+  watched_area: redrock
+  name: Black Velvet
+  slug: black-velvet
+  provider: campbell_cloud
+  station: "01a0c4e4-b777-71d7-8106-6f6d83d0c84a"
+  campbell_table: Rain_30min
+  campbell_field: Rain_in_Tot
+  units: "in"
+  info_bubble_excerpt: Precipitation data collected from SNCC's Black Velvet gauge.
+  position: 1
+
+# An alternate gauge that is just another Synoptic station.
+castlerock_backup:
+  watched_area: castlerock
+  name: Skyline
+  slug: skyline
+  provider: synoptic
+  station: SKYL1
+  units: "in"
+  position: 1

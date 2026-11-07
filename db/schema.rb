@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_04_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_07_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -47,6 +47,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_000000) do
     t.string "mt_z"
     t.datetime "updated_at", precision: nil, null: false
     t.index ["climbing_area_id"], name: "index_locations_on_climbing_area_id"
+  end
+
+  create_table "rain_gauges", force: :cascade do |t|
+    t.string "campbell_field"
+    t.string "campbell_table"
+    t.datetime "created_at", null: false
+    t.text "info_bubble_excerpt", default: "", null: false
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.string "provider", default: "synoptic", null: false
+    t.string "slug", null: false
+    t.string "station", null: false
+    t.string "units", default: "in", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "watched_area_id", null: false
+    t.index ["watched_area_id", "slug"], name: "index_rain_gauges_on_watched_area_id_and_slug", unique: true
+    t.index ["watched_area_id"], name: "index_rain_gauges_on_watched_area_id"
   end
 
   create_table "rainy_day_areas", force: :cascade do |t|
@@ -102,6 +119,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_000000) do
   end
 
   add_foreign_key "locations", "climbing_areas"
+  add_foreign_key "rain_gauges", "watched_areas"
   add_foreign_key "rainy_day_areas", "climbing_areas"
   add_foreign_key "rainy_day_areas", "watched_areas"
   add_foreign_key "watched_areas", "local_climbing_orgs"

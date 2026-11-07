@@ -14,6 +14,13 @@ digitalocean:
 # landing page renders its weather-unavailable state.
 synoptic:
   token: ''
+# CampbellCloud login for alternate rain gauges (SNCC's Black Velvet gauge,
+# on DRI's organization). Same deal as synoptic: real values come from
+# secrets.yaml; left empty, only the CampbellCloud gauges answer 503.
+campbellCloud:
+  organizationId: 4b170721-0e5f-4158-bbdc-3d9d0f4ab2f4
+  username: ''
+  password: ''
 image:
   repository: syntaf/wetrockpolice
   pullPolicy: IfNotPresent

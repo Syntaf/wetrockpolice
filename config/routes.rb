@@ -17,6 +17,9 @@ Rails.application.routes.draw do
 
     # Server-side Synoptic proxy; keeps the API token out of shipped JS.
     get 'precipitation', controller: 'weather', action: :show, as: :precipitation
+    # Same proxy for one of the area's alternate RainGauge rows (Synoptic or CampbellCloud).
+    get 'precipitation/:gauge', controller: 'weather', action: :show, as: :gauge_precipitation,
+                                constraints: { gauge: /[a-z0-9]+(?:-[a-z0-9]+)*/ }
 
     get '/', action: :index
   end

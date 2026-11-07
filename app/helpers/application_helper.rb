@@ -20,4 +20,37 @@ module ApplicationHelper
   def watched_area_bg_image(watched_area)
     WATCHED_AREA_BG_IMAGES[watched_area.slug]
   end
+
+  # The gauges the hero title cycles through, primary first. `station` keys
+  # the Open-Meteo missed-shower points in watched_area_controller.js, so only
+  # Synoptic gauges carry one; a CampbellCloud gauge sits at the crag itself
+  # and is trusted as-is.
+  def rain_gauge_options(watched_area)
+    primary = {
+      slug: '',
+      name: watched_area.name,
+      station: watched_area.station.to_s,
+      url: watched_area_precipitation_path(slug: watched_area.slug),
+      excerpt: watched_area.info_bubble_excerpt
+    }
+
+    alternates = watched_area.rain_gauges.map do |gauge|
+      {
+        slug: gauge.slug,
+        name: gauge.name,
+        station: gauge.synoptic? ? gauge.station : '',
+        url: watched_area_gauge_precipitation_path(slug: watched_area.slug, gauge: gauge.slug),
+        excerpt: gauge.info_bubble_excerpt.presence || watched_area.info_bubble_excerpt
+      }
+    end
+
+    [primary, *alternates]
+  end
+
+  # Which gauge the page opens on: ?gauge=black-velvet makes a shareable link.
+  def initial_rain_gauge_index(gauges, requested_slug)
+    return 0 if requested_slug.blank?
+
+    gauges.index { |gauge| gauge[:slug] == requested_slug } || 0
+  end
 end

@@ -87,6 +87,14 @@ class AbilityTest < ActiveSupport::TestCase
                  Location.accessible_by(ability).pluck(:id).sort
   end
 
+  test 'scoped admin manages the rain gauges of their own areas only' do
+    ability = Ability.new(users(:area_admin))
+
+    assert ability.can?(:manage, rain_gauges(:black_velvet))
+    assert ability.cannot?(:manage, rain_gauges(:castlerock_backup))
+    assert_equal [rain_gauges(:black_velvet).id], RainGauge.accessible_by(ability).pluck(:id)
+  end
+
   test 'an admin whose manages is empty can reach no records' do
     ability = Ability.new(User.new(admin: true, approved: true, manages: []))
 

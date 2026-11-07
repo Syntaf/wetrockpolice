@@ -23,6 +23,9 @@ class Ability
     # Allow Admins to manage models related to the watched areas they belong
     can :manage, RainyDayArea, watched_area_id: user.manages
 
+    # ...including the alternate rain gauges shown on their microsite
+    can :manage, RainGauge, watched_area_id: user.manages
+
     can :manage, ClimbingArea, watched_areas: { id: user.manages }
 
     can :manage, Location, watched_areas: { id: user.manages }

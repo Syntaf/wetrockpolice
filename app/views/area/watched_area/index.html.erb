@@ -1,7 +1,12 @@
+<% gauges = rain_gauge_options(@watched_area) %>
+<% gauge_index = initial_rain_gauge_index(gauges, params[:gauge]) %>
+<% gauge = gauges[gauge_index] %>
 <% content_for :body_attributes do %>
   data-controller="watched-area"
-  data-watched-area-precipitation-url-value="<%= watched_area_precipitation_path(slug: @watched_area.slug) %>"
-  data-watched-area-station-value="<%= @watched_area.station %>"
+  data-watched-area-precipitation-url-value="<%= gauge[:url] %>"
+  data-watched-area-station-value="<%= gauge[:station] %>"
+  data-watched-area-gauges-value="<%= gauges.to_json %>"
+  data-watched-area-gauge-index-value="<%= gauge_index %>"
   data-watched-area-development-mode-value="<%= development_mode? %>"
 <% end %>
 
@@ -15,7 +20,21 @@
   <div class="shadow-overlay"></div>
 
   <div class="hero-container" data-watched-area-target="rainTileSection">
-    <h1 class="animated bounceInLeft">Did it rain in <%= @watched_area.name %>?</h1>
+    <% if gauges.size > 1 %>
+      <h1 class="animated bounceInLeft">Did it rain in <button type="button"
+          class="gauge-switch"
+          data-action="watched-area#switchGauge"
+          data-watched-area-target="gaugeName"
+          aria-describedby="gaugeCallout"><%= gauge[:name] %></button>?</h1>
+      <div class="gauge-callout" id="gaugeCallout">
+        <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+        Tap the name to see the
+        <strong data-watched-area-target="nextGaugeName"><%= gauges[(gauge_index + 1) % gauges.size][:name] %></strong>
+        gauge
+      </div>
+    <% else %>
+      <h1 class="animated bounceInLeft">Did it rain in <%= @watched_area.name %>?</h1>
+    <% end %>
     <span>It's been...</span>
     <div class="row time-since-rain">
       <div class="days card">
@@ -44,10 +63,11 @@
         <i
           class="bi bi-exclamation-circle-fill"
           data-role="tooltip"
+          data-watched-area-target="infoBubble"
           data-controller="tooltip"
           data-bs-toggle="tooltip"
           data-bs-placement="right"
-          title="<%= @watched_area.info_bubble_excerpt %>">
+          title="<%= gauge[:excerpt] %>">
         </i>
       </div>
     </div>
@@ -108,6 +128,7 @@
           <div class="form-check form-switch d-inline-block">
               <input type="checkbox"
                 class="form-check-input"
+                data-watched-area-target="graphToggle"
                 data-action="change->watched-area#toggleGraphDisplay"
                 style="cursor: pointer;">
               <label for="site_state" class="form-check-label">Hourly</label>

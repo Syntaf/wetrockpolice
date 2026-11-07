@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { Tooltip as BootstrapTooltip } from "bootstrap";
 import { SYNOPTIC_OK_CODE } from "../constants";
 import { findModelRainAfter, parseDailyIntervals, parseHourlyIntervals } from "../utils";
 // Named imports instead of 'chart.js/auto' so esbuild tree-shakes every
@@ -49,16 +50,112 @@ export default class extends Controller {
     "daysLabel",
     "hoursTile",
     "hoursLabel",
-    "lastRainDate"
+    "lastRainDate",
+    "gaugeName",
+    "nextGaugeName",
+    "infoBubble",
+    "graphToggle"
   ]
 
   static values = {
     'precipitationUrl': String,
     'station': String,
+    // [{ slug, name, station, url, excerpt }], primary gauge first. Only
+    // areas with alternate gauges get the clickable hero title.
+    'gauges': Array,
+    'gaugeIndex': Number,
     'developmentMode': Boolean
   }
 
-  async connect() {
+  connect() {
+    // Server-side manual_warn styling has to survive a gauge switch; the
+    // model-rain warning (added per load) must not.
+    this.serverManualWarn = this.daysTileTarget.classList.contains('manual-warn');
+    this.loadId = 0;
+
+    this.loadRainData();
+  }
+
+  disconnect() {
+    this.timeSeriesChart?.destroy();
+    this.timeSeriesChart = null;
+  }
+
+  // Hero title click: move to the next gauge and reload everything below it.
+  switchGauge(event) {
+    event?.preventDefault();
+    if (this.gaugesValue.length < 2) return;
+
+    const index = (this.gaugeIndexValue + 1) % this.gaugesValue.length;
+    const gauge = this.gaugesValue[index];
+    const next = this.gaugesValue[(index + 1) % this.gaugesValue.length];
+
+    this.gaugeIndexValue = index;
+    this.precipitationUrlValue = gauge.url;
+    this.stationValue = gauge.station;
+
+    if (this.hasGaugeNameTarget) this.gaugeNameTarget.textContent = gauge.name;
+    if (this.hasNextGaugeNameTarget) this.nextGaugeNameTarget.textContent = next.name;
+    this.updateInfoBubble(gauge.excerpt);
+    this.updateGaugeQueryParam(gauge.slug);
+
+    this.resetRainDisplay();
+    this.loadRainData();
+  }
+
+  updateInfoBubble(text) {
+    if (!this.hasInfoBubbleTarget || !text) return;
+
+    this.infoBubbleTarget.setAttribute('title', text);
+    BootstrapTooltip.getInstance(this.infoBubbleTarget)?.setContent({ '.tooltip-inner': text });
+  }
+
+  // Keep the URL shareable: /redrock?gauge=black-velvet opens on that gauge.
+  updateGaugeQueryParam(slug) {
+    const url = new URL(window.location.href);
+    if (slug) {
+      url.searchParams.set('gauge', slug);
+    } else {
+      url.searchParams.delete('gauge');
+    }
+    window.history.replaceState(window.history.state, '', url);
+  }
+
+  // Back to the just-loaded state: spinners up, tiles and chart cleared.
+  resetRainDisplay() {
+    this.loadingTargets.forEach(el => { el.style.display = ''; });
+
+    [this.daysTileTarget, this.hoursTileTarget].forEach(tile => {
+      tile.innerHTML = '';
+      if (!this.serverManualWarn) tile.classList.remove('manual-warn');
+    });
+    this.daysLabelTarget.innerHTML = 'Days';
+    this.hoursLabelTarget.innerHTML = 'Hours';
+    this.lastRainDateTarget.innerHTML = '';
+
+    // The model-rain note is inserted as "<br><small>"; take both out.
+    const note = this.element.querySelector('[data-role="model-rain-note"]');
+    if (note) {
+      if (note.previousElementSibling?.tagName === 'BR') note.previousElementSibling.remove();
+      note.remove();
+    }
+    const excerpt = this.element.querySelector('[data-role="excerpt"]');
+    if (excerpt && !this.serverManualWarn) excerpt.classList.remove('manual-warn');
+
+    if (this.hasGraphToggleTarget) this.graphToggleTarget.checked = false;
+    this.timeSeriesChart?.destroy();
+    this.timeSeriesChart = null;
+  }
+
+  hideLoading() {
+    this.loadingTargets.forEach(el => { el.style.display = 'none'; });
+  }
+
+  async loadRainData() {
+    // A click mid-load starts a newer load; the older one must not render.
+    const loadId = ++this.loadId;
+    const isStale = () => loadId !== this.loadId;
+
     let intervals = null;
 
     // Never rejects (it returns null on any failure), so a slow or broken
@@ -74,12 +171,15 @@ export default class extends Controller {
       console.error('Failed to fetch precipitation data', error);
     }
 
+    if (isStale()) return;
+
     if (intervals === null) {
       this.renderWeatherUnavailable();
       return;
     }
 
     const modelRain = this.findMissedModelRain(intervals, await forecastsPromise);
+    if (isStale()) return;
 
     this.renderRainInformation(intervals, modelRain);
     this.renderRainGraph(intervals);
@@ -195,7 +295,7 @@ export default class extends Controller {
   // Terminal state for every failure path: clear the spinners, put
   // something honest in the tiles, and skip the chart entirely.
   renderWeatherUnavailable() {
-    this.loadingTargets.forEach(el => el.remove());
+    this.hideLoading();
     this.daysTileTarget.innerHTML = '?';
     this.hoursTileTarget.innerHTML = '?';
 
@@ -214,7 +314,7 @@ export default class extends Controller {
       : gaugeRain;
 
     if (!lastRainInterval) {
-        this.loadingTargets.forEach(el => el.remove());
+        this.hideLoading();
         this.daysTileTarget.innerHTML = '&#8734;';
         this.hoursTileTarget.innerHTML = '&#8734;' ;
 
@@ -228,7 +328,7 @@ export default class extends Controller {
     const days = Math.floor(elapsedHours / 24);
     const hours = Math.floor(elapsedHours % 24);
 
-    this.loadingTargets.forEach(el => el.remove());
+    this.hideLoading();
     this.daysTileTarget.innerHTML = days;
     this.hoursTileTarget.innerHTML = hours;
 
