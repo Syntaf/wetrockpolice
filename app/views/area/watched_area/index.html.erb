@@ -21,17 +21,11 @@
 
   <div class="hero-container" data-watched-area-target="rainTileSection">
     <% if gauges.size > 1 %>
-      <h1 class="animated bounceInLeft">Did it rain in <button type="button"
-          class="gauge-switch"
-          data-action="watched-area#switchGauge"
-          data-watched-area-target="gaugeName"
-          aria-describedby="gaugeCallout"><%= gauge[:name] %></button>?</h1>
-      <div class="gauge-callout" id="gaugeCallout">
-        <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
-        Tap the name to check the
-        <strong data-watched-area-target="nextGaugeName"><%= gauges[(gauge_index + 1) % gauges.size][:label] %></strong>
-        gauge
-      </div>
+      <h1 class="animated bounceInLeft">Did it rain in <span class="gauge-name" data-watched-area-target="gaugeName"><%= gauge[:name] %></span>?</h1>
+      <button type="button" class="btn gauge-switch" data-action="watched-area#switchGauge">
+        <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+        Check the <strong data-watched-area-target="nextGaugeName"><%= gauges[(gauge_index + 1) % gauges.size][:label] %></strong> gauge
+      </button>
     <% else %>
       <h1 class="animated bounceInLeft">Did it rain in <%= @watched_area.name %>?</h1>
     <% end %>

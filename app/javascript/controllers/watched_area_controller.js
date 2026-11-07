@@ -61,7 +61,7 @@ export default class extends Controller {
     'precipitationUrl': String,
     'station': String,
     // [{ slug, name, label, station, url, excerpt }], primary gauge first. Only
-    // areas with alternate gauges get the clickable hero title.
+    // areas with alternate gauges get the hero switch button.
     'gauges': Array,
     'gaugeIndex': Number,
     'developmentMode': Boolean
@@ -83,7 +83,7 @@ export default class extends Controller {
     this.timeSeriesChart = null;
   }
 
-  // Hero title click: move to the next gauge and reload everything below it.
+  // Hero switch button: move to the next gauge and reload everything below it.
   switchGauge(event) {
     event?.preventDefault();
     if (this.gaugesValue.length < 2) return;
