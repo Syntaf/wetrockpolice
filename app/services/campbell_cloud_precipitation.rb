@@ -218,13 +218,7 @@ class CampbellCloudPrecipitation < ApplicationService
       http.request(request)
     end
 
-    raise Unauthorized, 'CampbellCloud returned 401' if response.is_a?(Net::HTTPUnauthorized) && token
-
-    unless response.is_a?(Net::HTTPSuccess)
-      Rails.logger.warn("CampbellCloud returned HTTP #{response.code} for #{verb::METHOD} #{path_for_log(path)}")
-      raise Error, "CampbellCloud returned HTTP #{response.code}"
-    end
-
+    check_response!(response, "#{verb::METHOD} #{path_for_log(path)}", authenticated: token.present?)
     JSON.parse(response.body)
   rescue JSON::ParserError
     raise Error, 'CampbellCloud returned a non-JSON body'
@@ -232,6 +226,16 @@ class CampbellCloudPrecipitation < ApplicationService
          OpenSSL::SSL::SSLError, Net::ProtocolError => e
     Rails.logger.warn("CampbellCloud request error: #{e.class}")
     raise Error, "CampbellCloud request failed (#{e.class})"
+  end
+
+  # A 401 on an authenticated call means a stale token (retried by
+  # authorized_get); a 401 on login itself is bad credentials, a plain Error.
+  def check_response!(response, description, authenticated:)
+    raise Unauthorized, 'CampbellCloud returned 401' if authenticated && response.is_a?(Net::HTTPUnauthorized)
+    return if response.is_a?(Net::HTTPSuccess)
+
+    Rails.logger.warn("CampbellCloud returned HTTP #{response.code} for #{description}")
+    raise Error, "CampbellCloud returned HTTP #{response.code}"
   end
 
   # Paths carry only ids, never credentials, but keep the log line short.

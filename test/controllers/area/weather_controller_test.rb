@@ -11,7 +11,7 @@ class WeatherControllerTest < ActionDispatch::IntegrationTest
   TOKEN = 'controller-test-token'
   CAMPBELL_HOST = 'https://us-west-2.campbell-cloud.com'
   CAMPBELL_ORG = '4b170721-0e5f-4158-bbdc-3d9d0f4ab2f4'
-  CAMPBELL_TOKEN_URL = "#{CAMPBELL_HOST}/api/v1/tokens".freeze
+  CAMPBELL_TOKEN_URL = "#{CAMPBELL_HOST}/api/v1/tokens"
 
   setup do
     @previous_token = ENV['SYNOPTIC_API_TOKEN']

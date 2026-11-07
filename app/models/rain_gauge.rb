@@ -8,10 +8,10 @@ class RainGauge < ApplicationRecord
   UNITS = %w[in mm].freeze
 
   # Same shape the weather proxy enforces for Synoptic ids.
-  SYNOPTIC_STATION_FORMAT = /\A[A-Za-z0-9]{3,10}\z/
-  UUID_FORMAT = /\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/
+  SYNOPTIC_STATION_FORMAT = /\A[A-Za-z0-9]{3,10}\z/.freeze
+  UUID_FORMAT = /\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/.freeze
   # Campbell datalogger table/field names (Rain_30min, Rain_in_Tot)
-  CAMPBELL_NAME_FORMAT = /\A[A-Za-z0-9_()]{1,64}\z/
+  CAMPBELL_NAME_FORMAT = /\A[A-Za-z0-9_()]{1,64}\z/.freeze
 
   belongs_to :watched_area
 

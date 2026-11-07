@@ -35,11 +35,13 @@ class CampbellCloudPrecipitationTest < ActiveSupport::TestCase
   test 'readings are summed into the hour that ends at or after their stamp' do
     base = Time.utc(2026, 11, 7, 2).to_i * 1000 # 02:00
 
-    series = CampbellCloudPrecipitation::HourlySeries.build([
+    points = [
       { 'ts' => base + (HOUR / 2), 'value' => 0.01 }, # 02:30 -> hour ending 03:00
       { 'ts' => base + HOUR, 'value' => 0.02 },       # 03:00 -> hour ending 03:00
       { 'ts' => base + (HOUR * 3 / 2), 'value' => 0 } # 03:30 -> hour ending 04:00
-    ])
+    ]
+
+    series = CampbellCloudPrecipitation::HourlySeries.build(points)
 
     assert_equal [['2026-11-07T03:00:00Z', 0.03], ['2026-11-07T04:00:00Z', 0.0]], series
   end
@@ -47,10 +49,12 @@ class CampbellCloudPrecipitationTest < ActiveSupport::TestCase
   test 'hours with no readings are nil, not zero, so gaps stay gaps' do
     base = Time.utc(2026, 11, 7, 0).to_i * 1000
 
-    series = CampbellCloudPrecipitation::HourlySeries.build([
+    points = [
       { 'ts' => base, 'value' => 0.1 },
       { 'ts' => base + (HOUR * 3), 'value' => 0.2 }
-    ])
+    ]
+
+    series = CampbellCloudPrecipitation::HourlySeries.build(points)
 
     assert_equal [0.1, nil, nil, 0.2], series.map(&:last)
   end
@@ -66,12 +70,14 @@ class CampbellCloudPrecipitationTest < ActiveSupport::TestCase
   test 'NAN, negative and missing readings are dropped' do
     ts = Time.utc(2026, 11, 7, 1).to_i * 1000
 
-    series = CampbellCloudPrecipitation::HourlySeries.build([
+    points = [
       { 'ts' => ts, 'value' => 'NAN' },
       { 'ts' => ts, 'value' => -7999 },
       { 'ts' => ts, 'value' => nil },
       { 'ts' => nil, 'value' => 0.5 }
-    ])
+    ]
+
+    series = CampbellCloudPrecipitation::HourlySeries.build(points)
 
     assert_empty series
   end
@@ -88,7 +94,10 @@ class CampbellCloudPrecipitationTest < ActiveSupport::TestCase
                                { ts: ms(Time.utc(2026, 11, 7, 3)), value: 0.0 }
                              ])
 
-    body = JSON.parse(CampbellCloudPrecipitation.new(@gauge, now: NOW).call)
+    # A real cache, so the token is reused across the two GETs (test env is :null_store).
+    body = Rails.stub(:cache, ActiveSupport::Cache::MemoryStore.new) do
+      JSON.parse(CampbellCloudPrecipitation.new(@gauge, now: NOW).call)
+    end
 
     assert_equal 1, body.dig('SUMMARY', 'RESPONSE_CODE')
     observations = body.dig('STATION', 0, 'OBSERVATIONS')
