@@ -38,13 +38,13 @@ class WatchedAreaGaugeSwitchTest < ApplicationSystemTestCase
     visit '/redrock'
 
     assert_selector 'h1', text: 'Did it rain in Red Rock?'
-    assert_selector '.gauge-callout', text: 'Tap the name to see the new Black Velvet gauge'
+    assert_selector '.gauge-callout', text: 'Tap the name to check the new Black Velvet gauge'
     assert_selector '[data-watched-area-target="daysTile"]', text: /\A\d{2,}\z/, wait: WAIT
 
     click_button 'Red Rock'
 
     assert_selector 'h1', text: 'Did it rain in Black Velvet?'
-    assert_selector '.gauge-callout', text: 'Tap the name to see the Visitor Center gauge'
+    assert_selector '.gauge-callout', text: 'Tap the name to check the Visitor Center gauge'
     # Rain 5 hours ago at the Black Velvet gauge: same day.
     assert_selector '[data-watched-area-target="daysTile"]', text: /\A0\z/, wait: WAIT
     assert_no_selector '[data-watched-area-target="loading"]', wait: WAIT

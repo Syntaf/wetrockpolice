@@ -21,7 +21,7 @@ module ApplicationHelper
     WATCHED_AREA_BG_IMAGES[watched_area.slug]
   end
 
-  # What the hero caption calls an area's primary gauge ("Tap the name to see
+  # What the hero caption calls an area's primary gauge ("Tap the name to check
   # the Visitor Center gauge"); the title itself keeps the area name.
   PRIMARY_GAUGE_LABELS = {
     'redrock' => 'Visitor Center'
