@@ -275,7 +275,7 @@ bundled fixture response instead of fetching live data.
 
 ### Alternate rain gauges (CampbellCloud)
 
-A watched area can also have alternate gauges (`RainGauge` rows, editable in
+A watched area can also have alternate gauges (`RainGauge` rows, editable by super admins in
 Rails Admin). When it does, the area name in the hero title becomes a button
 that switches the tiles and chart between gauges, and `?gauge=<slug>` opens
 the page on a given gauge. Each alternate gauge is served by
