@@ -59,9 +59,8 @@ class WatchedAreaWeatherProxyTest < ApplicationSystemTestCase
     assert_selector '[data-watched-area-target="hoursTile"]', text: TILE_TEXT
     assert_selector '[data-watched-area-target="lastRainDate"]', text: /\S/
 
-    assert_no_selector '[data-watched-area-target="loading"]',
-                       visible: :all,
-                       wait: WAIT
+    # Spinners are hidden, not removed, so a gauge switch can show them again.
+    assert_no_selector '[data-watched-area-target="loading"]', wait: WAIT
 
     # Same painted-pixels bar as the mock-path test: a sized-but-blank canvas
     # means Chart.js never drew, however healthy the network hops looked.
@@ -103,9 +102,8 @@ class WatchedAreaWeatherProxyTest < ApplicationSystemTestCase
     assert_selector '[data-watched-area-target="daysTile"]', text: '?'
     assert_selector '[data-watched-area-target="hoursTile"]', text: '?'
 
-    assert_no_selector '[data-watched-area-target="loading"]',
-                       visible: :all,
-                       wait: WAIT
+    # Spinners are hidden, not removed, so a gauge switch can show them again.
+    assert_no_selector '[data-watched-area-target="loading"]', wait: WAIT
   end
 
   private

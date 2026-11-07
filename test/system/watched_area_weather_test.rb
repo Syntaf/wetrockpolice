@@ -62,9 +62,8 @@ class WatchedAreaWeatherTest < ApplicationSystemTestCase
     assert_selector '[data-watched-area-target="hoursTile"]', text: TILE_TEXT
     assert_selector '[data-watched-area-target="lastRainDate"]', text: /\S/
 
-    assert_no_selector '[data-watched-area-target="loading"]',
-                       visible: :all,
-                       wait: WAIT
+    # Spinners are hidden, not removed, so a gauge switch can show them again.
+    assert_no_selector '[data-watched-area-target="loading"]', wait: WAIT
 
     # Chart.js draws into the canvas and, being `responsive: true`, sizes it to
     # its container. A canvas that exists but measures 0x0, or one sized but

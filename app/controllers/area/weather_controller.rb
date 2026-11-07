@@ -3,7 +3,16 @@
 require 'net/http'
 
 module Area
-  # Server-side proxy for the Synoptic precipitation timeseries feed.
+  # Server-side proxy for a watched area's precipitation timeseries.
+  #
+  # GET /:slug/precipitation          -> the area's primary Synoptic station
+  # GET /:slug/precipitation/:gauge   -> one of the area's RainGauge rows
+  #                                      (Synoptic or CampbellCloud)
+  #
+  # Every response is Synoptic-shaped JSON, so the chart code doesn't care
+  # which provider a gauge lives on. CampbellCloud data is reshaped by
+  # CampbellCloudPrecipitation; the rest of this comment covers Synoptic.
+  #
   #
   # The watched-area Stimulus controller used to call api.synopticdata.com
   # straight from the browser, which meant shipping the API token in public
@@ -14,11 +23,13 @@ module Area
   # Failures are cached too (briefly): see FAILURE_TTL.
   #
   # Deliberately not a general proxy: the caller supplies nothing but the
-  # slug. The station id comes from the WatchedArea row, every other upstream
-  # parameter is a constant, and any query parameter at all is rejected.
+  # slug (and optionally a gauge slug, looked up in the area's own gauges).
+  # The station id comes from the database, every other upstream parameter
+  # is a constant, and any query parameter at all is rejected.
   class WeatherController < BaseController
     before_action :set_watched_area
     before_action :reject_query_params
+    before_action :set_rain_gauge
 
     class UpstreamError < StandardError; end
 
@@ -54,7 +65,17 @@ module Area
     READ_TIMEOUT = 10
 
     def show
-      station = @watched_area.station.to_s
+      if @rain_gauge&.campbell_cloud?
+        show_campbell_cloud(@rain_gauge)
+      else
+        show_synoptic(@rain_gauge&.station || @watched_area.station)
+      end
+    end
+
+    private
+
+    def show_synoptic(station)
+      station = station.to_s
       return service_unavailable('station is not configured') unless station.match?(STATION_FORMAT)
 
       token = ENV.fetch('SYNOPTIC_API_TOKEN', '')
@@ -66,7 +87,31 @@ module Area
       render json: body
     end
 
-    private
+    # Same caching contract as Synoptic: one upstream pull per CACHE_TTL on
+    # success, one per FAILURE_TTL on failure. The key includes updated_at so
+    # an admin editing the gauge (new table/field) takes effect immediately.
+    def show_campbell_cloud(gauge)
+      return service_unavailable('weather service is not configured') unless CampbellCloudPrecipitation.configured?
+
+      key = "campbell_cloud/precipitation/#{gauge.id}/#{gauge.updated_at.to_i}"
+      body = cached_body(key) do
+        CampbellCloudPrecipitation.call(gauge)
+      rescue CampbellCloudPrecipitation::Error => e
+        Rails.logger.warn("CampbellCloud gauge #{gauge.slug} unavailable: #{e.message}")
+        raise UpstreamError
+      end
+      return bad_gateway if body == FAILURE
+
+      render json: body
+    end
+
+    # Gauge slugs only ever resolve within this area's own gauges.
+    def set_rain_gauge
+      return if params[:gauge].blank?
+
+      @rain_gauge = @watched_area.rain_gauges.find_by(slug: params[:gauge])
+      render json: { error: 'unknown rain gauge' }, status: :not_found unless @rain_gauge
+    end
 
     # The feature sends no query parameters, so none are accepted. This is
     # what keeps the endpoint from being usable as an open proxy.
@@ -90,11 +135,14 @@ module Area
     # express this: a raised error caches nothing, and a rescued write
     # inside the block would pin the failure to the success TTL.)
     def cached_upstream_body(station, token)
-      key = "synoptic/precipitation/#{station}"
+      cached_body("synoptic/precipitation/#{station}") { fetch_upstream(station, token) }
+    end
+
+    def cached_body(key)
       cached = Rails.cache.read(key)
       return cached unless cached.nil?
 
-      body = fetch_upstream(station, token)
+      body = yield
       Rails.cache.write(key, body, expires_in: CACHE_TTL)
       body
     rescue UpstreamError

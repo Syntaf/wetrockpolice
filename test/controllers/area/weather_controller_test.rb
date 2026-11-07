@@ -9,6 +9,9 @@ require 'test_helper'
 class WeatherControllerTest < ActionDispatch::IntegrationTest
   UPSTREAM_URL = 'https://api.synopticdata.com/v2/stations/timeseries'
   TOKEN = 'controller-test-token'
+  CAMPBELL_HOST = 'https://us-west-2.campbell-cloud.com'
+  CAMPBELL_ORG = '4b170721-0e5f-4158-bbdc-3d9d0f4ab2f4'
+  CAMPBELL_TOKEN_URL = "#{CAMPBELL_HOST}/api/v1/tokens"
 
   setup do
     @previous_token = ENV['SYNOPTIC_API_TOKEN']
@@ -152,7 +155,99 @@ class WeatherControllerTest < ActionDispatch::IntegrationTest
     assert_not_requested(stub)
   end
 
+  # --- alternate gauges (/:slug/precipitation/:gauge) ---------------------
+
+  test 'a CampbellCloud gauge is served in the same Synoptic shape' do
+    with_campbell_env do
+      stub_campbell_success
+
+      get '/redrock/precipitation/black-velvet'
+
+      assert_response :success
+      body = JSON.parse(@response.body)
+      assert_equal 1, body.dig('SUMMARY', 'RESPONSE_CODE')
+      observations = body.dig('STATION', 0, 'OBSERVATIONS')
+      assert_equal observations['date_time'].length, observations['precip_intervals_set_1d'].length
+      assert_not_includes @response.body, 'campbell-test-password'
+      assert_not_includes @response.body, 'campbell-bearer'
+    end
+  end
+
+  test 'a CampbellCloud gauge without credentials is a 503 and no upstream call' do
+    with_campbell_env(password: nil) do
+      get '/redrock/precipitation/black-velvet'
+
+      assert_response :service_unavailable
+      assert_not_requested(:post, CAMPBELL_TOKEN_URL)
+    end
+  end
+
+  test 'a CampbellCloud failure is a 502 and is cached like Synoptic failures' do
+    with_campbell_env do
+      token = stub_request(:post, CAMPBELL_TOKEN_URL).to_return(status: 500, body: 'down')
+
+      Rails.stub(:cache, ActiveSupport::Cache::MemoryStore.new) do
+        get '/redrock/precipitation/black-velvet'
+        assert_response :bad_gateway
+
+        get '/redrock/precipitation/black-velvet'
+        assert_response :bad_gateway
+      end
+
+      assert_requested token, times: 1
+    end
+  end
+
+  test 'a Synoptic alternate gauge proxies its own station, not the area primary' do
+    stub = stub_request(:get, UPSTREAM_URL)
+           .with(query: hash_including('stid' => 'SKYL1', 'token' => TOKEN))
+           .to_return(status: 200, body: file_fixture('synoptic_timeseries.json').read)
+
+    get '/castlerock/precipitation/skyline'
+
+    assert_response :success
+    assert_requested stub
+  end
+
+  test 'gauges only resolve within their own area' do
+    get '/castlerock/precipitation/black-velvet'
+
+    assert_response :not_found
+    assert_not_requested(:post, CAMPBELL_TOKEN_URL)
+  end
+
+  test 'gauge routes still reject query parameters' do
+    get '/redrock/precipitation/black-velvet', params: { station: 'other' }
+
+    assert_response :bad_request
+  end
+
   private
+
+  def with_campbell_env(password: 'campbell-test-password')
+    keys = %w[CAMPBELL_CLOUD_ORGANIZATION_ID CAMPBELL_CLOUD_USERNAME CAMPBELL_CLOUD_PASSWORD]
+    previous = keys.index_with { |key| ENV.fetch(key, nil) }
+    ENV['CAMPBELL_CLOUD_ORGANIZATION_ID'] = CAMPBELL_ORG
+    ENV['CAMPBELL_CLOUD_USERNAME'] = 'wrp-reader@example.com'
+    ENV['CAMPBELL_CLOUD_PASSWORD'] = password
+    yield
+  ensure
+    previous.each { |key, value| ENV[key] = value }
+  end
+
+  def stub_campbell_success
+    stub_request(:post, CAMPBELL_TOKEN_URL)
+      .to_return(status: 200, body: { access_token: 'campbell-bearer', expires_in: 3600 }.to_json)
+    stub_request(:get, "#{CAMPBELL_HOST}/api/v1/organizations/#{CAMPBELL_ORG}/datastreams")
+      .with(query: hash_including('stationId' => rain_gauges(:black_velvet).station))
+      .to_return(status: 200, body: [{ id: 'ds-1', metadata: { table: 'Rain_30min', field: 'Rain_in_Tot' } }].to_json)
+
+    now = (Time.current.to_f * 1000).to_i
+    points = (0...96).map { |i| { ts: now - (i * 1_800_000), value: i == 10 ? 0.05 : 0.0 } }.reverse
+    stub_request(:get, "#{CAMPBELL_HOST}/api/v1/organizations/#{CAMPBELL_ORG}/datastreams/ds-1/datapoints")
+      .with(query: hash_including('brief' => 'true'))
+      .to_return(status: 200, body: { data: points }.to_json)
+  end
 
   # Strict param matcher: the stub only responds when the proxy sends exactly
   # the query the browser used to send, plus its own stid and token. A drift

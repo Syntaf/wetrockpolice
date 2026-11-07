@@ -87,6 +87,16 @@ class AbilityTest < ActiveSupport::TestCase
                  Location.accessible_by(ability).pluck(:id).sort
   end
 
+  # A CampbellCloud gauge reads any station in the org with the shared login,
+  # so only super admins pick stations, even for an area admin's own area.
+  test 'scoped admins cannot manage rain gauges, even on their own areas' do
+    ability = Ability.new(users(:area_admin))
+
+    assert ability.cannot?(:manage, rain_gauges(:black_velvet))
+    assert ability.cannot?(:create, RainGauge.new(watched_area: rain_gauges(:black_velvet).watched_area))
+    assert_empty RainGauge.accessible_by(ability)
+  end
+
   test 'an admin whose manages is empty can reach no records' do
     ability = Ability.new(User.new(admin: true, approved: true, manages: []))
 

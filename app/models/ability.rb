@@ -23,6 +23,10 @@ class Ability
     # Allow Admins to manage models related to the watched areas they belong
     can :manage, RainyDayArea, watched_area_id: user.manages
 
+    # RainGauge is deliberately super-admin only: a CampbellCloud gauge reads
+    # any station in the organization with the site's shared login, so area
+    # admins can't be the ones choosing which station that is.
+
     can :manage, ClimbingArea, watched_areas: { id: user.manages }
 
     can :manage, Location, watched_areas: { id: user.manages }

@@ -61,6 +61,18 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-synoptic
                   key: token
+            - name: CAMPBELL_CLOUD_ORGANIZATION_ID
+              value: {{ .Values.campbellCloud.organizationId | quote }}
+            - name: CAMPBELL_CLOUD_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-campbell-cloud
+                  key: username
+            - name: CAMPBELL_CLOUD_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-campbell-cloud
+                  key: password
           ports:
             - name: http
               containerPort: 3001
