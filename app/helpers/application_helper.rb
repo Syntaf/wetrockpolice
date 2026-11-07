@@ -21,6 +21,15 @@ module ApplicationHelper
     WATCHED_AREA_BG_IMAGES[watched_area.slug]
   end
 
+  # What the hero caption calls an area's primary gauge ("Tap the name to see
+  # the Visitor Center gauge"); the title itself keeps the area name.
+  PRIMARY_GAUGE_LABELS = {
+    'redrock' => 'Visitor Center'
+  }.freeze
+
+  # An alternate gauge is captioned "new <name>" for this long after it's added.
+  NEW_GAUGE_PERIOD = 90.days
+
   # The gauges the hero title cycles through, primary first. `station` keys
   # the Open-Meteo missed-shower points in watched_area_controller.js, so only
   # Synoptic gauges carry one; a CampbellCloud gauge sits at the crag itself
@@ -29,6 +38,7 @@ module ApplicationHelper
     primary = {
       slug: '',
       name: watched_area.name,
+      label: PRIMARY_GAUGE_LABELS.fetch(watched_area.slug, watched_area.name),
       station: watched_area.station.to_s,
       url: watched_area_precipitation_path(slug: watched_area.slug),
       excerpt: watched_area.info_bubble_excerpt
@@ -38,6 +48,7 @@ module ApplicationHelper
       {
         slug: gauge.slug,
         name: gauge.name,
+        label: gauge.created_at&.after?(NEW_GAUGE_PERIOD.ago) ? "new #{gauge.name}" : gauge.name,
         station: gauge.synoptic? ? gauge.station : '',
         url: watched_area_gauge_precipitation_path(slug: watched_area.slug, gauge: gauge.slug),
         excerpt: gauge.info_bubble_excerpt.presence || watched_area.info_bubble_excerpt

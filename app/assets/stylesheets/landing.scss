@@ -101,8 +101,8 @@ body[data-page-controller="watched_area"] {
             }
 
             // Clickable area name when the area has alternate rain gauges
-            // (e.g. Red Rock <-> Black Velvet). Red dashed underline + the
-            // callout pill below are the "you can click this" affordance.
+            // (e.g. Red Rock <-> Black Velvet). The red dashed underline is
+            // the "you can click this" affordance; the caption below says so.
             .gauge-switch {
                 font: inherit;
                 letter-spacing: inherit;
@@ -126,23 +126,22 @@ body[data-page-controller="watched_area"] {
                 }
             }
 
+            // Same voice as the hero's other captions ("It's been...",
+            // "Since rain last fell..."): italic, letter-spaced, on the photo.
             .gauge-callout {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                width: fit-content;
-                margin: 4px auto 14px;
-                padding: 3px 12px;
-                border-radius: 999px;
-                background: $warnRed;
-                color: #fff;
-                font-size: 13px;
-                font-weight: $bold;
-                letter-spacing: 0.5px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+                margin: 0 0 20px;
+                padding: 0 10px;
+                font-size: 14px;
+                font-style: italic;
+                letter-spacing: 2px;
 
                 i {
-                    font-size: 14px;
+                    margin-right: 4px;
+                    font-style: normal;
+                }
+
+                strong {
+                    font-weight: $bold;
                 }
             }
 

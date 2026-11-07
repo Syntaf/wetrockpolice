@@ -60,7 +60,7 @@ export default class extends Controller {
   static values = {
     'precipitationUrl': String,
     'station': String,
-    // [{ slug, name, station, url, excerpt }], primary gauge first. Only
+    // [{ slug, name, label, station, url, excerpt }], primary gauge first. Only
     // areas with alternate gauges get the clickable hero title.
     'gauges': Array,
     'gaugeIndex': Number,
@@ -148,7 +148,7 @@ export default class extends Controller {
     this.stationValue = gauge.station;
 
     if (this.hasGaugeNameTarget) this.gaugeNameTarget.textContent = gauge.name;
-    if (this.hasNextGaugeNameTarget) this.nextGaugeNameTarget.textContent = next.name;
+    if (this.hasNextGaugeNameTarget) this.nextGaugeNameTarget.textContent = next.label;
     this.updateInfoBubble(gauge.excerpt);
     this.updateGaugeQueryParam(gauge.slug);
   }
