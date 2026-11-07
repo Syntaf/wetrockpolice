@@ -73,6 +73,8 @@ export default class extends Controller {
     this.serverManualWarn = this.daysTileTarget.classList.contains('manual-warn');
     this.loadId = 0;
 
+    this.restoreSavedGauge();
+    this.saveGauge();
     this.loadRainData();
   }
 
@@ -86,7 +88,58 @@ export default class extends Controller {
     event?.preventDefault();
     if (this.gaugesValue.length < 2) return;
 
-    const index = (this.gaugeIndexValue + 1) % this.gaugesValue.length;
+    this.showGauge((this.gaugeIndexValue + 1) % this.gaugesValue.length);
+    this.saveGauge();
+    this.resetRainDisplay();
+    this.loadRainData();
+  }
+
+  // Returning visitors open on the gauge they last looked at. An explicit
+  // ?gauge= link wins (the server already picked it), and nothing has loaded
+  // yet, so there's no reset or reload, just the title and URL to update.
+  restoreSavedGauge() {
+    if (this.gaugesValue.length < 2) return;
+    if (new URL(window.location.href).searchParams.has('gauge')) return;
+
+    const slug = this.readStorage(this.gaugeStorageKey);
+    if (!slug) return;
+
+    const index = this.gaugesValue.findIndex(gauge => gauge.slug === slug);
+    if (index > 0 && index !== this.gaugeIndexValue) this.showGauge(index);
+  }
+
+  // The primary gauge is the default, so it clears the key, not stores ''.
+  saveGauge() {
+    if (this.gaugesValue.length < 2) return;
+
+    const slug = this.gaugesValue[this.gaugeIndexValue]?.slug;
+    try {
+      if (slug) {
+        window.localStorage.setItem(this.gaugeStorageKey, slug);
+      } else {
+        window.localStorage.removeItem(this.gaugeStorageKey);
+      }
+    } catch {
+      // Private mode or blocked storage: the switch still works, it just isn't remembered.
+    }
+  }
+
+  readStorage(key) {
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  }
+
+  // One preference per area. The primary gauge's proxy path is the area's
+  // own (/redrock/precipitation), so it keys the area without a new value.
+  get gaugeStorageKey() {
+    return `rain-gauge:${this.gaugesValue[0]?.url}`;
+  }
+
+  // Point the title, callout, tooltip, URL and fetch target at gauges[index].
+  showGauge(index) {
     const gauge = this.gaugesValue[index];
     const next = this.gaugesValue[(index + 1) % this.gaugesValue.length];
 
@@ -98,9 +151,6 @@ export default class extends Controller {
     if (this.hasNextGaugeNameTarget) this.nextGaugeNameTarget.textContent = next.name;
     this.updateInfoBubble(gauge.excerpt);
     this.updateGaugeQueryParam(gauge.slug);
-
-    this.resetRainDisplay();
-    this.loadRainData();
   }
 
   updateInfoBubble(text) {

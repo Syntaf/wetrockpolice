@@ -66,6 +66,27 @@ class WatchedAreaGaugeSwitchTest < ApplicationSystemTestCase
     assert_selector '[data-watched-area-target="daysTile"]', text: /\A0\z/, wait: WAIT
   end
 
+  test 'a returning visitor opens on the gauge they last looked at' do
+    visit '/redrock'
+    click_button 'Red Rock'
+    assert_selector 'h1', text: 'Did it rain in Black Velvet?'
+
+    visit '/redrock'
+
+    assert_selector 'h1', text: 'Did it rain in Black Velvet?'
+    assert_selector '[data-watched-area-target="daysTile"]', text: /\A0\z/, wait: WAIT
+    assert_equal 'gauge=black-velvet', URI(current_url).query
+
+    # Switching back to the primary gauge forgets the preference.
+    click_button 'Black Velvet'
+    assert_selector 'h1', text: 'Did it rain in Red Rock?'
+
+    visit '/redrock'
+
+    assert_selector 'h1', text: 'Did it rain in Red Rock?'
+    assert_selector '[data-watched-area-target="daysTile"]', text: /\A\d{2,}\z/, wait: WAIT
+  end
+
   test 'areas without alternate gauges keep a plain title' do
     stub_request(:get, 'https://api.synopticdata.com/v2/stations/timeseries')
       .with(query: hash_including('stid' => 'AV151'))
