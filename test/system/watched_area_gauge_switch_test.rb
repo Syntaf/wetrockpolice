@@ -3,7 +3,7 @@
 require 'application_system_test_case'
 
 # Red Rock has an alternate gauge (SNCC's Black Velvet gauge on CampbellCloud),
-# so its hero title is a button that swaps the tiles and chart between gauges.
+# so its hero has a button that swaps the tiles and chart between gauges.
 # Runs the real proxy path like watched_area_weather_proxy_test.rb, with only
 # the Synoptic and CampbellCloud hops stubbed.
 class WatchedAreaGaugeSwitchTest < ApplicationSystemTestCase
@@ -38,13 +38,13 @@ class WatchedAreaGaugeSwitchTest < ApplicationSystemTestCase
     visit '/redrock'
 
     assert_selector 'h1', text: 'Did it rain in Red Rock?'
-    assert_selector '.gauge-callout', text: 'Tap the name to check the new Black Velvet gauge'
+    assert_button 'Check the new Black Velvet gauge'
     assert_selector '[data-watched-area-target="daysTile"]', text: /\A\d{2,}\z/, wait: WAIT
 
-    click_button 'Red Rock'
+    click_button 'Check the new Black Velvet gauge'
 
     assert_selector 'h1', text: 'Did it rain in Black Velvet?'
-    assert_selector '.gauge-callout', text: 'Tap the name to check the Visitor Center gauge'
+    assert_button 'Check the Visitor Center gauge'
     # Rain 5 hours ago at the Black Velvet gauge: same day.
     assert_selector '[data-watched-area-target="daysTile"]', text: /\A0\z/, wait: WAIT
     assert_no_selector '[data-watched-area-target="loading"]', wait: WAIT
@@ -52,7 +52,7 @@ class WatchedAreaGaugeSwitchTest < ApplicationSystemTestCase
     assert_equal 'gauge=black-velvet', URI(current_url).query
 
     # ...and back again
-    click_button 'Black Velvet'
+    click_button 'Check the Visitor Center gauge'
 
     assert_selector 'h1', text: 'Did it rain in Red Rock?'
     assert_selector '[data-watched-area-target="daysTile"]', text: /\A\d{2,}\z/, wait: WAIT
@@ -68,7 +68,7 @@ class WatchedAreaGaugeSwitchTest < ApplicationSystemTestCase
 
   test 'a returning visitor opens on the gauge they last looked at' do
     visit '/redrock'
-    click_button 'Red Rock'
+    click_button 'Check the new Black Velvet gauge'
     assert_selector 'h1', text: 'Did it rain in Black Velvet?'
 
     visit '/redrock'
@@ -78,7 +78,7 @@ class WatchedAreaGaugeSwitchTest < ApplicationSystemTestCase
     assert_equal 'gauge=black-velvet', URI(current_url).query
 
     # Switching back to the primary gauge forgets the preference.
-    click_button 'Black Velvet'
+    click_button 'Check the Visitor Center gauge'
     assert_selector 'h1', text: 'Did it rain in Red Rock?'
 
     visit '/redrock'
@@ -97,7 +97,6 @@ class WatchedAreaGaugeSwitchTest < ApplicationSystemTestCase
 
     assert_selector 'h1', text: 'Did it rain in Castle Rock?'
     assert_no_selector 'button.gauge-switch'
-    assert_no_selector '.gauge-callout'
   end
 
   private
