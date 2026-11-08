@@ -10,8 +10,11 @@ class CampbellCloudPrecipitationTest < ActiveSupport::TestCase
   HOST = 'https://us-west-2.campbell-cloud.com'
   ORG = '4b170721-0e5f-4158-bbdc-3d9d0f4ab2f4'
   DATASTREAM = '01a19d88-5b07-7516-af38-d06dc0bd32dc'
+  CUMULATIVE_DATASTREAM = '01a19d88-5b08-7250-bbb1-ddacab2ac823'
+  RECORD_DATASTREAM = '01a19d88-5b06-7685-9368-8bee0581e01a'
   NOW = Time.utc(2026, 11, 7, 3, 10)
   HOUR = 3_600_000
+  HALF_HOUR = 1_800_000
 
   ENV_KEYS = %w[CAMPBELL_CLOUD_ORGANIZATION_ID CAMPBELL_CLOUD_USERNAME
                 CAMPBELL_CLOUD_PASSWORD CAMPBELL_CLOUD_HOST].freeze
@@ -82,6 +85,79 @@ class CampbellCloudPrecipitationTest < ActiveSupport::TestCase
     assert_empty series
   end
 
+  # --- Cumulative ---------------------------------------------------------
+
+  test 'running totals become per-reading increments, like the interval field' do
+    base = Time.utc(2026, 11, 7, 2).to_i * 1000
+    totals = [0.0, 0.01, 0.03, 0.03].each_with_index.map do |total, i|
+      { 'ts' => base + (i * HALF_HOUR), 'value' => total }
+    end
+
+    increments = CampbellCloudPrecipitation::Cumulative.to_intervals(totals)
+
+    # The first reading has nothing to diff against, so it's dropped.
+    assert_equal [base + HALF_HOUR, base + (2 * HALF_HOUR), base + (3 * HALF_HOUR)], increments.pluck('ts')
+    assert_equal [0.01, 0.02, 0.0], rounded_values(increments)
+  end
+
+  test 'rain that fell during a gap lands on the first reading after it' do
+    base = Time.utc(2026, 11, 7, 2).to_i * 1000
+    totals = [
+      { 'ts' => base, 'value' => 0.1 },
+      # 02:30, 03:00 and 03:30 never uploaded
+      { 'ts' => base + (4 * HALF_HOUR), 'value' => 0.3 }
+    ]
+
+    increments = CampbellCloudPrecipitation::Cumulative.to_intervals(totals)
+
+    assert_equal [base + (4 * HALF_HOUR)], increments.pluck('ts')
+    assert_equal [0.2], rounded_values(increments)
+  end
+
+  test 'the API returns newest first; increments are still taken oldest to newest' do
+    base = Time.utc(2026, 11, 7, 2).to_i * 1000
+    totals = [{ 'ts' => base + HALF_HOUR, 'value' => 0.25 }, { 'ts' => base, 'value' => 0.05 }]
+
+    assert_equal [0.2], rounded_values(CampbellCloudPrecipitation::Cumulative.to_intervals(totals))
+  end
+
+  test 'a logger restart counts the new total as rain since the restart' do
+    base = Time.utc(2026, 11, 7, 2).to_i * 1000
+    totals = [{ 'ts' => base, 'value' => 0.77 }, { 'ts' => base + HALF_HOUR, 'value' => 0.02 }]
+
+    assert_equal [0.02], CampbellCloudPrecipitation::Cumulative.to_intervals(totals).pluck('value')
+  end
+
+  test 'a record number reset is a restart even when the new total is higher' do
+    base = Time.utc(2026, 11, 7, 2).to_i * 1000
+    totals = [{ 'ts' => base, 'value' => 0.01 }, { 'ts' => base + HALF_HOUR, 'value' => 0.05 }]
+    records = [{ 'ts' => base, 'value' => 9792 }, { 'ts' => base + HALF_HOUR, 'value' => 0 }]
+
+    # Without the record numbers this would be 0.04.
+    assert_equal [0.05], CampbellCloudPrecipitation::Cumulative.to_intervals(totals, records).pluck('value')
+  end
+
+  test 'float noise in an unchanged total is zero rain, not a restart' do
+    base = Time.utc(2026, 11, 7, 2).to_i * 1000
+    totals = [{ 'ts' => base, 'value' => 0.770625 }, { 'ts' => base + HALF_HOUR, 'value' => 0.770625 - 1e-12 }]
+
+    assert_equal [0.0], CampbellCloudPrecipitation::Cumulative.to_intervals(totals).pluck('value')
+  end
+
+  test 'unreadable totals are skipped, so the next good reading covers them' do
+    base = Time.utc(2026, 11, 7, 2).to_i * 1000
+    totals = [
+      { 'ts' => base, 'value' => 0.1 },
+      { 'ts' => base + HALF_HOUR, 'value' => 'NAN' },
+      { 'ts' => base + (2 * HALF_HOUR), 'value' => 0.3 }
+    ]
+
+    increments = CampbellCloudPrecipitation::Cumulative.to_intervals(totals)
+
+    assert_equal [base + (2 * HALF_HOUR)], increments.pluck('ts')
+    assert_in_delta 0.2, increments.first['value']
+  end
+
   # --- API conversation ---------------------------------------------------
 
   test 'returns Synoptic-shaped JSON for the configured table and field' do
@@ -108,6 +184,33 @@ class CampbellCloudPrecipitationTest < ActiveSupport::TestCase
     assert_requested token
     assert_requested lookup
     assert_requested points
+  end
+
+  test 'a cumulative gauge reads the running total and record number, crediting gap rain' do
+    @gauge.update!(campbell_field: 'cum_ppt_in', cumulative: true)
+    stub_token
+    stub_datastreams
+    totals = stub_datapoints(id: CUMULATIVE_DATASTREAM, data: [
+                               { ts: ms(Time.utc(2026, 11, 7, 1)), value: 0.5 },
+                               { ts: ms(Time.utc(2026, 11, 7, 1, 30)), value: 0.5 },
+                               # 02:00 and 02:30 missing: 0.12 fell in there somewhere
+                               { ts: ms(Time.utc(2026, 11, 7, 3)), value: 0.62 }
+                             ])
+    records = stub_datapoints(id: RECORD_DATASTREAM, data: [
+                                { ts: ms(Time.utc(2026, 11, 7, 1)), value: 10 },
+                                { ts: ms(Time.utc(2026, 11, 7, 1, 30)), value: 11 },
+                                { ts: ms(Time.utc(2026, 11, 7, 3)), value: 14 }
+                              ])
+
+    body = JSON.parse(CampbellCloudPrecipitation.new(@gauge, now: NOW).call)
+
+    observations = body.dig('STATION', 0, 'OBSERVATIONS')
+    assert_equal %w[2026-11-07T02:00:00Z 2026-11-07T03:00:00Z], observations['date_time']
+    # 02:00's hour has only the 01:30 reading (no rain); the gap's rain is
+    # all credited to the hour ending 03:00.
+    assert_equal [0.0, 0.12], observations['precip_intervals_set_1d']
+    assert_requested totals
+    assert_requested records
   end
 
   test 'asks for the last 20 days, in milliseconds, at the API maximum page size' do
@@ -173,6 +276,11 @@ class CampbellCloudPrecipitationTest < ActiveSupport::TestCase
 
   private
 
+  # Differences of float totals (0.03 - 0.01) carry float noise.
+  def rounded_values(increments)
+    increments.map { |point| point['value'].round(6) }
+  end
+
   def ms(time)
     (time.to_f * 1000).to_i
   end
@@ -196,13 +304,14 @@ class CampbellCloudPrecipitationTest < ActiveSupport::TestCase
             headers: { 'Authorization' => 'Bearer bearer-abc' })
       .to_return(status: 200, body: [
         datastream('Rain_10min', 'Rain_mm_Tot', '01a0eeba-8d0d-7225-a114-e8e1241593cf'),
-        datastream('Rain_30min', 'cum_ppt_in', '01a19d88-5b08-7250-bbb1-ddacab2ac823'),
+        datastream('Rain_30min', 'record', RECORD_DATASTREAM),
+        datastream('Rain_30min', 'cum_ppt_in', CUMULATIVE_DATASTREAM),
         datastream('Rain_30min', 'Rain_in_Tot', DATASTREAM)
       ].to_json)
   end
 
-  def stub_datapoints(data:)
-    stub_request(:get, "#{HOST}/api/v1/organizations/#{ORG}/datastreams/#{DATASTREAM}/datapoints")
+  def stub_datapoints(data:, id: DATASTREAM)
+    stub_request(:get, "#{HOST}/api/v1/organizations/#{ORG}/datastreams/#{id}/datapoints")
       .with(query: hash_including({}), headers: { 'Authorization' => 'Bearer bearer-abc' })
       .to_return(status: 200, body: { data: data, range: { exceeded_request: false } }.to_json)
   end
