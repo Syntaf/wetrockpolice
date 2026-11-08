@@ -63,8 +63,13 @@ class RailsAdminAccessTest < ActionDispatch::IntegrationTest
       base = "/admin/manage/#{am.to_param}"
       get base
       assert_response :success, "index #{am.model_name}"
-      get "#{base}/new"
-      assert_response :success, "new #{am.model_name}"
+      if am.model == ApiKey
+        # Keys are created by `api_keys:create`, which shows the key once.
+        assert_raises(RailsAdmin::ActionNotAllowed) { get "#{base}/new" }
+      else
+        get "#{base}/new"
+        assert_response :success, "new #{am.model_name}"
+      end
 
       record = am.model.first
       next unless record

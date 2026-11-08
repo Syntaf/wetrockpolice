@@ -1,0 +1,10 @@
+# Tokens are only stored as SHA-256 digests; tests send the plain tokens.
+partner:
+  name: Test partner
+  token_digest: <%= OpenSSL::Digest::SHA256.hexdigest('wrp_test_partner_key') %>
+  active: true
+
+revoked:
+  name: Former partner
+  token_digest: <%= OpenSSL::Digest::SHA256.hexdigest('wrp_revoked_key') %>
+  active: false

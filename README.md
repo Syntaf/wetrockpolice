@@ -306,6 +306,47 @@ bin/rails "campbell_cloud:datastreams[<station uuid>]"
 In production the credentials come from the `campbellCloud.username` /
 `campbellCloud.password` Helm values (`secrets.yaml`).
 
+## Partner rain data API
+
+Partner sites can read the rain gauge data that belongs to the climbing
+coalitions (today, SNCC's Black Velvet gauge) over a small JSON API. The
+areas' primary Synoptic stations are never included: Synoptic's terms (§2.4)
+forbid redistributing their data, and the model won't let a Synoptic gauge be
+marked shareable.
+
+**Keys.** Create one per partner; it's printed once and only its SHA-256
+digest is stored:
+
+```
+bin/rails "api_keys:create[Mountain Project]"
+bin/rails api_keys:list
+```
+
+Revoke a key by unticking `active` under API keys in Rails Admin. A gauge is
+shared when its `api_visible` box is ticked (CampbellCloud gauges only).
+
+**Requests.** Server-to-server only (no CORS), 60 requests a minute per key:
+
+```
+curl -H "Authorization: Bearer wrp_..." https://wetrockpolice.com/api/v1/areas
+curl -H "Authorization: Bearer wrp_..." https://wetrockpolice.com/api/v1/areas/redrock
+```
+
+`/api/v1/areas` lists the areas with shared gauges. `/api/v1/areas/:slug`
+returns each shared gauge with:
+
+- `status`: `ok`, or `unavailable` while the gauge's provider is failing
+- `last_rain_at` / `hours_since_rain`: the most recent hour with rain (`null`
+  if none in the last 20 days)
+- `totals`: inches in the last `24h`, `72h` and `7d`
+- `hourly`: 20 days of `{ "end": "<ISO 8601 hour end>", "precip": <inches> }`;
+  `precip` is `null` for hours the gauge sent no data, which is not the same
+  as `0`
+
+Data refreshes every 10 minutes (it shares the site's cache, so API traffic
+adds no load on the gauge provider). Unlike the website, the API reports gauge
+data only, without the Open-Meteo modeled-rain check.
+
 ## Creating or Updating Hero Images
 
 This repository uses a custom strategy for loading large background images on the client to ensure the first-load experience isn't poor. Without this strategy, the page would load with the large image missing, then slowly load the image top-down as if the page was being printed out.
