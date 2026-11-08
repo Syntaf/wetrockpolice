@@ -1,7 +1,12 @@
 import { Controller } from "@hotwired/stimulus";
 import { Tooltip as BootstrapTooltip } from "bootstrap";
 import { SYNOPTIC_OK_CODE } from "../constants";
-import { findModelRainAfter, parseDailyIntervals, parseHourlyIntervals } from "../utils";
+import {
+  HOURLY_LOOKBACK_DAYS,
+  findModelRainAfter,
+  parseDailyIntervals,
+  parseHourlyIntervals
+} from "../utils";
 // Named imports instead of 'chart.js/auto' so esbuild tree-shakes every
 // controller/scale/plugin the bar chart doesn't use. Registered below:
 // type 'bar' needs BarController + BarElement, its default category x-axis
@@ -41,6 +46,36 @@ const MODEL_NAMES = ['ncep_hrrr_conus', 'ecmwf_ifs025', 'icon_seamless', 'gem_se
 const MODEL_MIN_MM = 0.25;
 const MODEL_TIMEOUT_MS = 5000;
 
+// What the Daily/Hourly switch changes on the chart. `tick` labels the x-axis
+// (null hides a tick and its grid line); `tooltipFormat` is the hover label.
+const GRAPH_MODES = {
+  daily: {
+    legend: 'Rain per day (inches)',
+    description: 'Each bar is the total rain for one calendar day, midnight ' +
+      'to midnight in your time zone. The last bar is today so far.',
+    tooltipFormat: 'LLL do',
+    tick: (date) => format(date, 'LLL do'),
+    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    borderWidth: 1,
+    categoryPercentage: 0.8,
+    barPercentage: 0.9
+  },
+  hourly: {
+    legend: 'Rain per hour (inches)',
+    description: 'Each bar is the rain recorded in one hour, over the last ' +
+      `${HOURLY_LOOKBACK_DAYS} days.`,
+    tooltipFormat: 'LLL do haaa',
+    // One tick per day, on its first hour, instead of a label per bar
+    tick: (date) => (date.getHours() === 0 ? format(date, 'LLL do') : null),
+    // Bars are a pixel or two wide on a phone: solid, so a short shower still
+    // shows, and borderless, since a border would swallow them
+    backgroundColor: 'rgb(255, 99, 132)',
+    borderWidth: 0,
+    categoryPercentage: 1,
+    barPercentage: 0.8
+  }
+};
+
 export default class extends Controller {
   static targets = [
     "rainTileSection",
@@ -54,7 +89,8 @@ export default class extends Controller {
     "gaugeName",
     "nextGaugeName",
     "infoBubble",
-    "graphToggle"
+    "graphToggle",
+    "graphDescription"
   ]
 
   static values = {
@@ -473,14 +509,14 @@ export default class extends Controller {
     this.timeSeriesChart = new Chart(timeSeriesCanvas, {
         type: 'bar',
         data: {
-            labels: this.timeSeriesDailyData.map(intv => format(intv.label, "LLL do")),
+            labels: [],
             datasets: [{
-                label: 'Accumulated Precipitation (rolling 24 hours)',
-                data: this.timeSeriesDailyData.map(intv => intv.value),
-                barThickness: 30,
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgb(255, 99, 132, 0.7)',
-                borderWidth: 1
+                data: [],
+                // No fixed barThickness: Chart.js fits bars to the space each
+                // one has, so they never overlap on a narrow screen. The cap
+                // keeps the few daily bars from turning into slabs on desktop.
+                maxBarThickness: 30,
+                borderColor: 'rgb(255, 99, 132, 0.7)'
             }]
         },
         options: {
@@ -488,6 +524,9 @@ export default class extends Controller {
             aspectRatio: false,
             showTooltips: true,
             scales: {
+              x: {
+                ticks: {}
+              },
               y: {
                 ticks: {
                   beginAtZero: true,
@@ -497,26 +536,41 @@ export default class extends Controller {
             }
         }
     });
+
+    this.showGraphMode(false);
   }
 
   toggleGraphDisplay(event) {
     // No chart exists when the weather data failed to load.
     if (!this.timeSeriesChart) return;
 
-    const checked = event.target.checked;
+    this.showGraphMode(event.target.checked);
+  }
 
-    if (checked) {
-      this.timeSeriesChart.config.data.datasets[0].data =
-        this.timeSeriesHourlyData.map(intv => intv.value);
-      this.timeSeriesChart.config.data.labels =
-        this.timeSeriesHourlyData.map(intv => format(intv.label, 'LLL do haaa'));
-    } else {
-      this.timeSeriesChart.config.data.datasets[0].data =
-        this.timeSeriesDailyData.map(intv => intv.value);
-      this.timeSeriesChart.config.data.labels =
-        this.timeSeriesDailyData.map(intv => format(intv.label, 'LLL do'));
+  // Point the chart, its legend and the description under it at one series.
+  showGraphMode(hourly) {
+    const mode = hourly ? GRAPH_MODES.hourly : GRAPH_MODES.daily;
+    const series = hourly ? this.timeSeriesHourlyData : this.timeSeriesDailyData;
+    const chart = this.timeSeriesChart;
+    const dataset = chart.data.datasets[0];
+
+    // Labels are what the tooltip shows; the axis ticks are set separately.
+    chart.data.labels = series.map(intv => format(intv.label, mode.tooltipFormat));
+    dataset.data = series.map(intv => intv.value);
+    dataset.label = mode.legend;
+    dataset.backgroundColor = mode.backgroundColor;
+    dataset.borderWidth = mode.borderWidth;
+    dataset.categoryPercentage = mode.categoryPercentage;
+    dataset.barPercentage = mode.barPercentage;
+
+    const ticks = chart.options.scales.x.ticks;
+    ticks.autoSkip = !hourly;
+    ticks.callback = (value) => mode.tick(series[value].label);
+
+    if (this.hasGraphDescriptionTarget) {
+      this.graphDescriptionTarget.textContent = mode.description;
     }
 
-    this.timeSeriesChart.update();
+    chart.update();
   }
 }

@@ -339,6 +339,16 @@ body[data-page-controller="watched_area"] {
                 .graph-render {
                     height: 450px;
                 }
+
+                .graph-description {
+                    color: #6c6c6c;
+                    font-size: 13px;
+                    font-style: italic;
+                    text-align: center;
+                    max-width: 520px;
+                    margin: 8px auto 0;
+                    padding: 0 15px;
+                }
             }
 
             .text-content {

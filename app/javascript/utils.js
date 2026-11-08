@@ -8,54 +8,46 @@ export const toDateString = (date) => {
     return date.toLocaleString('en-US', { month: 'short', day: 'numeric' });
 };
 
+// How far back the hourly chart looks. Rain from several days ago still
+// matters for wet sandstone (#118).
+export const HOURLY_LOOKBACK_DAYS = 7;
+
+const HOUR_MS = 60 * 60 * 1000;
+
+// One bar per calendar day (midnight to midnight in the viewer's time zone),
+// each the sum of that day's hourly intervals. Not a rolling 24 hours. The
+// last day is today so far.
 export const parseDailyIntervals = (intervals) => {
     const data = [];
 
-    let accumulatedPrecip = intervals[0].precip;
-    let date = new Date(intervals[0].last_report);
+    intervals.forEach((interval) => {
+        const date = new Date(interval.last_report);
+        const day = data[data.length - 1];
 
-    for (let i = 0; i < intervals.length; i++) {
-
-        const intDate = new Date(intervals[i].last_report);
-
-        if (sameDate(date, intDate)) {
-            accumulatedPrecip += intervals[i].precip;
+        if (day && sameDate(day.label, date)) {
+            day.value += interval.precip;
         } else {
-            data.push({
-                label: date,
-                value: accumulatedPrecip
-            });
-
-            date = new Date(intervals[i].last_report);
-            accumulatedPrecip = intervals[i].precip;
+            data.push({ label: date, value: interval.precip });
         }
-    }
+    });
 
     return data;
 };
 
-export const parseHourlyIntervals = (intervals) => {
-    const data = [];
+// Every hourly interval from the last `days` days, ending at the latest
+// reading. Both providers already send one interval per hour.
+export const parseHourlyIntervals = (intervals, days = HOURLY_LOOKBACK_DAYS) => {
+    if (!intervals.length) return [];
 
-    // Find the time between two intervals in minutes
-    const intervalMiliseconds =
-        (new Date(intervals[1].last_report)) - (new Date(intervals[0].last_report));
-    const intervalMinutes = (intervalMiliseconds / 1000) / 60;
-    const intervalStep = Math.ceil(60 / intervalMinutes);
+    const latest = new Date(intervals[intervals.length - 1].last_report);
+    const cutoff = latest.getTime() - days * 24 * HOUR_MS;
 
-    // Start pulling data 30 hours before the current interval
-    const intervalStart = intervals.length - intervalStep * 30;
-
-    for (let i = intervalStart, j = 0; j < 30; i += intervalStep, j += 1) {
-        const date = new Date(intervals[i].last_report);
-
-        data.push({
-            label: date,
-            value: intervals[i].precip
-        });
-    }
-
-    return data;
+    return intervals
+        .filter(interval => new Date(interval.last_report).getTime() > cutoff)
+        .map(interval => ({
+            label: new Date(interval.last_report),
+            value: interval.precip
+        }));
 };
 
 const median = (xs) => {
