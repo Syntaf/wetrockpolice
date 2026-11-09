@@ -10,7 +10,7 @@ export const toDateString = (date) => {
 
 // How far back the hourly chart looks. Rain from several days ago still
 // matters for wet sandstone (#118).
-export const HOURLY_LOOKBACK_DAYS = 7;
+export const HOURLY_LOOKBACK_DAYS = 5;
 
 const HOUR_MS = 60 * 60 * 1000;
 

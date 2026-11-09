@@ -21,7 +21,8 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import { format } from 'date-fns';
+import { addDays, format, startOfDay } from 'date-fns';
+import { rainWindowsPlugin } from '../rain_chart_plugin';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -46,15 +47,23 @@ const MODEL_NAMES = ['ncep_hrrr_conus', 'ecmwf_ifs025', 'icon_seamless', 'gem_se
 const MODEL_MIN_MM = 0.25;
 const MODEL_TIMEOUT_MS = 5000;
 
+const HOUR_MS = 60 * 60 * 1000;
+const SHADING_NOTE = ' Shading marks the last 24, 48 and 72 hours.';
+
 // What the Daily/Hourly switch changes on the chart. `tick` labels the x-axis
-// (null hides a tick and its grid line); `tooltipFormat` is the hover label.
+// (null hides the label); `tooltipFormat` is the hover label. `slot` is the
+// time a bar covers, [startMs, endMs], which places the 24/48/72-hour shading;
+// `gridLine` says whether a gridline goes on the boundary before a bar.
 const GRAPH_MODES = {
   daily: {
     legend: 'Rain per day (inches)',
     description: 'Each bar is the total rain for one calendar day, midnight ' +
-      'to midnight in your time zone. The last bar is today so far.',
+      'to midnight in your time zone. The last bar is today so far.' + SHADING_NOTE,
     tooltipFormat: 'LLL do',
     tick: (date) => format(date, 'LLL do'),
+    // startOfDay/addDays, not +24h, so a daylight-saving day is 23 or 25 hours
+    slot: (date) => [startOfDay(date).getTime(), addDays(startOfDay(date), 1).getTime()],
+    gridLine: () => true,
     backgroundColor: 'rgba(255, 99, 132, 0.5)',
     borderWidth: 1,
     categoryPercentage: 0.8,
@@ -63,10 +72,13 @@ const GRAPH_MODES = {
   hourly: {
     legend: 'Rain per hour (inches)',
     description: 'Each bar is the rain recorded in one hour, over the last ' +
-      `${HOURLY_LOOKBACK_DAYS} days.`,
+      `${HOURLY_LOOKBACK_DAYS} days.` + SHADING_NOTE,
     tooltipFormat: 'LLL do haaa',
-    // One tick per day, on its first hour, instead of a label per bar
+    // One tick and one gridline per day, on its first hour, instead of one per bar
     tick: (date) => (date.getHours() === 0 ? format(date, 'LLL do') : null),
+    // Each reading is the rain in the hour up to its timestamp
+    slot: (date) => [date.getTime() - HOUR_MS, date.getTime()],
+    gridLine: (date) => date.getHours() === 0,
     // Bars are a pixel or two wide on a phone: solid, so a short shower still
     // shows, and borderless, since a border would swallow them
     backgroundColor: 'rgb(255, 99, 132)',
@@ -525,16 +537,25 @@ export default class extends Controller {
             showTooltips: true,
             scales: {
               x: {
+                // rainWindowsPlugin draws the vertical gridlines, always
+                // between bars (see its comment for why not Chart.js's own)
+                grid: { display: false },
                 ticks: {}
               },
               y: {
+                beginAtZero: true,
+                // Headroom: the tallest bar stops at 80% of the height or
+                // less, clear of the shading labels along the top. (Chart.js
+                // takes a grace percentage of half the range: 50% adds 25%.)
+                grace: '50%',
+                grid: { display: false },
                 ticks: {
-                  beginAtZero: true,
                   callback: (v) => `${v.toFixed(2)} in`
                 },
               }
             }
-        }
+        },
+        plugins: [rainWindowsPlugin]
     });
 
     this.showGraphMode(false);
@@ -567,10 +588,28 @@ export default class extends Controller {
     ticks.autoSkip = !hourly;
     ticks.callback = (value) => mode.tick(series[value].label);
 
+    chart.$rainWindows = {
+      anchor: this.rainWindowsAnchor(),
+      slots: series.map(intv => mode.slot(intv.label)),
+      gridIndices: series
+        .map((intv, i) => (mode.gridLine(intv.label) ? i : null))
+        .filter(i => i !== null)
+        // and the right-hand edge, after the last bar
+        .concat(mode === GRAPH_MODES.daily ? [series.length] : [])
+    };
+
     if (this.hasGraphDescriptionTarget) {
       this.graphDescriptionTarget.textContent = mode.description;
     }
 
     chart.update();
+  }
+
+  // The shading counts back from now, the same clock as the "since rain"
+  // tiles. The development fixture is from 2024, so there it counts back from
+  // the latest reading instead, or the bands would be off the chart.
+  rainWindowsAnchor() {
+    const latest = this.timeSeriesHourlyData[this.timeSeriesHourlyData.length - 1];
+    return this.developmentModeValue && latest ? latest.label : new Date();
   }
 }
