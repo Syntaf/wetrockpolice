@@ -290,6 +290,14 @@ body[data-page-controller="watched_area"] {
                 font-size: 32px;
                 margin-left: 4px;
                 color: #272727;
+                // Keep "September 20th" together when the title wraps
+                white-space: nowrap;
+            }
+
+            // "30 hours ago" inside the title: bold, at the title's own size
+            h2 strong {
+                font-size: inherit;
+                margin-left: 0;
             }
 
             .rain-warning {

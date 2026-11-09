@@ -40,6 +40,8 @@ class WatchedAreaRainHeaderTest < ApplicationSystemTestCase
     visit '/redrock'
 
     assert_selector HEADER, exact_text: 'The last recorded precipitation was 30 hours ago on', wait: WAIT
+    # Bold, like the date after it
+    assert_selector "#{HEADER} strong", exact_text: '30 hours ago'
     assert_selector WARNING, exact_text: 'Avoid climbing 24-72 hours after rain.'
   end
 
@@ -50,6 +52,7 @@ class WatchedAreaRainHeaderTest < ApplicationSystemTestCase
     assert_no_selector '[data-watched-area-target="loading"]', wait: WAIT
     assert_selector '[data-watched-area-target="lastRainDate"]', text: /\S/
     assert_selector HEADER, exact_text: 'The last recorded precipitation was on'
+    assert_no_selector "#{HEADER} strong"
     assert_no_selector WARNING
   end
 

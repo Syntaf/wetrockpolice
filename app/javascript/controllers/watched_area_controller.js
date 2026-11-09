@@ -489,9 +489,16 @@ export default class extends Controller {
     const recent = elapsedHours !== null && elapsedHours < RECENT_RAIN_HOURS;
 
     if (this.hasRainHeaderTarget && this.defaultRainHeader !== null) {
-      this.rainHeaderTarget.textContent = recent
-        ? `The last recorded precipitation was ${this.hoursAgo(elapsedHours)} on`
-        : this.defaultRainHeader;
+      if (recent) {
+        // Bold, like the date after it
+        const hours = document.createElement('strong');
+        hours.dataset.role = 'rain-hours-ago';
+        hours.textContent = this.hoursAgo(elapsedHours);
+        this.rainHeaderTarget.replaceChildren(
+          'The last recorded precipitation was ', hours, ' on');
+      } else {
+        this.rainHeaderTarget.textContent = this.defaultRainHeader;
+      }
     }
     if (this.hasRainWarningTarget) this.rainWarningTarget.hidden = !recent;
   }
