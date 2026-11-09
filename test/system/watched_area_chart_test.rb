@@ -11,10 +11,10 @@ require 'application_system_test_case'
 # Uses the bundled fixture (MOCK_WEATHER_DATA), like watched_area_weather_test:
 # 480 hourly readings ending at LAST_READING, with 0.17in of rain in all. The
 # chart itself is read through Stimulus, which application.js exposes as
-# window.Stimulus.
+# window.Stimulus. The browser runs on Red Rock's time zone, so which day a
+# reading falls on is the same on any machine.
 class WatchedAreaChartTest < ApplicationSystemTestCase
   WAIT = 15
-  FIRST_READING = '2024-09-02T00:34:00Z'
   LAST_READING = '2024-09-21T23:34:00Z'
   FIXTURE_TOTAL_INCHES = 0.17
   HOURLY_BARS = 5 * 24
@@ -23,15 +23,22 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
   PHONE_HEIGHT = 812
 
   CONTROLLER_JS = "Stimulus.getControllerForElementAndIdentifier(document.body, 'watched-area')"
+  TIME_ZONE = 'America/Los_Angeles'
 
   setup do
     @previous_mock_weather_data = ENV['MOCK_WEATHER_DATA']
+    @previous_token = ENV['SYNOPTIC_API_TOKEN']
     ENV['MOCK_WEATHER_DATA'] = '1'
+    page.driver.browser.execute_cdp('Emulation.setTimezoneOverride', timezoneId: TIME_ZONE)
   end
 
   teardown do
     ENV['MOCK_WEATHER_DATA'] = @previous_mock_weather_data
+    ENV['SYNOPTIC_API_TOKEN'] = @previous_token
     page.driver.browser.execute_cdp('Emulation.clearDeviceMetricsOverride')
+    # An empty id goes back to the machine's own time zone
+    page.driver.browser.execute_cdp('Emulation.setTimezoneOverride', timezoneId: '')
+    page.driver.browser.execute_cdp('Network.setBlockedURLs', urls: [])
   end
 
   test 'daily bars are whole calendar days, ending today, with every reading counted once' do
@@ -39,10 +46,10 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
 
     chart = chart_state
 
-    # Every local calendar day the readings touch, in order. The last one is
-    # the fixture's "today", which used to be dropped.
-    assert_equal calendar_days_between(FIRST_READING, LAST_READING), chart['dailyDays']
-    assert_equal local_day(LAST_READING), chart['dailyDays'].last
+    # The readings start at 00:34 UTC on Sep 2, 17:34 Sep 1 Red Rock time: that day would be
+    # a few hours passing for a whole day, so it's left out. Then every day
+    # through the fixture's "today" (Sep 21), which used to be dropped.
+    assert_equal days_between(Date.new(2024, 9, 2), Date.new(2024, 9, 21)), chart['dailyDays']
     # A desktop window has room for every day
     assert_equal chart['dailyDays'].size, chart['values'].size
     assert_in_delta FIXTURE_TOTAL_INCHES, chart['values'].sum, 1e-9
@@ -119,6 +126,24 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     toggle_graph
     assert_operator chart_state['values'].size, :<, chart_state['dailyDays'].size, 'the rainy first day is on the chart'
     assert_shading_colors('daily', 'dry')
+  end
+
+  # Readings stamped exactly on the hour, as CampbellCloud gauges send them.
+  # Each is the rain in the hour up to its stamp, so the one at 00:00 Oct 12
+  # is the last hour of Oct 11. They start at 19:00 on Oct 9 (the hour from
+  # 18:00), so Oct 9 is partial and left out.
+  test 'a reading stamped at midnight counts toward the day before, and a partial first day is left out' do
+    zone = ActiveSupport::TimeZone[TIME_ZONE]
+    stub_gauge(
+      from: zone.local(2025, 10, 9, 19), to: zone.local(2025, 10, 14, 0),
+      rain: { zone.local(2025, 10, 12, 0) => 0.10, zone.local(2025, 10, 12, 1) => 0.02 }
+    )
+    visit_chart
+
+    chart = chart_state
+
+    assert_equal days_between(Date.new(2025, 10, 10), Date.new(2025, 10, 13)), chart['dailyDays']
+    assert_equal([0, 0.10, 0.02, 0], chart['values'].map { |value| value.round(4) })
   end
 
   # The fixture's last midnight is well clear of the right edge, so this ends
@@ -383,21 +408,37 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
   end
 
   # The browser's time zone decides the calendar days, so ask the browser.
-  def calendar_days_between(first, last)
-    page.evaluate_script(<<~JS)
-      (() => {
-        const days = [];
-        for (let t = Date.parse('#{first}'); t <= Date.parse('#{last}'); t += 3600000) {
-          const day = new Date(t).toDateString();
-          if (days[days.length - 1] !== day) days.push(day);
-        }
-        return days;
-      })()
-    JS
+  # Date#strftime to match JavaScript's toDateString ("Mon Sep 02 2024")
+  def days_between(first, last)
+    (first..last).map { |date| date.strftime('%a %b %d %Y') }
   end
 
-  def local_day(iso)
-    page.evaluate_script("new Date('#{iso}').toDateString()")
+  # Serves the page hourly readings from `from` to `to` through the Rails
+  # proxy (as watched_area_rain_header_test does), dry except for `rain`
+  # ({ time => inches }). Open-Meteo's modeled rain is blocked in the browser.
+  def stub_gauge(from:, to:, rain:)
+    # 'false', not unset: see watched_area_weather_proxy_test
+    ENV['MOCK_WEATHER_DATA'] = 'false'
+    ENV['SYNOPTIC_API_TOKEN'] = 'system-test-token'
+
+    page.driver.browser.execute_cdp('Network.enable')
+    page.driver.browser.execute_cdp('Network.setBlockedURLs', urls: ['*open-meteo.com*'])
+
+    times = (0..((to - from) / 3600).to_i).map { |hour| from + hour.hours }
+    body = {
+      'SUMMARY' => { 'RESPONSE_CODE' => 1, 'RESPONSE_MESSAGE' => 'OK', 'NUMBER_OF_OBJECTS' => 1 },
+      'STATION' => [{
+        'STID' => 'RRKN2',
+        'OBSERVATIONS' => {
+          'date_time' => times.map { |time| time.utc.iso8601 },
+          'precip_intervals_set_1d' => times.map { |time| rain.fetch(time, 0.0) }
+        }
+      }]
+    }
+
+    stub_request(:get, 'https://api.synopticdata.com/v2/stations/timeseries')
+      .with(query: hash_including('stid' => 'RRKN2', 'token' => 'system-test-token'))
+      .to_return(status: 200, body: body.to_json, headers: { 'Content-Type' => 'application/json' })
   end
 
   def iso_hours_before(iso, hours)

@@ -1,9 +1,3 @@
-export const sameDate = (dateOne, dateTwo) => {
-    return dateOne.getFullYear() === dateTwo.getFullYear() &&
-        dateOne.getMonth() === dateTwo.getMonth() &&
-        dateOne.getDate() === dateTwo.getDate();
-};
-
 export const toDateString = (date) => {
     return date.toLocaleString('en-US', { month: 'short', day: 'numeric' });
 };
@@ -14,24 +8,45 @@ export const HOURLY_LOOKBACK_DAYS = 5;
 
 const HOUR_MS = 60 * 60 * 1000;
 
+// Each reading is the rain in the hour up to its timestamp, so its day is
+// the day of the moment just before the stamp: one stamped exactly midnight
+// (00:00) is the last hour of the day before. Returns that day's midnight.
+const readingDay = (date) => {
+    const justBefore = new Date(date.getTime() - 1);
+    return new Date(justBefore.getFullYear(), justBefore.getMonth(), justBefore.getDate());
+};
+
 // One bar per calendar day (midnight to midnight in the viewer's time zone),
 // each the sum of that day's hourly intervals. Not a rolling 24 hours. The
-// last day is today so far.
+// last day is today so far. Each bar's label is its day's midnight.
+//
+// The readings start partway through a day (20 days back from the current
+// time of day), so the first day is left out unless its first reading's hour
+// began at its midnight: a partial total would pass for a whole day's.
 export const parseDailyIntervals = (intervals) => {
     const data = [];
 
     intervals.forEach((interval) => {
         const date = new Date(interval.last_report);
+        const dayStart = readingDay(date);
         const day = data[data.length - 1];
 
-        if (day && sameDate(day.label, date)) {
+        if (day && day.label.getTime() === dayStart.getTime()) {
             day.value += interval.precip;
         } else {
-            data.push({ label: date, value: interval.precip });
+            data.push({
+                label: dayStart,
+                value: interval.precip,
+                complete: date.getTime() - HOUR_MS <= dayStart.getTime()
+            });
         }
     });
 
-    return data;
+    // Today, the last day, is labelled "so far"; any earlier first day must
+    // be whole.
+    if (data.length > 1 && !data[0].complete) data.shift();
+
+    return data.map(({ label, value }) => ({ label, value }));
 };
 
 // Every hourly interval from the last `days` days, ending at the latest
