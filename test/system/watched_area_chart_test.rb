@@ -49,6 +49,7 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     assert_equal 'Rain per day (inches)', chart['legend']
     assert_match(/one calendar day, midnight to midnight/, description_text)
     assert_axis_dates_plain(chart, 'daily')
+    assert_equal expected_axis_labels(chart['dailyDays']), chart['axisTicks']
   end
 
   test 'the hourly switch shows the last 5 days of hourly bars and switches back' do
@@ -63,6 +64,9 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     assert_equal 'Rain per hour (inches)', chart['legend']
     assert_match(/one hour, over the last 5 days/, description_text)
     assert_axis_dates_plain(chart, 'hourly')
+    # Five days of dates, under a week, so each keeps its month
+    assert_equal 5, chart['axisTicks'].size
+    assert(chart['axisTicks'].all? { |label| label.start_with?('Sep ') }, chart['axisTicks'].inspect)
     # The last bar is the latest reading, the first is 119 hours before it.
     assert_equal iso_hours_before(LAST_READING, 0), chart['hourlyTimes'].last
     assert_equal iso_hours_before(LAST_READING, HOURLY_BARS - 1), chart['hourlyTimes'].first
@@ -83,6 +87,24 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
 
     assert_rain_windows('hourly', slots_per_band: 24)
     assert_match(/Shading marks the last 24, 48 and 72 hours/, description_text)
+  end
+
+  # The fixture never crosses a month, so this hands the chart ten days that do
+  test 'a new month gets its name on the x-axis as well as each week' do
+    visit_chart
+
+    labels = page.evaluate_script(<<~JS)
+      (() => {
+        const controller = #{CONTROLLER_JS};
+        controller.timeSeriesDailyData = Array.from({ length: 10 }, (_, i) =>
+          ({ label: new Date(2024, 8, 26 + i, 12), value: 0 }));
+        controller.dailyDaysShown = null;
+        controller.showGraphMode(false);
+        return controller.timeSeriesChart.scales.x.ticks.map(tick => tick.label);
+      })()
+    JS
+
+    assert_equal ['Sep 26', '27', '28', '29', '30', 'Oct 1', '2', 'Oct 3', '4', '5'], labels
   end
 
   test 'bars keep headroom below the shading labels, with no horizontal gridlines' do
@@ -107,6 +129,7 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     # The most recent days, ending today
     assert_equal state['dailyDays'].last(state['values'].size), state['shownDays']
     assert_equal WINDOW_LABELS, state['labels'].pluck('text'), 'a shading label was left out'
+    assert_equal expected_axis_labels(state['shownDays']), state['axisTicks']
 
     toggle_graph
     toggle_graph
@@ -189,11 +212,27 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     JS
   end
 
-  # "Sep 20", not "Sep 20th"
+  # "Sep 20" or "20", never "Sep 20th"
   def assert_axis_dates_plain(state, mode)
     assert_not_empty state['axisTicks'], "#{mode}: no x-axis labels"
     state['axisTicks'].each do |label|
-      assert_match(/\A[A-Z][a-z]{2} \d{1,2}\z/, label, "#{mode}: x-axis label #{label.inspect}")
+      assert_match(/\A([A-Z][a-z]{2} )?\d{1,2}\z/, label, "#{mode}: x-axis label #{label.inspect}")
+    end
+  end
+
+  # For days given as toDateString()s: with more than a week of them, the
+  # month once a week (from the first) and where a new month starts, else just
+  # the day: "Sep 1", "2", ... "7", "Sep 8". A week or less: the month on each.
+  def expected_axis_labels(days)
+    dates = days.map { |day| Date.parse(day) }
+
+    dates.each_with_index.map do |date, i|
+      new_month = i.positive? && dates[i - 1].month != date.month
+      if dates.size <= 7 || (i % 7).zero? || new_month
+        date.strftime('%b %-d')
+      else
+        date.day.to_s
+      end
     end
   end
 

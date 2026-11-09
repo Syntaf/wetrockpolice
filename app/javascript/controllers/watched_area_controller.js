@@ -57,6 +57,25 @@ const MIN_DAILY_DAYS = 4;
 // x-axis dates: "Sep 20", no "th", to keep the labels short. The tooltips
 // keep the ordinal ("Sep 20th").
 const AXIS_DATE_FORMAT = 'LLL d';
+const DAYS_PER_WEEK = 7;
+
+// The x-axis labels for a series. `tick` gives each bar's label ("Sep 20",
+// or null for none). With more than a week of dates, the month shows once a
+// week, counting from the first, and wherever a new month starts; the rest
+// are just the day: "Sep 1", "2", ... "7", "Sep 8", "9", ...
+const axisLabels = (series, tick) => {
+  const labels = series.map(intv => tick(intv.label));
+  const dated = labels.flatMap((label, i) => (label === null ? [] : [i]));
+  if (dated.length <= DAYS_PER_WEEK) return labels;
+
+  dated.forEach((index, k) => {
+    const date = series[index].label;
+    const previous = k > 0 ? series[dated[k - 1]].label : null;
+    const newMonth = previous !== null && previous.getMonth() !== date.getMonth();
+    if (k % DAYS_PER_WEEK !== 0 && !newMonth) labels[index] = format(date, 'd');
+  });
+  return labels;
+};
 const SHADING_NOTE = ' Shading marks the last 24, 48 and 72 hours.';
 
 // What the Daily/Hourly switch changes on the chart. `tick` labels the x-axis
@@ -673,8 +692,11 @@ export default class extends Controller {
     dataset.barPercentage = mode.barPercentage;
 
     const ticks = chart.options.scales.x.ticks;
-    ticks.autoSkip = !hourly;
-    ticks.callback = (value) => mode.tick(series[value].label);
+    const labels = axisLabels(series, mode.tick);
+    // Every label shows, so the weekly months above stay put: daily days are
+    // kept wide enough (fitDailyDays), and hourly labels only one bar a day.
+    ticks.autoSkip = false;
+    ticks.callback = (value) => labels[value];
 
     chart.$rainWindows = {
       anchor: this.currentTime(),
