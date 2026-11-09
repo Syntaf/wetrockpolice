@@ -48,8 +48,7 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     assert_in_delta FIXTURE_TOTAL_INCHES, chart['values'].sum, 1e-9
     assert_equal 'Rain per day (inches)', chart['legend']
     assert_match(/one calendar day, midnight to midnight/, description_text)
-    assert_axis_dates(chart, 'daily')
-    assert_equal expected_axis_labels(chart['dailyDays']), chart['axisTicks']
+    assert_daily_axis_dates(chart, chart['dailyDays'])
   end
 
   test 'the hourly switch shows the last 5 days of hourly bars and switches back' do
@@ -63,8 +62,8 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     assert_equal HOURLY_BARS, chart['values'].size
     assert_equal 'Rain per hour (inches)', chart['legend']
     assert_match(/one hour, over the last 5 days/, description_text)
-    assert_axis_dates(chart, 'hourly')
-    # Five days of dates, under a week, so each keeps its month
+    assert_hourly_axis_dates(chart)
+    # One date a day
     assert_equal 5, chart['axisTicks'].size
     assert(chart['axisTicks'].all? { |label| label.start_with?('Sep ') }, chart['axisTicks'].inspect)
     # ...with its weekday underneath, and starting just right of its day's
@@ -92,25 +91,6 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     toggle_graph
 
     assert_rain_windows('hourly', slots_per_band: 24)
-  end
-
-  # The fixture never crosses a month, so this hands the chart ten days that do
-  test 'a new month gets its name on the x-axis as well as each week' do
-    visit_chart
-
-    labels = page.evaluate_script(<<~JS)
-      (() => {
-        const controller = #{CONTROLLER_JS};
-        controller.timeSeriesDailyData = Array.from({ length: 10 }, (_, i) =>
-          ({ label: new Date(2024, 8, 26 + i, 12), value: 0 }));
-        controller.dailyDaysShown = null;
-        controller.showGraphMode(false);
-        controller.timeSeriesChart.draw();
-        return controller.timeSeriesChart.$axisLabelsDrawn.map(d => d.lines[0].text);
-      })()
-    JS
-
-    assert_equal ['Sep 26', '27', '28', '29', '30', 'Oct 1', '2', 'Oct 3', '4', '5'], labels
   end
 
   # The fixture's last midnight is well clear of the right edge, so this ends
@@ -163,7 +143,7 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     # The most recent days, ending today
     assert_equal state['dailyDays'].last(state['values'].size), state['shownDays']
     assert_equal WINDOW_LABELS, state['labels'].pluck('text'), 'a shading label was left out'
-    assert_equal expected_axis_labels(state['shownDays']), state['axisTicks']
+    assert_daily_axis_dates(state, state['shownDays'])
 
     toggle_graph
     toggle_graph
@@ -221,6 +201,7 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
         chart.draw();
         const drawn = chart.$rainWindowsDrawn;
         const axisLabels = chart.$axisLabelsDrawn.filter(d => !d.omitted).map(d => ({
+          index: d.index,
           lines: d.lines.map(line => line.text),
           left: d.left,
           width: d.width,
@@ -257,30 +238,31 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     JS
   end
 
-  # "Sep 20" or "20", never "Sep 20th"
-  def assert_axis_dates(state, mode)
-    assert_not_empty state['axisLabels'], "#{mode}: no x-axis labels"
+  # "Sep 20", never "Sep 20th"
+  def assert_hourly_axis_dates(state)
+    assert_not_empty state['axisLabels'], 'hourly: no x-axis labels'
     state['axisLabels'].each do |label|
-      text = label['lines'][0]
-
-      assert_match(/\A([A-Z][a-z]{2} )?\d{1,2}\z/, text, "#{mode}: x-axis label #{text.inspect}")
+      assert_match(/\A[A-Z][a-z]{2} \d{1,2}\z/, label['lines'][0], 'hourly: x-axis label')
     end
   end
 
-  # For days given as toDateString()s: with more than a week of them, the
-  # month once a week (from the first) and where a new month starts, else just
-  # the day: "Sep 1", "2", ... "7", "Sep 8". A week or less: the month on each.
-  def expected_axis_labels(days)
-    dates = days.map { |day| Date.parse(day) }
+  # "Sep 20th" under each bar for the days shown (given as toDateString()s),
+  # in order. Chart.js may skip some when they don't fit, but never the
+  # first, and never more than every other one.
+  def assert_daily_axis_dates(state, days)
+    labels = state['axisLabels']
 
-    dates.each_with_index.map do |date, i|
-      new_month = i.positive? && dates[i - 1].month != date.month
-      if dates.size <= 7 || (i % 7).zero? || new_month
-        date.strftime('%b %-d')
-      else
-        date.day.to_s
-      end
+    assert_not_empty labels, 'daily: no x-axis labels'
+    labels.each do |label|
+      assert_equal ordinal_date(Date.parse(days[label['index']])), label['lines'][0],
+                   "daily: x-axis label under bar #{label['index']}"
     end
+    assert_equal 0, labels.first['index'], 'daily: the first day has no label'
+    assert_operator labels.size * 2, :>=, days.size, 'daily: most days have no label'
+  end
+
+  def ordinal_date(date)
+    "#{date.strftime('%b')} #{date.day.ordinalize}"
   end
 
   def assert_rain_windows(mode, slots_per_band:)
