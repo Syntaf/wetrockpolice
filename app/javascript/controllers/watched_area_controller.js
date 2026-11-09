@@ -54,6 +54,9 @@ const RECENT_RAIN_HOURS = 72;
 // The fewest days the daily chart narrows to: the shaded 72 hours plus today
 // can touch four.
 const MIN_DAILY_DAYS = 4;
+// x-axis dates: "Sep 20", no "th", to keep the labels short. The tooltips
+// keep the ordinal ("Sep 20th").
+const AXIS_DATE_FORMAT = 'LLL d';
 const SHADING_NOTE = ' Shading marks the last 24, 48 and 72 hours.';
 
 // What the Daily/Hourly switch changes on the chart. `tick` labels the x-axis
@@ -66,7 +69,7 @@ const GRAPH_MODES = {
     description: 'Each bar is the total rain for one calendar day, midnight ' +
       'to midnight in your time zone. The last bar is today so far.' + SHADING_NOTE,
     tooltipFormat: 'LLL do',
-    tick: (date) => format(date, 'LLL do'),
+    tick: (date) => format(date, AXIS_DATE_FORMAT),
     // startOfDay/addDays, not +24h, so a daylight-saving day is 23 or 25 hours
     slot: (date) => [startOfDay(date).getTime(), addDays(startOfDay(date), 1).getTime()],
     gridLine: () => true,
@@ -81,7 +84,7 @@ const GRAPH_MODES = {
       `${HOURLY_LOOKBACK_DAYS} days.` + SHADING_NOTE,
     tooltipFormat: 'LLL do haaa',
     // One tick and one gridline per day, on its first hour, instead of one per bar
-    tick: (date) => (date.getHours() === 0 ? format(date, 'LLL do') : null),
+    tick: (date) => (date.getHours() === 0 ? format(date, AXIS_DATE_FORMAT) : null),
     // Each reading is the rain in the hour up to its timestamp
     slot: (date) => [date.getTime() - HOUR_MS, date.getTime()],
     gridLine: (date) => date.getHours() === 0,

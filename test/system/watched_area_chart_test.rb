@@ -48,6 +48,7 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     assert_in_delta FIXTURE_TOTAL_INCHES, chart['values'].sum, 1e-9
     assert_equal 'Rain per day (inches)', chart['legend']
     assert_match(/one calendar day, midnight to midnight/, description_text)
+    assert_axis_dates_plain(chart, 'daily')
   end
 
   test 'the hourly switch shows the last 5 days of hourly bars and switches back' do
@@ -61,6 +62,7 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     assert_equal HOURLY_BARS, chart['values'].size
     assert_equal 'Rain per hour (inches)', chart['legend']
     assert_match(/one hour, over the last 5 days/, description_text)
+    assert_axis_dates_plain(chart, 'hourly')
     # The last bar is the latest reading, the first is 119 hours before it.
     assert_equal iso_hours_before(LAST_READING, 0), chart['hourlyTimes'].last
     assert_equal iso_hours_before(LAST_READING, HOURLY_BARS - 1), chart['hourlyTimes'].first
@@ -168,6 +170,8 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
         return {
           values: chart.data.datasets[0].data,
           legend: chart.data.datasets[0].label,
+          // The x-axis labels Chart.js kept (it may skip some to fit)
+          axisTicks: chart.scales.x.ticks.map(tick => tick.label).filter(Boolean),
           dailyDays: controller.timeSeriesDailyData.map(d => d.label.toDateString()),
           // Each bar's day (on the daily chart), from the time slot it covers
           shownDays: chart.$rainWindows.slots.map(slot => new Date(slot[0]).toDateString()),
@@ -183,6 +187,14 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
         };
       })()
     JS
+  end
+
+  # "Sep 20", not "Sep 20th"
+  def assert_axis_dates_plain(state, mode)
+    assert_not_empty state['axisTicks'], "#{mode}: no x-axis labels"
+    state['axisTicks'].each do |label|
+      assert_match(/\A[A-Z][a-z]{2} \d{1,2}\z/, label, "#{mode}: x-axis label #{label.inspect}")
+    end
   end
 
   def assert_rain_windows(mode, slots_per_band:)
