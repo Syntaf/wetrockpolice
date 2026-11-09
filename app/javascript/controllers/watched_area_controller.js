@@ -77,7 +77,6 @@ const axisLabels = (series, mode) => {
   });
   return labels;
 };
-const SHADING_NOTE = ' Shading marks the last 24, 48 and 72 hours.';
 
 // What the Daily/Hourly switch changes on the chart. `labelled` says which
 // bars get an x-axis date (see axisLabels for the rest of the axis options);
@@ -88,7 +87,7 @@ const GRAPH_MODES = {
   daily: {
     legend: 'Rain per day (inches)',
     description: 'Each bar is the total rain for one calendar day, midnight ' +
-      'to midnight in your time zone. The last bar is today so far.' + SHADING_NOTE,
+      'to midnight in your time zone. The last bar is today so far.',
     tooltipFormat: 'LLL do',
     // A date under every bar, centred, slanting when they're tight
     labelled: () => true,
@@ -106,7 +105,7 @@ const GRAPH_MODES = {
   hourly: {
     legend: 'Rain per hour (inches)',
     description: 'Each bar is the rain recorded in one hour, over the last ' +
-      `${HOURLY_LOOKBACK_DAYS} days.` + SHADING_NOTE,
+      `${HOURLY_LOOKBACK_DAYS} days.`,
     tooltipFormat: 'LLL do haaa',
     // One date and one gridline per day, on its first hour, instead of one
     // per bar. The date and weekday start at the gridline, level.

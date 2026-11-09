@@ -88,12 +88,10 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     visit_chart
 
     assert_rain_windows('daily', slots_per_band: 1)
-    assert_match(/Shading marks the last 24, 48 and 72 hours/, description_text)
 
     toggle_graph
 
     assert_rain_windows('hourly', slots_per_band: 24)
-    assert_match(/Shading marks the last 24, 48 and 72 hours/, description_text)
   end
 
   # The fixture never crosses a month, so this hands the chart ten days that do
