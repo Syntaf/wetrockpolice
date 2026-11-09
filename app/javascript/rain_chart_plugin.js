@@ -13,10 +13,18 @@ export const RAIN_WINDOWS = [
 // enough for a label this size (see minBandWidth).
 export const LABEL_FONT_SIZE = 15;
 
+// Colors of the bands (as "r, g, b", each band's alpha added from
+// RAIN_WINDOWS) and their labels. Pink while the chart shows any rain; grey
+// when every bar on it is zero, so the shading isn't mistaken for rain bars.
+// Change them here.
+export const SHADING_COLORS = {
+  rain: { band: '255, 99, 132', label: 'rgba(194, 24, 91, 0.8)' },
+  dry: { band: '110, 110, 110', label: 'rgba(100, 100, 100, 0.8)' }
+};
+
 const HOUR_MS = 60 * 60 * 1000;
 const LABEL_TOP_PADDING = 4;
 const LABEL_SIDE_PADDING = 4;
-const LABEL_COLOR = 'rgba(194, 24, 91, 0.8)';
 
 // On the hourly chart, the gap between a day's gridline and the x-axis label
 // that starts there.
@@ -49,6 +57,10 @@ export const fractionalIndex = (slots, time) => {
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
+// 'rain' if any bar on the chart is above zero, else 'dry'
+const shadingPalette = (chart) =>
+  (chart.data.datasets[0]?.data ?? []).some(value => value > 0) ? 'rain' : 'dry';
+
 // A Chart.js plugin: an object of hooks Chart.js calls while it draws. The
 // controller hands it chart.$rainWindows = { anchor, slots, gridIndices } and
 // chart.$axisLabels = { labels, atBoundary }; what it draws is recorded on
@@ -65,7 +77,9 @@ export const rainWindowsPlugin = {
   beforeDatasetsDraw(chart) {
     const { ctx, chartArea, scales: { x } } = chart;
     const input = chart.$rainWindows;
-    const drawn = { bands: [], labels: [], gridLines: [] };
+    const palette = shadingPalette(chart);
+    const colors = SHADING_COLORS[palette];
+    const drawn = { palette, labelColor: colors.label, bands: [], labels: [], gridLines: [] };
     chart.$rainWindowsDrawn = drawn;
 
     if (!input || !input.slots.length) return;
@@ -89,11 +103,13 @@ export const rainWindowsPlugin = {
       const left = pixelFor(anchor - window.hours * HOUR_MS);
       if (right - left < 0.5) return;
 
-      ctx.fillStyle = `rgba(255, 99, 132, ${window.alpha})`;
+      const fill = `rgba(${colors.band}, ${window.alpha})`;
+      ctx.fillStyle = fill;
       ctx.fillRect(left, chartArea.top, right - left, height);
       drawn.bands.push({
         label: window.label,
         alpha: window.alpha,
+        fill,
         left,
         right,
         top: chartArea.top,
@@ -125,7 +141,7 @@ export const rainWindowsPlugin = {
 
     ctx.save();
     ctx.font = labelFont();
-    ctx.fillStyle = LABEL_COLOR;
+    ctx.fillStyle = drawn.labelColor;
 
     drawn.bands.forEach((band) => {
       const textWidth = ctx.measureText(band.label).width;

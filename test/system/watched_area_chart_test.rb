@@ -93,6 +93,34 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     assert_rain_windows('hourly', slots_per_band: 24)
   end
 
+  # The fixture has rain in both views. On a phone the daily chart shows only
+  # the last days, so this gives it rain on the first day alone (off the
+  # chart) and none in the hourly data.
+  test 'the shading and its labels turn grey when no bar on the chart shows rain' do
+    emulate_phone
+    visit_chart
+
+    assert_shading_colors('daily', 'rain')
+    toggle_graph
+    assert_shading_colors('hourly', 'rain')
+
+    page.execute_script(<<~JS)
+      (() => {
+        const controller = #{CONTROLLER_JS};
+        controller.timeSeriesDailyData = controller.timeSeriesDailyData
+          .map((d, i) => ({ ...d, value: i === 0 ? 0.05 : 0 }));
+        controller.timeSeriesHourlyData = controller.timeSeriesHourlyData
+          .map(d => ({ ...d, value: 0 }));
+        controller.showGraphMode(true);
+      })()
+    JS
+
+    assert_shading_colors('hourly', 'dry')
+    toggle_graph
+    assert_operator chart_state['values'].size, :<, chart_state['dailyDays'].size, 'the rainy first day is on the chart'
+    assert_shading_colors('daily', 'dry')
+  end
+
   # The fixture's last midnight is well clear of the right edge, so this ends
   # the hourly readings on a midnight hour: that day's label has one bar's
   # width to fit in, and is left out instead of cut off.
@@ -229,6 +257,8 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
           chartArea: { left, right, top, bottom },
           yMax: chart.scales.y.max,
           yGridShown: chart.options.scales.y.grid.display,
+          palette: drawn.palette,
+          labelColor: drawn.labelColor,
           bands: drawn.bands,
           labels: drawn.labels,
           gridLines: drawn.gridLines,
@@ -263,6 +293,24 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
 
   def ordinal_date(date)
     "#{date.strftime('%b')} #{date.day.ordinalize}"
+  end
+
+  # Pink bands and labels with rain on the chart; grey (red, green and blue
+  # equal) without
+  def assert_shading_colors(mode, palette)
+    state = chart_state
+
+    assert_equal palette, state['palette'], "#{mode}: shading palette"
+    assert_equal WINDOW_LABELS, state['bands'].pluck('label'), "#{mode}: bands"
+    (state['bands'].pluck('fill') + [state['labelColor']]).each do |color|
+      red, green, blue = color.scan(/\d+/).first(3).map(&:to_i)
+
+      if palette == 'dry'
+        assert_equal [red, red], [green, blue], "#{mode}: #{color} isn't grey"
+      else
+        assert_operator red, :>, green + 50, "#{mode}: #{color} isn't pink"
+      end
+    end
   end
 
   def assert_rain_windows(mode, slots_per_band:)
