@@ -8,11 +8,27 @@ export const RAIN_WINDOWS = [
   { hours: 72, label: '72h', alpha: 0.05 }
 ];
 
+// Size, in pixels, of the "24h" / "48h" / "72h" labels. Change it here: on a
+// narrow screen the daily chart shows fewer days so each one stays wide
+// enough for a label this size (see minBandWidth).
+export const LABEL_FONT_SIZE = 15;
+
 const HOUR_MS = 60 * 60 * 1000;
-const LABEL_FONT_SIZE = 11;
 const LABEL_TOP_PADDING = 4;
-const LABEL_SIDE_PADDING = 3;
-const LABEL_COLOR = 'rgba(194, 24, 91, 0.75)';
+const LABEL_SIDE_PADDING = 4;
+const LABEL_COLOR = 'rgba(194, 24, 91, 0.8)';
+
+const labelFont = () => `600 ${LABEL_FONT_SIZE}px ${defaults.font.family}`;
+
+// The narrowest a band can be and still fit its label: the daily chart keeps
+// each day at least this wide.
+export const minBandWidth = (ctx) => {
+  ctx.save();
+  ctx.font = labelFont();
+  const widest = Math.max(...RAIN_WINDOWS.map(window => ctx.measureText(window.label).width));
+  ctx.restore();
+  return widest + 2 * LABEL_SIDE_PADDING;
+};
 
 // Where `time` falls on a category axis, as a fractional bar index: bar i
 // covers values i - 0.5 to i + 0.5, and slots[i] = [startMs, endMs] is the
@@ -103,7 +119,7 @@ export const rainWindowsPlugin = {
     const top = chartArea.top + LABEL_TOP_PADDING;
 
     ctx.save();
-    ctx.font = `600 ${LABEL_FONT_SIZE}px ${defaults.font.family}`;
+    ctx.font = labelFont();
     ctx.fillStyle = LABEL_COLOR;
 
     drawn.bands.forEach((band) => {
@@ -111,37 +127,20 @@ export const rainWindowsPlugin = {
       const bandWidth = band.right - band.left;
       const centre = (band.left + band.right) / 2;
 
-      if (textWidth + 2 * LABEL_SIDE_PADDING <= bandWidth) {
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        ctx.fillText(band.label, centre, top);
-        drawn.labels.push({
-          text: band.label,
-          rotated: false,
-          left: centre - textWidth / 2,
-          right: centre + textWidth / 2,
-          top,
-          bottom: top + LABEL_FONT_SIZE
-        });
-      } else if (LABEL_FONT_SIZE + 2 <= bandWidth) {
-        // Too narrow for the text (a day on a phone): turn it to read upwards,
-        // ending at the top, instead of spilling into the next band
-        ctx.save();
-        ctx.translate(centre, top);
-        ctx.rotate(-Math.PI / 2);
-        ctx.textAlign = 'right';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(band.label, 0, 0);
-        ctx.restore();
-        drawn.labels.push({
-          text: band.label,
-          rotated: true,
-          left: centre - LABEL_FONT_SIZE / 2,
-          right: centre + LABEL_FONT_SIZE / 2,
-          top,
-          bottom: top + textWidth
-        });
-      }
+      // A band too narrow for its label goes without, rather than spilling
+      // into the next one. The daily chart sizes days so this doesn't happen.
+      if (textWidth + 2 * LABEL_SIDE_PADDING > bandWidth) return;
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(band.label, centre, top);
+      drawn.labels.push({
+        text: band.label,
+        left: centre - textWidth / 2,
+        right: centre + textWidth / 2,
+        top,
+        bottom: top + LABEL_FONT_SIZE
+      });
     });
 
     ctx.restore();

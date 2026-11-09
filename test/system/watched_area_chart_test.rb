@@ -4,8 +4,9 @@ require 'application_system_test_case'
 
 # What the precipitation chart's bars mean (#118): one bar per calendar day
 # with today included and nothing counted twice, 5 days of hourly bars, the
-# last 24/48/72 hours shaded behind them, headroom above the tallest bar, and
-# no bars overlapping each other or a gridline on a phone-width screen.
+# last 24/48/72 hours shaded and labelled behind them, headroom above the
+# tallest bar, and, on a phone-width screen, fewer days (so each has room for
+# its label) with no bars overlapping each other or a gridline.
 #
 # Uses the bundled fixture (MOCK_WEATHER_DATA), like watched_area_weather_test:
 # 480 hourly readings ending at LAST_READING, with 0.17in of rain in all. The
@@ -42,6 +43,8 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     # the fixture's "today", which used to be dropped.
     assert_equal calendar_days_between(FIRST_READING, LAST_READING), chart['dailyDays']
     assert_equal local_day(LAST_READING), chart['dailyDays'].last
+    # A desktop window has room for every day
+    assert_equal chart['dailyDays'].size, chart['values'].size
     assert_in_delta FIXTURE_TOTAL_INCHES, chart['values'].sum, 1e-9
     assert_equal 'Rain per day (inches)', chart['legend']
     assert_match(/one calendar day, midnight to midnight/, description_text)
@@ -88,6 +91,26 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     toggle_graph
 
     assert_headroom('hourly')
+  end
+
+  test 'a phone shows fewer days, each wide enough for its label' do
+    emulate_phone
+    visit_chart
+
+    state = chart_state
+    all_days = state['dailyDays'].size
+
+    assert_operator state['values'].size, :<, all_days, 'the phone still squeezes in every day'
+    assert_operator state['values'].size, :>=, 4, 'too few days for the shaded 72 hours and today'
+    # The most recent days, ending today
+    assert_equal state['dailyDays'].last(state['values'].size), state['shownDays']
+    assert_equal WINDOW_LABELS, state['labels'].pluck('text'), 'a shading label was left out'
+
+    toggle_graph
+    toggle_graph
+
+    assert_equal state['values'].size, chart_state['values'].size,
+                 'switching back to daily lost the fitted number of days'
   end
 
   test 'bars never overlap or sit on a gridline on a phone-width screen' do
@@ -146,6 +169,8 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
           values: chart.data.datasets[0].data,
           legend: chart.data.datasets[0].label,
           dailyDays: controller.timeSeriesDailyData.map(d => d.label.toDateString()),
+          // Each bar's day (on the daily chart), from the time slot it covers
+          shownDays: chart.$rainWindows.slots.map(slot => new Date(slot[0]).toDateString()),
           hourlyTimes: controller.timeSeriesHourlyData.map(d => d.label.toISOString()),
           chartWidth: chart.width,
           chartArea: { left, right, top, bottom },
