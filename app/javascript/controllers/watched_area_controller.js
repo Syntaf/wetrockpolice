@@ -54,32 +54,34 @@ const RECENT_RAIN_HOURS = 72;
 // The fewest days the daily chart narrows to: the shaded 72 hours plus today
 // can touch four.
 const MIN_DAILY_DAYS = 4;
-// x-axis dates: "Sep 20", no "th", to keep the labels short. The tooltips
-// keep the ordinal ("Sep 20th").
-const AXIS_DATE_FORMAT = 'LLL d';
 const DAYS_PER_WEEK = 7;
 
-// The x-axis labels for a series. `tick` gives each bar's label ("Sep 20",
-// or null for none). With more than a week of dates, the month shows once a
-// week, counting from the first, and wherever a new month starts; the rest
-// are just the day: "Sep 1", "2", ... "7", "Sep 8", "9", ...
-const axisLabels = (series, tick) => {
-  const labels = series.map(intv => tick(intv.label));
-  const dated = labels.flatMap((label, i) => (label === null ? [] : [i]));
-  if (dated.length <= DAYS_PER_WEEK) return labels;
+// The x-axis labels for a series: for each bar, null or its lines, each
+// { text }. With more than a week of dates, the month shows once a week,
+// counting from the first, and wherever a new month starts; the rest are
+// just the day: "Sep 1", "2", ... "7", "Sep 8". The hourly chart adds the
+// weekday ("Fri") underneath.
+const axisLabels = (series, mode) => {
+  const dated = series.flatMap((intv, i) => (mode.labelled(intv.label) ? [i] : []));
+  const weekly = dated.length > DAYS_PER_WEEK;
+  const labels = series.map(() => null);
 
   dated.forEach((index, k) => {
     const date = series[index].label;
     const previous = k > 0 ? series[dated[k - 1]].label : null;
     const newMonth = previous !== null && previous.getMonth() !== date.getMonth();
-    if (k % DAYS_PER_WEEK !== 0 && !newMonth) labels[index] = format(date, 'd');
+    const withMonth = !weekly || k % DAYS_PER_WEEK === 0 || newMonth;
+
+    labels[index] = [{ text: format(date, withMonth ? 'LLL d' : 'd') }];
+    if (mode.weekday) labels[index].push({ text: format(date, 'EEE') });
   });
   return labels;
 };
 const SHADING_NOTE = ' Shading marks the last 24, 48 and 72 hours.';
 
-// What the Daily/Hourly switch changes on the chart. `tick` labels the x-axis
-// (null hides the label); `tooltipFormat` is the hover label. `slot` is the
+// What the Daily/Hourly switch changes on the chart. `labelled` says which
+// bars get an x-axis date (see axisLabels for the rest of the axis options);
+// `tooltipFormat` is the hover label. `slot` is the
 // time a bar covers, [startMs, endMs], which places the 24/48/72-hour shading;
 // `gridLine` says whether a gridline goes on the boundary before a bar.
 const GRAPH_MODES = {
@@ -88,7 +90,11 @@ const GRAPH_MODES = {
     description: 'Each bar is the total rain for one calendar day, midnight ' +
       'to midnight in your time zone. The last bar is today so far.' + SHADING_NOTE,
     tooltipFormat: 'LLL do',
-    tick: (date) => format(date, AXIS_DATE_FORMAT),
+    // A date under every bar, centred, slanting when they're tight
+    labelled: () => true,
+    weekday: false,
+    labelAtBoundary: false,
+    maxRotation: 50,
     // startOfDay/addDays, not +24h, so a daylight-saving day is 23 or 25 hours
     slot: (date) => [startOfDay(date).getTime(), addDays(startOfDay(date), 1).getTime()],
     gridLine: () => true,
@@ -102,8 +108,12 @@ const GRAPH_MODES = {
     description: 'Each bar is the rain recorded in one hour, over the last ' +
       `${HOURLY_LOOKBACK_DAYS} days.` + SHADING_NOTE,
     tooltipFormat: 'LLL do haaa',
-    // One tick and one gridline per day, on its first hour, instead of one per bar
-    tick: (date) => (date.getHours() === 0 ? format(date, AXIS_DATE_FORMAT) : null),
+    // One date and one gridline per day, on its first hour, instead of one
+    // per bar. The date and weekday start at the gridline, level.
+    labelled: (date) => date.getHours() === 0,
+    weekday: true,
+    labelAtBoundary: true,
+    maxRotation: 0,
     // Each reading is the rain in the hour up to its timestamp
     slot: (date) => [date.getTime() - HOUR_MS, date.getTime()],
     gridLine: (date) => date.getHours() === 0,
@@ -609,7 +619,9 @@ export default class extends Controller {
                 // rainWindowsPlugin draws the vertical gridlines, always
                 // between bars (see its comment for why not Chart.js's own)
                 grid: { display: false },
-                ticks: {}
+                // Invisible: rainWindowsPlugin draws the labels (see
+                // applyGraphMode)
+                ticks: { color: 'transparent' }
               },
               y: {
                 beginAtZero: true,
@@ -692,11 +704,19 @@ export default class extends Controller {
     dataset.barPercentage = mode.barPercentage;
 
     const ticks = chart.options.scales.x.ticks;
-    const labels = axisLabels(series, mode.tick);
+    const labels = axisLabels(series, mode);
     // Every label shows, so the weekly months above stay put: daily days are
     // kept wide enough (fitDailyDays), and hourly labels only one bar a day.
     ticks.autoSkip = false;
-    ticks.callback = (value) => labels[value];
+    ticks.maxRotation = mode.maxRotation;
+    // Chart.js makes room for the labels from this text, drawn invisibly;
+    // rainWindowsPlugin draws them where they belong (see its afterDraw).
+    ticks.callback = (value) => {
+      const lines = labels[value]?.map(line => line.text);
+      if (!lines) return null;
+      return lines.length === 1 ? lines[0] : lines;
+    };
+    chart.$axisLabels = { labels, atBoundary: mode.labelAtBoundary };
 
     chart.$rainWindows = {
       anchor: this.currentTime(),

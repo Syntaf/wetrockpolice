@@ -48,7 +48,7 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     assert_in_delta FIXTURE_TOTAL_INCHES, chart['values'].sum, 1e-9
     assert_equal 'Rain per day (inches)', chart['legend']
     assert_match(/one calendar day, midnight to midnight/, description_text)
-    assert_axis_dates_plain(chart, 'daily')
+    assert_axis_dates(chart, 'daily')
     assert_equal expected_axis_labels(chart['dailyDays']), chart['axisTicks']
   end
 
@@ -63,10 +63,17 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
     assert_equal HOURLY_BARS, chart['values'].size
     assert_equal 'Rain per hour (inches)', chart['legend']
     assert_match(/one hour, over the last 5 days/, description_text)
-    assert_axis_dates_plain(chart, 'hourly')
+    assert_axis_dates(chart, 'hourly')
     # Five days of dates, under a week, so each keeps its month
     assert_equal 5, chart['axisTicks'].size
     assert(chart['axisTicks'].all? { |label| label.start_with?('Sep ') }, chart['axisTicks'].inspect)
+    # ...with its weekday underneath, and starting just right of its day's
+    # gridline (on the side holding that day), within the plot
+    chart['axisLabels'].each do |label|
+      assert_equal label['dayName'], label['lines'][1], "weekday under #{label['lines'][0]}"
+      assert_includes 0..5, label['left'] - label['boundaryX'], "#{label['lines'][0]} doesn't start at its gridline"
+      assert_operator label['left'] + label['width'], :<=, chart['chartArea']['right']
+    end
     # The last bar is the latest reading, the first is 119 hours before it.
     assert_equal iso_hours_before(LAST_READING, 0), chart['hourlyTimes'].last
     assert_equal iso_hours_before(LAST_READING, HOURLY_BARS - 1), chart['hourlyTimes'].first
@@ -100,11 +107,40 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
           ({ label: new Date(2024, 8, 26 + i, 12), value: 0 }));
         controller.dailyDaysShown = null;
         controller.showGraphMode(false);
-        return controller.timeSeriesChart.scales.x.ticks.map(tick => tick.label);
+        controller.timeSeriesChart.draw();
+        return controller.timeSeriesChart.$axisLabelsDrawn.map(d => d.lines[0].text);
       })()
     JS
 
     assert_equal ['Sep 26', '27', '28', '29', '30', 'Oct 1', '2', 'Oct 3', '4', '5'], labels
+  end
+
+  # The fixture's last midnight is well clear of the right edge, so this ends
+  # the hourly readings on a midnight hour: that day's label has one bar's
+  # width to fit in, and is left out instead of cut off.
+  test 'an hourly date label too close to the right edge is left out' do
+    visit_chart
+
+    drawn = page.evaluate_script(<<~JS)
+      (() => {
+        const controller = #{CONTROLLER_JS};
+        controller.timeSeriesHourlyData = Array.from({ length: 47 }, (_, i) =>
+          ({ label: new Date(2024, 8, 19, 2 + i, 34), value: 0 }));
+        controller.showGraphMode(true);
+        const chart = controller.timeSeriesChart;
+        chart.draw();
+        return {
+          shown: chart.$axisLabelsDrawn.filter(d => !d.omitted).map(d => d.lines[0].text),
+          omitted: chart.$axisLabelsDrawn.filter(d => d.omitted).map(d => d.lines[0].text),
+          rightmost: Math.max(...chart.$axisLabelsDrawn.filter(d => !d.omitted).map(d => d.left + d.width)),
+          plotRight: chart.chartArea.right
+        };
+      })()
+    JS
+
+    assert_equal ['Sep 20'], drawn['shown']
+    assert_equal ['Sep 21'], drawn['omitted']
+    assert_operator drawn['rightmost'], :<=, drawn['plotRight']
   end
 
   test 'bars keep headroom below the shading labels, with no horizontal gridlines' do
@@ -186,6 +222,16 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
         const chart = controller.timeSeriesChart;
         chart.draw();
         const drawn = chart.$rainWindowsDrawn;
+        const axisLabels = chart.$axisLabelsDrawn.filter(d => !d.omitted).map(d => ({
+          lines: d.lines.map(line => line.text),
+          left: d.left,
+          width: d.width,
+          boundaryX: chart.scales.x.getPixelForValue(d.index - 0.5),
+          // On the hourly chart (bar indexes into the hourly series)
+          dayName: controller.graphHourly
+            ? controller.timeSeriesHourlyData[d.index].label.toDateString().slice(0, 3)
+            : null
+        }));
         const bars = chart.getDatasetMeta(0).data
           .map(bar => bar.getProps(['x', 'y', 'width'], true));
         const { left, right, top, bottom } = chart.chartArea;
@@ -193,8 +239,9 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
         return {
           values: chart.data.datasets[0].data,
           legend: chart.data.datasets[0].label,
-          // The x-axis labels Chart.js kept (it may skip some to fit)
-          axisTicks: chart.scales.x.ticks.map(tick => tick.label).filter(Boolean),
+          // The x-axis labels rainWindowsPlugin drew: first line, and in full
+          axisTicks: axisLabels.map(label => label.lines[0]),
+          axisLabels,
           dailyDays: controller.timeSeriesDailyData.map(d => d.label.toDateString()),
           // Each bar's day (on the daily chart), from the time slot it covers
           shownDays: chart.$rainWindows.slots.map(slot => new Date(slot[0]).toDateString()),
@@ -213,10 +260,12 @@ class WatchedAreaChartTest < ApplicationSystemTestCase
   end
 
   # "Sep 20" or "20", never "Sep 20th"
-  def assert_axis_dates_plain(state, mode)
-    assert_not_empty state['axisTicks'], "#{mode}: no x-axis labels"
-    state['axisTicks'].each do |label|
-      assert_match(/\A([A-Z][a-z]{2} )?\d{1,2}\z/, label, "#{mode}: x-axis label #{label.inspect}")
+  def assert_axis_dates(state, mode)
+    assert_not_empty state['axisLabels'], "#{mode}: no x-axis labels"
+    state['axisLabels'].each do |label|
+      text = label['lines'][0]
+
+      assert_match(/\A([A-Z][a-z]{2} )?\d{1,2}\z/, text, "#{mode}: x-axis label #{text.inspect}")
     end
   end
 

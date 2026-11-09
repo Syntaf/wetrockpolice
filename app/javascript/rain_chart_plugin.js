@@ -18,6 +18,10 @@ const LABEL_TOP_PADDING = 4;
 const LABEL_SIDE_PADDING = 4;
 const LABEL_COLOR = 'rgba(194, 24, 91, 0.8)';
 
+// On the hourly chart, the gap between a day's gridline and the x-axis label
+// that starts there.
+const AXIS_LABEL_GAP = 3;
+
 const labelFont = () => `600 ${LABEL_FONT_SIZE}px ${defaults.font.family}`;
 
 // The narrowest a band can be and still fit its label: the daily chart keeps
@@ -46,8 +50,9 @@ export const fractionalIndex = (slots, time) => {
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 // A Chart.js plugin: an object of hooks Chart.js calls while it draws. The
-// controller hands it chart.$rainWindows = { anchor, slots, gridIndices };
-// what it draws is recorded on chart.$rainWindowsDrawn, for the tests.
+// controller hands it chart.$rainWindows = { anchor, slots, gridIndices } and
+// chart.$axisLabels = { labels, atBoundary }; what it draws is recorded on
+// chart.$rainWindowsDrawn and chart.$axisLabelsDrawn, for the tests.
 //
 // It also draws the vertical gridlines. Chart.js puts a gridline halfway
 // between the date labels it keeps, so once a narrow screen skips every
@@ -140,6 +145,72 @@ export const rainWindowsPlugin = {
         right: centre + textWidth / 2,
         top,
         bottom: top + LABEL_FONT_SIZE
+      });
+    });
+
+    ctx.restore();
+  },
+
+  // The x-axis labels. Chart.js can only centre a label on its tick (the
+  // midnight bar, on the hourly chart), so it lays the labels out, drawn
+  // invisibly, and this draws them. labels[i] is null or the lines under bar
+  // i: [{ text }].
+  //
+  // With atBoundary (the hourly chart), a label starts just right of its
+  // day's gridline, on the side holding that day; one that wouldn't fit
+  // before the right edge is left out rather than cut off. Otherwise labels
+  // go exactly where Chart.js put them.
+  afterDraw(chart) {
+    const { ctx, chartArea, scales: { x } } = chart;
+    const input = chart.$axisLabels;
+    const drawn = [];
+    chart.$axisLabelsDrawn = drawn;
+    if (!input) return;
+
+    ctx.save();
+    ctx.fillStyle = defaults.color;
+    ctx.textBaseline = 'middle';
+
+    x.getLabelItems().forEach((item, i) => {
+      const index = x.ticks[i].value;
+      const lines = input.labels[index];
+      if (!lines) return;
+
+      const { font } = item;
+      ctx.font = font.string;
+      const width = Math.max(...lines.map(line => ctx.measureText(line.text).width));
+
+      let originX, rotation, align;
+      if (input.atBoundary) {
+        originX = x.getPixelForValue(index - 0.5) + AXIS_LABEL_GAP;
+        rotation = 0;
+        align = 'left';
+        if (originX + width > chartArea.right) {
+          drawn.push({ index, lines, omitted: true, left: originX, width });
+          return;
+        }
+      } else {
+        originX = item.options.translation[0];
+        rotation = item.options.rotation;
+        align = item.options.textAlign;
+      }
+
+      ctx.save();
+      ctx.translate(originX, item.options.translation[1]);
+      ctx.rotate(rotation);
+      ctx.textAlign = align;
+      lines.forEach((line, j) => {
+        ctx.fillText(line.text, 0, item.textOffset + j * font.lineHeight);
+      });
+      ctx.restore();
+
+      drawn.push({
+        index,
+        lines,
+        omitted: false,
+        rotated: rotation !== 0,
+        left: align === 'left' ? originX : align === 'right' ? originX - width : originX - width / 2,
+        width
       });
     });
 
