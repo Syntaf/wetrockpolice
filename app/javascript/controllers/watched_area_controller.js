@@ -286,6 +286,10 @@ export default class extends Controller {
       return;
     }
 
+    this.latestReading = intervals.length
+      ? new Date(intervals[intervals.length - 1].last_report)
+      : null;
+
     const modelRain = this.findMissedModelRain(intervals, await forecastsPromise);
     if (isStale()) return;
 
@@ -336,7 +340,7 @@ export default class extends Controller {
     const gaugeRain = this.findLastRainInterval(intervals);
     const gaugeLastRain = gaugeRain ? new Date(gaugeRain.interval.last_report) : null;
 
-    return findModelRainAfter(forecasts, points, MODEL_NAMES, gaugeLastRain, new Date(), MODEL_MIN_MM);
+    return findModelRainAfter(forecasts, points, MODEL_NAMES, gaugeLastRain, this.currentTime(), MODEL_MIN_MM);
   }
 
   async fetchPrecipitationIntervals() {
@@ -416,7 +420,7 @@ export default class extends Controller {
     // the model only comes back when it's newer than the gauge's last rain
     const lastRainInterval = modelRain
       ? {
-          elapsedHours: (new Date() - modelRain.at) / (1000 * 60 * 60),
+          elapsedHours: (this.currentTime() - modelRain.at) / (1000 * 60 * 60),
           interval: { last_report: modelRain.at.toISOString() }
         }
       : gaugeRain;
@@ -504,7 +508,7 @@ export default class extends Controller {
 
     if (!latestRainInterval) return null;
 
-    const now = new Date();
+    const now = this.currentTime();
     const periodEnd = new Date(latestRainInterval['last_report']);
     const diffInMilliseconds = now - periodEnd;
     const elapsedHours = diffInMilliseconds / (1000 * 60 * 60);
@@ -663,7 +667,7 @@ export default class extends Controller {
     ticks.callback = (value) => mode.tick(series[value].label);
 
     chart.$rainWindows = {
-      anchor: this.rainWindowsAnchor(),
+      anchor: this.currentTime(),
       slots: series.map(intv => mode.slot(intv.label)),
       gridIndices: series
         .map((intv, i) => (mode.gridLine(intv.label) ? i : null))
@@ -683,11 +687,11 @@ export default class extends Controller {
     this.chartGutter = chart.width - chart.chartArea.width;
   }
 
-  // The shading counts back from now, the same clock as the "since rain"
-  // tiles. The development fixture is from 2024, so there it counts back from
-  // the latest reading instead, or the bands would be off the chart.
-  rainWindowsAnchor() {
-    const latest = this.timeSeriesHourlyData[this.timeSeriesHourlyData.length - 1];
-    return this.developmentModeValue && latest ? latest.label : new Date();
+  // The time the tiles, the title and the chart's shading count back from.
+  // The development fixture is a snapshot from September 2024, so there "now"
+  // is its latest reading: the page then looks as it did that evening,
+  // instead of two years without rain.
+  currentTime() {
+    return this.developmentModeValue && this.latestReading ? this.latestReading : new Date();
   }
 }

@@ -5,7 +5,8 @@ require 'application_system_test_case'
 # Climbers should wait 24 to 72 hours after rain. Until 72 hours have passed,
 # the title says how many ("The last recorded precipitation was 30 hours ago
 # on September 20th") and a warning shows under it; after that the title is
-# the plain "was on September 20th".
+# the plain "was on September 20th". With the development sample data, "now"
+# is its last reading.
 #
 # Needs rain at a known time before now, so, like watched_area_weather_proxy_test,
 # it stubs the Synoptic hop behind the Rails proxy with readings generated
@@ -50,6 +51,20 @@ class WatchedAreaRainHeaderTest < ApplicationSystemTestCase
     assert_selector '[data-watched-area-target="lastRainDate"]', text: /\S/
     assert_selector HEADER, exact_text: 'The last recorded precipitation was on'
     assert_no_selector WARNING
+  end
+
+  # The development fixture is a 2024 snapshot whose last rain (0.13in at
+  # 2024-09-20T14:34Z) is 33 hours before its last reading. In development
+  # the page counts from that last reading, so the title, the tiles and the
+  # chart's shading agree, as they would have that evening.
+  test 'with the sample data, the page counts back from its last reading' do
+    ENV['MOCK_WEATHER_DATA'] = '1'
+    visit '/redrock'
+
+    assert_selector HEADER, exact_text: 'The last recorded precipitation was 33 hours ago on', wait: WAIT
+    assert_selector WARNING, exact_text: 'Avoid climbing 24-72 hours after rain.'
+    assert_selector '[data-watched-area-target="daysTile"]', exact_text: '1'
+    assert_selector '[data-watched-area-target="hoursTile"]', exact_text: '9'
   end
 
   private
