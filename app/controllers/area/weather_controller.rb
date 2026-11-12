@@ -87,20 +87,13 @@ module Area
       render json: body
     end
 
-    # Same caching contract as Synoptic: one upstream pull per CACHE_TTL on
-    # success, one per FAILURE_TTL on failure. The key includes updated_at so
-    # an admin editing the gauge (new table/field) takes effect immediately.
+    # Same caching contract as Synoptic (one pull per 10 minutes, failures
+    # cached for 45 seconds), kept in the service so the partner API shares it.
     def show_campbell_cloud(gauge)
       return service_unavailable('weather service is not configured') unless CampbellCloudPrecipitation.configured?
 
-      key = "campbell_cloud/precipitation/#{gauge.id}/#{gauge.updated_at.to_i}"
-      body = cached_body(key) do
-        CampbellCloudPrecipitation.call(gauge)
-      rescue CampbellCloudPrecipitation::Error => e
-        Rails.logger.warn("CampbellCloud gauge #{gauge.slug} unavailable: #{e.message}")
-        raise UpstreamError
-      end
-      return bad_gateway if body == FAILURE
+      body = CampbellCloudPrecipitation.cached(gauge)
+      return bad_gateway unless body
 
       render json: body
     end

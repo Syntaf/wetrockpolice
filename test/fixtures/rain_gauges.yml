@@ -10,6 +10,7 @@ black_velvet:
   units: "in"
   info_bubble_excerpt: Precipitation data collected from SNCC's Black Velvet gauge.
   position: 1
+  api_visible: true
 
 # An alternate gauge that is just another Synoptic station.
 castlerock_backup:

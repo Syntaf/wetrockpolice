@@ -62,4 +62,18 @@ class RainGaugeTest < ActiveSupport::TestCase
     assert gauge.errors.key?(:provider)
     assert gauge.errors.key?(:units)
   end
+
+  # Synoptic's terms (§2.4) forbid redistributing their data.
+  test 'Synoptic gauges cannot be shared through the partner API' do
+    gauge = rain_gauges(:castlerock_backup)
+    gauge.api_visible = true
+
+    assert_not gauge.valid?
+    assert_includes gauge.errors[:api_visible].join, 'Synoptic'
+  end
+
+  test 'CampbellCloud gauges can be shared through the partner API' do
+    assert rain_gauges(:black_velvet).valid?
+    assert_equal [rain_gauges(:black_velvet)], RainGauge.api_visible.to_a
+  end
 end

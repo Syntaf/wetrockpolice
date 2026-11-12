@@ -27,6 +27,13 @@ class RainGauge < ApplicationRecord
                       if: :campbell_cloud?
   validates :campbell_table, :campbell_field,
             presence: true, format: { with: CAMPBELL_NAME_FORMAT }, if: :campbell_cloud?
+  # Synoptic's terms (§2.4) forbid redistributing their data to third
+  # parties, so only gauges whose data we own (SNCC's) can be shared.
+  validates :api_visible, absence: { message: "can't be set on Synoptic gauges: their terms forbid redistribution" },
+                          if: :synoptic?
+
+  # Gauges the partner API (Api::V1) may serve.
+  scope :api_visible, -> { where(api_visible: true) }
 
   def synoptic?
     provider == 'synoptic'

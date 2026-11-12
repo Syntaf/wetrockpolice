@@ -56,10 +56,29 @@ RailsAdmin.config do |config|
     end
   end
 
+  # Partner API keys are created with `bin/rails "api_keys:create[Name]"`,
+  # which prints the key once; here they can only be renamed or revoked.
+  config.model ApiKey do
+    list do
+      field :name
+      field :active
+      field :last_used_at
+      field :created_at
+    end
+    edit do
+      field :name
+      field :active do
+        help 'Untick to revoke this key.'
+      end
+    end
+  end
+
   config.actions do
     dashboard                     # mandatory
     index                         # mandatory
-    new
+    new do
+      except ['ApiKey']
+    end
     export
     bulk_delete
     show

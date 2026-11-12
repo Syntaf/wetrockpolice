@@ -97,6 +97,11 @@ class AbilityTest < ActiveSupport::TestCase
     assert_empty RainGauge.accessible_by(ability)
   end
 
+  test 'partner API keys are super-admin only' do
+    assert Ability.new(users(:area_admin)).cannot?(:manage, api_keys(:partner))
+    assert Ability.new(users(:super_admin)).can?(:manage, api_keys(:partner))
+  end
+
   test 'an admin whose manages is empty can reach no records' do
     ability = Ability.new(User.new(admin: true, approved: true, manages: []))
 

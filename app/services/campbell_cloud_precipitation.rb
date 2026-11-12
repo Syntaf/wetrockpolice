@@ -35,9 +35,36 @@ class CampbellCloudPrecipitation < ApplicationService
   OPEN_TIMEOUT = 5
   READ_TIMEOUT = 10
 
+  # Shared by the page's proxy and the partner API, so neither adds upstream
+  # load for the other: one CampbellCloud pull per gauge per CACHE_TTL.
+  CACHE_TTL = 10.minutes
+  # Failures are cached briefly too, so an outage costs one attempt per
+  # window per process instead of one per request (see Area::WeatherController).
+  FAILURE_TTL = 45.seconds
+  FAILURE = 'campbell-cloud-upstream-failure'
+
   def self.configured?
     %w[CAMPBELL_CLOUD_ORGANIZATION_ID CAMPBELL_CLOUD_USERNAME CAMPBELL_CLOUD_PASSWORD]
       .all? { |key| ENV.fetch(key, '').present? }
+  end
+
+  # The gauge's Synoptic-shaped JSON, or nil while CampbellCloud is failing.
+  # The key includes updated_at so an admin edit (new field) applies at once.
+  def self.cached(gauge)
+    key = "campbell_cloud/precipitation/#{gauge.id}/#{gauge.updated_at.to_i}"
+    body = Rails.cache.read(key)
+
+    if body.nil?
+      body = begin
+        call(gauge)
+      rescue Error => e
+        Rails.logger.warn("CampbellCloud gauge #{gauge.slug} unavailable: #{e.message}")
+        FAILURE
+      end
+      Rails.cache.write(key, body, expires_in: body == FAILURE ? FAILURE_TTL : CACHE_TTL)
+    end
+
+    body unless body == FAILURE
   end
 
   def initialize(gauge, now: Time.current)

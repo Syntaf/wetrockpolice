@@ -11,6 +11,14 @@ Rails.application.routes.draw do
   # is pulled from the Service until it recovers.
   get 'ready' => 'health#ready', as: :readiness_check
 
+  # Partner rain data API (bearer keys; see ApiKey). Above the /:slug scope
+  # so "api" is never read as a watched area slug.
+  namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+      resources :areas, only: %i[index show], param: :slug
+    end
+  end
+
   scope '/:slug', controller: 'watched_area', module: :area, as: :watched_area do
     resources :rainy_day_options, path: 'rainy-day-options', only: %i( index show )
     resources :faqs, path: 'faq', only: %i( index )
