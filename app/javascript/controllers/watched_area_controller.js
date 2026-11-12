@@ -1,7 +1,12 @@
 import { Controller } from "@hotwired/stimulus";
 import { Tooltip as BootstrapTooltip } from "bootstrap";
 import { SYNOPTIC_OK_CODE } from "../constants";
-import { findModelRainAfter, parseDailyIntervals, parseHourlyIntervals } from "../utils";
+import {
+  HOURLY_LOOKBACK_DAYS,
+  findModelRainAfter,
+  parseDailyIntervals,
+  parseHourlyIntervals
+} from "../utils";
 // Named imports instead of 'chart.js/auto' so esbuild tree-shakes every
 // controller/scale/plugin the bar chart doesn't use. Registered below:
 // type 'bar' needs BarController + BarElement, its default category x-axis
@@ -16,7 +21,8 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import { format } from 'date-fns';
+import { addDays, format, startOfDay } from 'date-fns';
+import { minBandWidth, rainWindowsPlugin } from '../rain_chart_plugin';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -41,6 +47,75 @@ const MODEL_NAMES = ['ncep_hrrr_conus', 'ecmwf_ifs025', 'icon_seamless', 'gem_se
 const MODEL_MIN_MM = 0.25;
 const MODEL_TIMEOUT_MS = 5000;
 
+const HOUR_MS = 60 * 60 * 1000;
+// Climbers should wait 24 to 72 hours after rain. Until 72 hours have
+// passed, the title says how many and a warning shows under it.
+const RECENT_RAIN_HOURS = 72;
+// The fewest days the daily chart narrows to: the shaded 72 hours plus today
+// can touch four.
+const MIN_DAILY_DAYS = 4;
+
+// The x-axis labels for a series: for each bar, null or its lines, each
+// { text }: the date in the mode's axisFormat, and on the hourly chart the
+// weekday ("Fri") underneath.
+const axisLabels = (series, mode) => series.map((intv) => {
+  if (!mode.labelled(intv.label)) return null;
+  const lines = [{ text: format(intv.label, mode.axisFormat) }];
+  if (mode.weekday) lines.push({ text: format(intv.label, 'EEE') });
+  return lines;
+});
+
+// What the Daily/Hourly switch changes on the chart. `labelled` says which
+// bars get an x-axis date and `axisFormat` how it reads (see axisLabels and
+// applyGraphMode for the rest of the axis options);
+// `tooltipFormat` is the hover label. `slot` is the
+// time a bar covers, [startMs, endMs], which places the 24/48/72-hour shading;
+// `gridLine` says whether a gridline goes on the boundary before a bar.
+const GRAPH_MODES = {
+  daily: {
+    legend: 'Rain per day (inches)',
+    description: 'Each bar is the total rain for one calendar day, midnight ' +
+      'to midnight in your time zone. The last bar is today so far.',
+    tooltipFormat: 'LLL do',
+    // "Sep 20th" under every bar, centred, slanting when they're tight
+    // (and skipping some if slanting isn't enough)
+    axisFormat: 'LLL do',
+    labelled: () => true,
+    weekday: false,
+    labelAtBoundary: false,
+    maxRotation: 50,
+    // startOfDay/addDays, not +24h, so a daylight-saving day is 23 or 25 hours
+    slot: (date) => [startOfDay(date).getTime(), addDays(startOfDay(date), 1).getTime()],
+    gridLine: () => true,
+    backgroundColor: 'rgb(255, 99, 132)',
+    borderWidth: 0,
+    categoryPercentage: 0.8,
+    barPercentage: 0.9
+  },
+  hourly: {
+    legend: 'Rain per hour (inches)',
+    description: 'Each bar is the rain recorded in one hour, over the last ' +
+      `${HOURLY_LOOKBACK_DAYS} days.`,
+    tooltipFormat: 'LLL do haaa',
+    // One date and one gridline per day, on its first hour, instead of one
+    // per bar. The date ("Sep 20") and weekday start at the gridline, level.
+    axisFormat: 'LLL d',
+    labelled: (date) => date.getHours() === 0,
+    weekday: true,
+    labelAtBoundary: true,
+    maxRotation: 0,
+    // Each reading is the rain in the hour up to its timestamp
+    slot: (date) => [date.getTime() - HOUR_MS, date.getTime()],
+    gridLine: (date) => date.getHours() === 0,
+    // Bars are a pixel or two wide on a phone: borderless, since a border
+    // would swallow them. Solid, like the daily bars.
+    backgroundColor: 'rgb(255, 99, 132)',
+    borderWidth: 0,
+    categoryPercentage: 1,
+    barPercentage: 0.8
+  }
+};
+
 export default class extends Controller {
   static targets = [
     "rainTileSection",
@@ -54,7 +129,10 @@ export default class extends Controller {
     "gaugeName",
     "nextGaugeName",
     "infoBubble",
-    "graphToggle"
+    "graphToggle",
+    "graphDescription",
+    "rainHeader",
+    "rainWarning"
   ]
 
   static values = {
@@ -71,6 +149,7 @@ export default class extends Controller {
     // Server-side manual_warn styling has to survive a gauge switch; the
     // model-rain warning (added per load) must not.
     this.serverManualWarn = this.daysTileTarget.classList.contains('manual-warn');
+    this.defaultRainHeader = this.hasRainHeaderTarget ? this.rainHeaderTarget.textContent : null;
     this.loadId = 0;
 
     this.restoreSavedGauge();
@@ -182,6 +261,7 @@ export default class extends Controller {
     this.daysLabelTarget.innerHTML = 'Days';
     this.hoursLabelTarget.innerHTML = 'Hours';
     this.lastRainDateTarget.innerHTML = '';
+    this.showRecentRain(null);
 
     // The model-rain note is inserted as "<br><small>"; take both out.
     const note = this.element.querySelector('[data-role="model-rain-note"]');
@@ -227,6 +307,10 @@ export default class extends Controller {
       this.renderWeatherUnavailable();
       return;
     }
+
+    this.latestReading = intervals.length
+      ? new Date(intervals[intervals.length - 1].last_report)
+      : null;
 
     const modelRain = this.findMissedModelRain(intervals, await forecastsPromise);
     if (isStale()) return;
@@ -278,7 +362,7 @@ export default class extends Controller {
     const gaugeRain = this.findLastRainInterval(intervals);
     const gaugeLastRain = gaugeRain ? new Date(gaugeRain.interval.last_report) : null;
 
-    return findModelRainAfter(forecasts, points, MODEL_NAMES, gaugeLastRain, new Date(), MODEL_MIN_MM);
+    return findModelRainAfter(forecasts, points, MODEL_NAMES, gaugeLastRain, this.currentTime(), MODEL_MIN_MM);
   }
 
   async fetchPrecipitationIntervals() {
@@ -358,7 +442,7 @@ export default class extends Controller {
     // the model only comes back when it's newer than the gauge's last rain
     const lastRainInterval = modelRain
       ? {
-          elapsedHours: (new Date() - modelRain.at) / (1000 * 60 * 60),
+          elapsedHours: (this.currentTime() - modelRain.at) / (1000 * 60 * 60),
           interval: { last_report: modelRain.at.toISOString() }
         }
       : gaugeRain;
@@ -397,6 +481,7 @@ export default class extends Controller {
     const day = this.getOrdinalSuffix(dateOfRain.getDate());
 
     this.lastRainDateTarget.innerHTML = `${month} ${day}`;
+    this.showRecentRain(elapsedHours);
 
     if (modelRain) this.showModelRainSource(modelRain);
   }
@@ -420,13 +505,39 @@ export default class extends Controller {
       '<a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a></small>');
   }
 
+  // Under 72 hours since rain: "The last recorded precipitation was 30 hours
+  // ago on" and the warning. Otherwise (or null) the title as the page has it.
+  showRecentRain(elapsedHours) {
+    const recent = elapsedHours !== null && elapsedHours < RECENT_RAIN_HOURS;
+
+    if (this.hasRainHeaderTarget && this.defaultRainHeader !== null) {
+      if (recent) {
+        // Bold, like the date after it
+        const hours = document.createElement('strong');
+        hours.dataset.role = 'rain-hours-ago';
+        hours.textContent = this.hoursAgo(elapsedHours);
+        this.rainHeaderTarget.replaceChildren(
+          'The last recorded precipitation was ', hours, ' on');
+      } else {
+        this.rainHeaderTarget.textContent = this.defaultRainHeader;
+      }
+    }
+    if (this.hasRainWarningTarget) this.rainWarningTarget.hidden = !recent;
+  }
+
+  hoursAgo(elapsedHours) {
+    const hours = Math.floor(elapsedHours);
+    if (hours < 1) return 'less than an hour ago';
+    return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
+  }
+
   findLastRainInterval(intervals) {
     const latestRainInterval = 
       intervals.toReversed().find(interval => interval.precip > 0);
 
     if (!latestRainInterval) return null;
 
-    const now = new Date();
+    const now = this.currentTime();
     const periodEnd = new Date(latestRainInterval['last_report']);
     const diffInMilliseconds = now - periodEnd;
     const elapsedHours = diffInMilliseconds / (1000 * 60 * 60);
@@ -473,50 +584,156 @@ export default class extends Controller {
     this.timeSeriesChart = new Chart(timeSeriesCanvas, {
         type: 'bar',
         data: {
-            labels: this.timeSeriesDailyData.map(intv => format(intv.label, "LLL do")),
+            labels: [],
             datasets: [{
-                label: 'Accumulated Precipitation (rolling 24 hours)',
-                data: this.timeSeriesDailyData.map(intv => intv.value),
-                barThickness: 30,
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgb(255, 99, 132, 0.7)',
-                borderWidth: 1
+                data: [],
+                // No fixed barThickness: Chart.js fits bars to the space each
+                // one has, so they never overlap on a narrow screen. The cap
+                // keeps the few daily bars from turning into slabs on desktop.
+                maxBarThickness: 30,
+                borderColor: 'rgb(255, 99, 132, 0.7)'
             }]
         },
         options: {
             responsive: true,
             aspectRatio: false,
             showTooltips: true,
+            // A narrower or wider window can change how many days fit
+            onResize: (chart, size) => {
+              if (!this.graphHourly && this.chartGutter !== undefined) {
+                this.fitDailyDays(size.width - this.chartGutter);
+              }
+            },
             scales: {
+              x: {
+                // rainWindowsPlugin draws the vertical gridlines, always
+                // between bars (see its comment for why not Chart.js's own)
+                grid: { display: false },
+                // Invisible: rainWindowsPlugin draws the labels (see
+                // applyGraphMode)
+                ticks: { color: 'transparent' }
+              },
               y: {
+                beginAtZero: true,
+                // Headroom: the tallest bar stops at 80% of the height or
+                // less, clear of the shading labels along the top. (Chart.js
+                // takes a grace percentage of half the range: 50% adds 25%.)
+                grace: '50%',
+                grid: { display: false },
                 ticks: {
-                  beginAtZero: true,
                   callback: (v) => `${v.toFixed(2)} in`
                 },
               }
             }
-        }
+        },
+        plugins: [rainWindowsPlugin]
     });
+
+    // A new chart (first load or a gauge switch) has shown no days yet
+    this.dailyDaysShown = null;
+    this.chartGutter = undefined;
+    this.showGraphMode(false);
   }
 
   toggleGraphDisplay(event) {
     // No chart exists when the weather data failed to load.
     if (!this.timeSeriesChart) return;
 
-    const checked = event.target.checked;
+    this.showGraphMode(event.target.checked);
+  }
 
-    if (checked) {
-      this.timeSeriesChart.config.data.datasets[0].data =
-        this.timeSeriesHourlyData.map(intv => intv.value);
-      this.timeSeriesChart.config.data.labels =
-        this.timeSeriesHourlyData.map(intv => format(intv.label, 'LLL do haaa'));
+  showGraphMode(hourly) {
+    this.graphHourly = hourly;
+
+    if (hourly) {
+      this.applyGraphMode(GRAPH_MODES.hourly, this.timeSeriesHourlyData);
     } else {
-      this.timeSeriesChart.config.data.datasets[0].data =
-        this.timeSeriesDailyData.map(intv => intv.value);
-      this.timeSeriesChart.config.data.labels =
-        this.timeSeriesDailyData.map(intv => format(intv.label, 'LLL do'));
+      this.fitDailyDays();
+    }
+  }
+
+  // The most recent days that each get room for a "72h" label (all of them
+  // on a desktop; fewer on a phone) instead of squeezing every day in.
+  fitDailyDays(plotWidth = this.plotWidth()) {
+    const chart = this.timeSeriesChart;
+    const all = this.timeSeriesDailyData;
+    const minWidth = minBandWidth(chart.ctx);
+    const fits = (width) =>
+      Math.min(all.length, Math.max(MIN_DAILY_DAYS, Math.floor(width / minWidth)));
+
+    let days = fits(plotWidth);
+    if (days === this.dailyDaysShown) return;
+
+    this.applyGraphMode(GRAPH_MODES.daily, all.slice(-days));
+
+    // The axes may take a few more pixels once the real labels are in
+    while (days > MIN_DAILY_DAYS && fits(chart.chartArea.width) < days) {
+      days -= 1;
+      this.applyGraphMode(GRAPH_MODES.daily, all.slice(-days));
+    }
+  }
+
+  plotWidth() {
+    const chart = this.timeSeriesChart;
+    return chart.chartArea ? chart.chartArea.width : chart.width;
+  }
+
+  // Point the chart, its legend and the description under it at one series.
+  applyGraphMode(mode, series) {
+    const chart = this.timeSeriesChart;
+    const hourly = mode === GRAPH_MODES.hourly;
+    const dataset = chart.data.datasets[0];
+
+    // Labels are what the tooltip shows; the axis ticks are set separately.
+    chart.data.labels = series.map(intv => format(intv.label, mode.tooltipFormat));
+    dataset.data = series.map(intv => intv.value);
+    dataset.label = mode.legend;
+    dataset.backgroundColor = mode.backgroundColor;
+    dataset.borderWidth = mode.borderWidth;
+    dataset.categoryPercentage = mode.categoryPercentage;
+    dataset.barPercentage = mode.barPercentage;
+
+    const ticks = chart.options.scales.x.ticks;
+    const labels = axisLabels(series, mode);
+    // Hourly labels are one bar a day already, each placed at its gridline,
+    // so all of them show; daily ones may skip a few when they're tight.
+    ticks.autoSkip = !hourly;
+    ticks.maxRotation = mode.maxRotation;
+    // Chart.js makes room for the labels from this text, drawn invisibly;
+    // rainWindowsPlugin draws them where they belong (see its afterDraw).
+    ticks.callback = (value) => {
+      const lines = labels[value]?.map(line => line.text);
+      if (!lines) return null;
+      return lines.length === 1 ? lines[0] : lines;
+    };
+    chart.$axisLabels = { labels, atBoundary: mode.labelAtBoundary };
+
+    chart.$rainWindows = {
+      anchor: this.currentTime(),
+      slots: series.map(intv => mode.slot(intv.label)),
+      gridIndices: series
+        .map((intv, i) => (mode.gridLine(intv.label) ? i : null))
+        .filter(i => i !== null)
+        // and the right-hand edge, after the last bar
+        .concat(mode === GRAPH_MODES.daily ? [series.length] : [])
+    };
+
+    if (this.hasGraphDescriptionTarget) {
+      this.graphDescriptionTarget.textContent = mode.description;
     }
 
-    this.timeSeriesChart.update();
+    chart.update();
+
+    this.dailyDaysShown = hourly ? null : series.length;
+    // Everything but the plot area (mostly the y-axis), to size it on resize
+    this.chartGutter = chart.width - chart.chartArea.width;
+  }
+
+  // The time the tiles, the title and the chart's shading count back from.
+  // The development fixture is a snapshot from September 2024, so there "now"
+  // is its latest reading: the page then looks as it did that evening,
+  // instead of two years without rain.
+  currentTime() {
+    return this.developmentModeValue && this.latestReading ? this.latestReading : new Date();
   }
 }
