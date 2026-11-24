@@ -101,13 +101,14 @@
   data-watched-area-target="rainGraphSection">
   <div class="container">
     <div class="header">
-      <h2 data-role="weather-breakdown-header">The last recorded precipitation was on</h2>
+      <h2 data-role="weather-breakdown-header" data-watched-area-target="rainHeader">The last recorded precipitation was on</h2>
       <div class="spinner loading-date" data-watched-area-target="loading">
         <div class="bounce1"></div>
         <div class="bounce2"></div>
         <div class="bounce3"></div>
       </div>
       <strong data-watched-area-target="lastRainDate"></strong>
+      <p class="rain-warning" data-watched-area-target="rainWarning" hidden>Avoid climbing 24-72 hours after rain.</p>
       <div class="text-center">
         <%= link_to 'Where does this data come from?',
           watched_area_faqs_path,
@@ -133,6 +134,7 @@
             <canvas id="timeSeries"></canvas>
           </div>
         </div>
+        <p class="graph-description" data-watched-area-target="graphDescription"></p>
       </div>
       <div class="text-content">
         <div class="text mb-3 text-dark">

@@ -284,12 +284,33 @@ body[data-page-controller="watched_area"] {
             h2 {
                 display: inline-block;
                 color: #272727;
+                margin-bottom: 0;
             }
 
-            strong {
+            // The date ("September 20th"). An inline-block rather than plain
+            // inline, because browsers ignore top and bottom margins on
+            // inline elements. These two margins set the space above and
+            // below the date when the title wraps onto its own lines. Kept
+            // equal, with the warning's 4px top margin making up for the
+            // extra room the title's letters leave under them, the date sits
+            // evenly between the title and the warning (about 17px of clear
+            // space each side on a phone).
+            > strong {
+                display: inline-block;
                 font-size: 32px;
-                margin-left: 4px;
+                line-height: 1.2;
+                margin: 10px 0 10px 4px;
                 color: #272727;
+                // Keep "September 20th" together when the title wraps
+                white-space: nowrap;
+            }
+
+            .rain-warning {
+                color: #c2185b;
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 1.2;
+                margin: 4px 0 8px;
             }
 
             .loading-date {
@@ -338,6 +359,16 @@ body[data-page-controller="watched_area"] {
 
                 .graph-render {
                     height: 450px;
+                }
+
+                .graph-description {
+                    color: #6c6c6c;
+                    font-size: 13px;
+                    font-style: italic;
+                    text-align: center;
+                    max-width: 520px;
+                    margin: 8px auto 0;
+                    padding: 0 15px;
                 }
             }
 

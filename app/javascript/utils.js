@@ -1,61 +1,68 @@
-export const sameDate = (dateOne, dateTwo) => {
-    return dateOne.getFullYear() === dateTwo.getFullYear() &&
-        dateOne.getMonth() === dateTwo.getMonth() &&
-        dateOne.getDate() === dateTwo.getDate();
-};
-
 export const toDateString = (date) => {
     return date.toLocaleString('en-US', { month: 'short', day: 'numeric' });
 };
 
+// How far back the hourly chart looks. Rain from several days ago still
+// matters for wet sandstone (#118).
+export const HOURLY_LOOKBACK_DAYS = 5;
+
+const HOUR_MS = 60 * 60 * 1000;
+
+// Each reading is the rain in the hour up to its timestamp, so its day is
+// the day of the moment just before the stamp: one stamped exactly midnight
+// (00:00) is the last hour of the day before. Returns that day's midnight.
+const readingDay = (date) => {
+    const justBefore = new Date(date.getTime() - 1);
+    return new Date(justBefore.getFullYear(), justBefore.getMonth(), justBefore.getDate());
+};
+
+// One bar per calendar day (midnight to midnight in the viewer's time zone),
+// each the sum of that day's hourly intervals. Not a rolling 24 hours. The
+// last day is today so far. Each bar's label is its day's midnight.
+//
+// The readings start partway through a day (20 days back from the current
+// time of day), so the first day is left out unless its first reading's hour
+// began at its midnight: a partial total would pass for a whole day's.
 export const parseDailyIntervals = (intervals) => {
     const data = [];
 
-    let accumulatedPrecip = intervals[0].precip;
-    let date = new Date(intervals[0].last_report);
+    intervals.forEach((interval) => {
+        const date = new Date(interval.last_report);
+        const dayStart = readingDay(date);
+        const day = data[data.length - 1];
 
-    for (let i = 0; i < intervals.length; i++) {
-
-        const intDate = new Date(intervals[i].last_report);
-
-        if (sameDate(date, intDate)) {
-            accumulatedPrecip += intervals[i].precip;
+        if (day && day.label.getTime() === dayStart.getTime()) {
+            day.value += interval.precip;
         } else {
             data.push({
-                label: date,
-                value: accumulatedPrecip
+                label: dayStart,
+                value: interval.precip,
+                complete: date.getTime() - HOUR_MS <= dayStart.getTime()
             });
-
-            date = new Date(intervals[i].last_report);
-            accumulatedPrecip = intervals[i].precip;
         }
-    }
+    });
 
-    return data;
+    // Today, the last day, is labelled "so far"; any earlier first day must
+    // be whole.
+    if (data.length > 1 && !data[0].complete) data.shift();
+
+    return data.map(({ label, value }) => ({ label, value }));
 };
 
-export const parseHourlyIntervals = (intervals) => {
-    const data = [];
+// Every hourly interval from the last `days` days, ending at the latest
+// reading. Both providers already send one interval per hour.
+export const parseHourlyIntervals = (intervals, days = HOURLY_LOOKBACK_DAYS) => {
+    if (!intervals.length) return [];
 
-    // Find the time between two intervals in minutes
-    const intervalMiliseconds =
-        (new Date(intervals[1].last_report)) - (new Date(intervals[0].last_report));
-    const intervalMinutes = (intervalMiliseconds / 1000) / 60;
-    const intervalStep = Math.ceil(60 / intervalMinutes);
+    const latest = new Date(intervals[intervals.length - 1].last_report);
+    const cutoff = latest.getTime() - days * 24 * HOUR_MS;
 
-    // Start pulling data 30 hours before the current interval
-    const intervalStart = intervals.length - intervalStep * 30;
-
-    for (let i = intervalStart, j = 0; j < 30; i += intervalStep, j += 1) {
-        const date = new Date(intervals[i].last_report);
-
-        data.push({
-            label: date,
-            value: intervals[i].precip
-        });
-    }
-
-    return data;
+    return intervals
+        .filter(interval => new Date(interval.last_report).getTime() > cutoff)
+        .map(interval => ({
+            label: new Date(interval.last_report),
+            value: interval.precip
+        }));
 };
 
 const median = (xs) => {
